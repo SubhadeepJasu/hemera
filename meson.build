@@ -2,7 +2,7 @@ project(
   'com.github.SubhadeepJasu.hemera',
   ['c', 'vala'],
   version: '1.0.0',
-  meson_version: '>= 0.40.0',
+  meson_version: '>= 0.46.0',
 )
 
 i18n = import('i18n')
@@ -18,7 +18,7 @@ hemera_deps = [
   dependency('gobject-2.0'),
   dependency('glib-2.0'),
   dependency('gtk+-3.0'),
-  dependency('libsoup-2.4'),
+  libhemera_dep
 ]
 
 gnome = import('gnome')
