@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Hemera
+Icon=com.github.SubhadeepJasu.hemera
+Exec=com.github.SubhadeepJasu.hemera
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true

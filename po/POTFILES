@@ -1,0 +1,4 @@
+data/com.github.SubhadeepJasu.hemera.desktop.in
+data/com.github.SubhadeepJasu.hemera.appdata.xml.in
+src/configs/Constants.vala
+src/Main.vala
