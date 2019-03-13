@@ -2,6 +2,12 @@ using Soup;
 using Gtk;
 
 namespace Hemera {
+    public string decode_bytes (Bytes byt) {
+        Intl.setlocale ();
+        uint8[] chars = byt.get_data ();
+        string output = """Message: %s""".printf(@"$((string) chars)\n");
+        return output;
+    }
     public class MyCroftConnection {
         public signal void ws_message (int type, Bytes message);
         
@@ -14,7 +20,6 @@ namespace Hemera {
             var socket_client = new Soup.Session ();
             socket_client.https_aliases = { "wss" };
             var message = new Soup.Message ("GET", "ws://%s:%s/core".printf (ip_address, port_number));
-            
             socket_client.websocket_connect_async.begin (message, null, null, null, (obj, res) => {
                 try {
                     connection = socket_client.websocket_connect_async.end (res);
@@ -43,7 +48,8 @@ namespace Hemera {
         window.set_default_size (350, 70);
         window.destroy.connect (Gtk.main_quit);
         mcc.ws_message.connect ((type, smme) => {
-            warning ("Message: %s\n", (string)smme);
+            string message = decode_bytes (smme);
+            warning ("%s\n", message);
         });
 
         window.show_all ();
