@@ -13,29 +13,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Authored by: Subhadeep Jasu <subhajasu@gmail.com>
  *              Hannes Schulze
  */
 
-using Soup;
-using Gtk;
-
-namespace Hemera {
-    public class MyCroftConnection {
+namespace Hemera.Services {
+    public class Connection {
         public signal void ws_message (int type, string message);
         public signal void connection_established ();
         public signal void connection_failed ();
         public signal void connection_disengaged ();
 
-        private Soup.WebsocketConnection connection;
-        private string ip_address  = "0.0.0.0";
+        private Soup.WebsocketConnection websocket_connection;
+        private string ip_address = "0.0.0.0";
         private string port_number = "8181";
         private bool ws_connected { public get; private set; }
 
-        public MyCroftConnection (string ip_address, string port_number) {
+        public Connection (string ip_address, string port_number) {
             this.ip_address = ip_address;
             this.port_number = port_number;
             this.ws_connected = false;
@@ -47,13 +44,15 @@ namespace Hemera {
             var message = new Soup.Message ("GET", "ws://%s:%s/core".printf (ip_address, port_number));
             socket_client.websocket_connect_async.begin (message, null, null, null, (obj, res) => {
                 try {
-                    connection = socket_client.websocket_connect_async.end (res);
+                    websocket_connection = socket_client.websocket_connect_async.end (res);
                     print ("Connected!\n");
                     ws_connected = true;
                     connection_established ();
-                    if (connection != null) {
-                        connection.message.connect ((type, message) => { ws_message (type, decode_bytes(message)); });
-                        connection.closed.connect (() => {
+                    if (websocket_connection != null) {
+                        websocket_connection.message.connect ((type, message) => {
+                            ws_message (type, decode_bytes(message));
+                        });
+                        websocket_connection.closed.connect (() => {
                             print ("Connection closed\n");
                             connection_disengaged ();
                         });
@@ -85,7 +84,7 @@ namespace Hemera {
 	            string str = generator.to_data (null);
 
                 try {
-                    this.connection.send_text (str);
+                    this.websocket_connection.send_text (str);
                 }
                 catch (Error e) {
                     warning ("[Hemera]: Send Message error %s", (string)e);
@@ -98,39 +97,12 @@ namespace Hemera {
                 return false;
             }
         }
-        private string decode_bytes (Bytes byt) {
+
+        private static string decode_bytes (Bytes byt) {
             Intl.setlocale ();
             uint8[] chars = byt.get_data ();
             string output = """%s""".printf(@"$((string) chars)\n");
             return output;
         }
     }
-}
-
-
-// Below main function is supposed to be cut from this file
-int main (string[] args) {
-    Gtk.init (ref args);
-    Hemera.MyCroftConnection mcc = new Hemera.MyCroftConnection ("127.0.0.1", "8181");
-    mcc.init_ws ();
-    var window = new Window ();
-    window.title = "Mycroft placeholder UI";
-    window.border_width = 10;
-    window.window_position = WindowPosition.CENTER;
-    window.set_default_size (350, 200);
-    window.destroy.connect (Gtk.main_quit);
-    
-    Gtk.Button button = new Gtk.Button.with_label ("Send Message");
-
-    window.add (button);
-    window.show_all ();
-    mcc.ws_message.connect ((type, smme) => {
-        warning ("Message: %s\n", smme);
-    });
-    button.clicked.connect (() => {
-        mcc.ws_send_message ("who are you");
-    });
-
-    Gtk.main ();
-    return 0;
 }
