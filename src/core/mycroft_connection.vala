@@ -74,7 +74,7 @@ namespace Hemera {
                 builder.begin_object ();                                        //      {
                 builder.set_member_name ("utterances");                         //          "utternances" : 
                 builder.begin_array ();
-                builder.add_string_value (val);                               //              [ val ]
+                builder.add_string_value (val);                                 //              [ val ]
                 builder.end_array ();
                 builder.end_object ();                                          //      }
                 builder.end_object ();                                          // }
@@ -119,11 +119,17 @@ int main (string[] args) {
     window.window_position = WindowPosition.CENTER;
     window.set_default_size (350, 200);
     window.destroy.connect (Gtk.main_quit);
+    
+    Gtk.Button button = new Gtk.Button.with_label ("Send Message");
+
+    window.add (button);
+    window.show_all ();
     mcc.ws_message.connect ((type, smme) => {
         warning ("Message: %s\n", smme);
     });
-
-    window.show_all ();
+    button.clicked.connect (() => {
+        mcc.ws_send_message ("who are you");
+    });
 
     Gtk.main ();
     return 0;
