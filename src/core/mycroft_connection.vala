@@ -31,12 +31,14 @@ namespace Hemera {
         public signal void connection_disengaged ();
 
         private Soup.WebsocketConnection connection;
-        private string ip_address = "0.0.0.0";
+        private string ip_address  = "0.0.0.0";
         private string port_number = "8181";
+        private bool ws_connected { public get; private set; }
 
         public MyCroftConnection (string ip_address, string port_number) {
             this.ip_address = ip_address;
             this.port_number = port_number;
+            this.ws_connected = false;
         }
 
         public void init_ws () {
@@ -47,6 +49,7 @@ namespace Hemera {
                 try {
                     connection = socket_client.websocket_connect_async.end (res);
                     print ("Connected!\n");
+                    ws_connected = true;
                     connection_established ();
                     if (connection != null) {
                         connection.message.connect ((type, message) => { ws_message (type, decode_bytes(message)); });
@@ -61,10 +64,44 @@ namespace Hemera {
                 }
             });
         }
+        public bool ws_send_message (string val) {
+            if (ws_connected) {
+                Json.Builder builder = new Json.Builder ();
+                builder.begin_object ();                                        // {
+                builder.set_member_name ("type");                               //     "type" : 
+                builder.add_string_value ("recognizer_loop:utterance");         //          "recognizer_loop:utterance",
+                builder.set_member_name ("data");                               //     "data" : 
+                builder.begin_object ();                                        //      {
+                builder.set_member_name ("utterances");                         //          "utternances" : 
+                builder.begin_array ();
+                builder.add_string_value (val);                               //              [ val ]
+                builder.end_array ();
+                builder.end_object ();                                          //      }
+                builder.end_object ();                                          // }
+
+                Json.Generator generator = new Json.Generator ();
+	            Json.Node root = builder.get_root ();
+	            generator.set_root (root);
+	            string str = generator.to_data (null);
+
+                try {
+                    this.connection.send_text (str);
+                }
+                catch (Error e) {
+                    warning ("[Hemera]: Send Message error %s", (string)e);
+                    return false;
+                }
+                return true;
+            }
+            else {
+                warning ("[Hemera]: No web socket");
+                return false;
+            }
+        }
         private string decode_bytes (Bytes byt) {
             Intl.setlocale ();
             uint8[] chars = byt.get_data ();
-            string output = """Message: %s""".printf(@"$((string) chars)\n");
+            string output = """%s""".printf(@"$((string) chars)\n");
             return output;
         }
     }
@@ -83,7 +120,7 @@ int main (string[] args) {
     window.set_default_size (350, 200);
     window.destroy.connect (Gtk.main_quit);
     mcc.ws_message.connect ((type, smme) => {
-        warning ("%s\n", smme);
+        warning ("Message: %s\n", smme);
     });
 
     window.show_all ();
