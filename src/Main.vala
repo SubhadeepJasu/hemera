@@ -42,7 +42,8 @@ namespace Hemera.App {
             warning ("%s\n", smme);
         });
         button.clicked.connect (() => {
-            mcc.ws_send_message ("Who are you");
+            //mcc.ws_send_message ("Who are you");
+            mcc.ws_wake ();
         });
 
         Gtk.main ();
