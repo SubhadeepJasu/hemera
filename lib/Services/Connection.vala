@@ -37,6 +37,9 @@ namespace Hemera.Services {
             this.port_number = port_number;
             this.ws_connected = false;
         }
+        public Soup.WebsocketConnection get_web_socket () {
+            return websocket_connection;
+        }
 
         public void init_ws () {
             var socket_client = new Soup.Session ();
@@ -103,7 +106,7 @@ namespace Hemera.Services {
                 Json.Builder builder = new Json.Builder ();
                 builder.begin_object ();                                        // {
                 builder.set_member_name ("type");                               //     "type" : 
-                builder.add_string_value ("mycroft.mic.listen");
+                builder.add_string_value ("mycroft.mic.listen");                //          "mycroft.mic.listen"
                 builder.end_object ();                                          // }
 
                 Json.Generator generator = new Json.Generator ();

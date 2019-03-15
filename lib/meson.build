@@ -1,5 +1,6 @@
 libhemera_sources = files(
   'Services/Connection.vala',
+  'Services/MessageManager.vala',
 )
 
 libhemera_deps = [
