@@ -30,7 +30,7 @@ namespace Hemera.Services {
         private Soup.WebsocketConnection websocket_connection;
         private string ip_address = "0.0.0.0";
         private string port_number = "8181";
-        private bool ws_connected { public get; private set; }
+        public bool ws_connected { public get; private set; }
 
         public Connection (string ip_address, string port_number) {
             this.ip_address = ip_address;
@@ -52,8 +52,8 @@ namespace Hemera.Services {
                     ws_connected = true;
                     connection_established ();
                     if (websocket_connection != null) {
-                        websocket_connection.message.connect ((type, message) => {
-                            ws_message (type, decode_bytes(message));
+                        websocket_connection.message.connect ((type, m_message) => {
+                            ws_message (type, decode_bytes(m_message, m_message.length));
                         });
                         websocket_connection.closed.connect (() => {
                             print ("Connection closed\n");
@@ -66,73 +66,24 @@ namespace Hemera.Services {
                 }
             });
         }
-        public bool ws_send_message (string val) {
-            if (ws_connected) {
-                Json.Builder builder = new Json.Builder ();
-                builder.begin_object ();                                        // {
-                builder.set_member_name ("type");                               //     "type" : 
-                builder.add_string_value ("recognizer_loop:utterance");         //          "recognizer_loop:utterance",
-                builder.set_member_name ("data");                               //     "data" : 
-                builder.begin_object ();                                        //      {
-                builder.set_member_name ("utterances");                         //          "utternances" : 
-                builder.begin_array ();
-                builder.add_string_value (val);                                 //              [ val ]
-                builder.end_array ();
-                builder.end_object ();                                          //      }
-                builder.end_object ();                                          // }
 
-                Json.Generator generator = new Json.Generator ();
-	            Json.Node root = builder.get_root ();
-	            generator.set_root (root);
-	            string str = generator.to_data (null);
-
-                try {
-                    this.websocket_connection.send_text (str);
-                }
-                catch (Error e) {
-                    warning ("[Hemera]: Send Message error %s", (string)e);
-                    return false;
-                }
-                return true;
-            }
-            else {
-                warning ("[Hemera]: No web socket");
-                return false;
-            }
-        }
-        
-        public bool ws_wake () {
-            if (ws_connected) {
-                Json.Builder builder = new Json.Builder ();
-                builder.begin_object ();                                        // {
-                builder.set_member_name ("type");                               //     "type" : 
-                builder.add_string_value ("mycroft.mic.listen");                //          "mycroft.mic.listen"
-                builder.end_object ();                                          // }
-
-                Json.Generator generator = new Json.Generator ();
-	            Json.Node root = builder.get_root ();
-	            generator.set_root (root);
-	            string str = generator.to_data (null);
-
-                try {
-                    this.websocket_connection.send_text (str);
-                }
-                catch (Error e) {
-                    warning ("[Hemera]: Wake Mic Error: %s", (string)e);
-                    return false;
-                }
-                return true;
-            }
-            else {
-                warning ("[Hemera]: No web socket");
-                return false;
-            }
-        }
-
-        private static string decode_bytes (Bytes byt) {
+        private static string decode_bytes (Bytes byt, int n) {
             Intl.setlocale ();
-            uint8[] chars = byt.get_data ();
+
+            /* The reason for the for loop is to remove
+             * garbage after the main JSON string.
+             * Store contents of the byte array in to
+             * another array and stop when the expected 
+             * array length is reached
+             */
+
+            uint8[] chars = new uint8 [n];
+            uint8[] capdata = byt.get_data ();
+            for (int i = 0; i < n; i++) {
+                chars[i] = capdata[i];
+            }
             string output = """%s""".printf(@"$((string) chars)\n");
+            
             return output;
         }
     }

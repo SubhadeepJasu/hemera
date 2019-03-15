@@ -41,9 +41,10 @@ namespace Hemera.App {
         mcc.ws_message.connect ((type, smme) => {
             warning ("%s\n", smme);
         });
+        var event_manager = new Hemera.Services.MessageManager (mcc);
         button.clicked.connect (() => {
-            //mcc.ws_send_message ("Who are you");
-            mcc.ws_wake ();
+            //event_manager.send_utterance ("Who are you");
+            event_manager.send_wake ();
         });
 
         Gtk.main ();
