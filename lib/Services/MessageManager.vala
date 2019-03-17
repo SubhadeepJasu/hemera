@@ -20,6 +20,11 @@
  *              Hannes Schulze
  */
 
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+// Initialise Mycroft MessageManager Service                                               //
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
 namespace Hemera.Services {
     public class MessageManager {
         Connection ws_connection;
@@ -29,7 +34,10 @@ namespace Hemera.Services {
                 readJSON (message);
             });
         }
-        
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+// Parse events from Mycroft                                                               //
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
         private void readJSON (string json_message) {
             try {
                 Json.Parser parser = new Json.Parser ();
@@ -37,71 +45,205 @@ namespace Hemera.Services {
                 var root_object = parser.get_root ().get_object ();
                 string type = root_object.get_string_member ("type");
                 warning (type);
+
+                // SYSTEM MESSAGES /////////////////////////////////////////////////////////
                 if (type == "connected") {
                     // Notify that I am connected to Mycroft server
-                    warning ("[ HEMERA DEBUG ] Connected");
+                    warning ("Mycroft connection established");
                 }
                 else if (type == "speak") {
                     // I am supposed to speaking something
-                    warning ("[ HEMERA DEBUG ] Speak");
                 }
                 else if (type == "mycroft.not.paired") {
                     // I need some love as well
-                    warning ("Hemera isn't paired");
+                    warning ("Hemera isn't paired with Mycroft. Run the Mycroft Pairing wizard");
                 }
                 else if (type == "recognizer_loop:audio_output_start") {
                     // I started speaking something... blah, blah, blah
-                    warning ("[ HEMERA DEBUG ] Start saying");
                 }
                 else if (type == "recognizer_loop:audio_output_end") {
                     // I stopped speaking. Shshh!
-                    warning ("[ HEMERA DEBUG ] Stop saying");
                 }
                 else if (type == "configuration.updated") {
                     // Just got back from school
-                    warning ("[ HEMERA DEBUG ] Updated");
                 }
                 else if (type == "recognizer_loop:utterance") {
                     // I heard you say...
-                    warning ("[ HEMERA DEBUG ] Received utterance");
                 }
                 else if (type == "intent_failure") {
                     // Sorry. I didn't hear you.
-                    warning ("[ HEMERA DEBUG ] Utterance not understandable");
                 }
                 else if (type == "gui.value.set") {
                     // See this, yeah that icon tells you something
-                    warning ("[ HEMERA DEBUG ] GUI value");
+                    // {"type": "gui.value.set", "data": {"current": "11", "min": "3", "max": "14", "location": "Lawrence\nKansas\nUnited States", "condition": "clear", "icon": "01d", "weathercode": 0, "humidity": 51, "wind": "--", "__from": "mycroft-weather.mycroftai"}, "context": {}}
+                    // 
+                }
+
+                // COMMON DISPLAY SIGNALS //////////////////////////////////////////////////
+                else if (type == "enclosure.system.blink") {
+                    /* The 'eyes' should blink the given number of times.
+                     * Args:
+                     * times (int): number of times to blink
+                     */
+                }
+                else if (type == "enclosure.system.mute") {
+                    // Mute (turn off) the system speaker
+                }
+                else if (type == "enclosure.system.unmute") {
+                    // Unmute (turn on) the system speaker
                 }
                 else if (type == "enclosure.weather.display") {
                     // I heard there will be some thunder storms in your area
-                    warning ("[ HEMERA DEBUG ] ");
+                    /* Show a the temperature and a weather icon
+                     *  Args:
+                     *      img_code (char): one of the following icon codes
+                     *                    0 = sunny
+                     *                    1 = partly cloudy
+                     *                    2 = cloudy
+                     *                    3 = light rain
+                     *                    4 = raining
+                     *                    5 = stormy
+                     *                    6 = snowing
+                     *                    7 = wind/mist
+                     *       temp (int): the temperature (either C or F, not indicated)
+                     */
                 }
+
+                // EYE FEATURE SIGNALS /////////////////////////////////////////////////////
                 else if (type == "enclosure.eyes.blink") {
-                    // Do I look more like Human now?
-                    warning ("[ HEMERA DEBUG ] Connected");
+                    /* Do I look more like Human now?
+                     * Make the eyes blink
+                     * Args:
+                     * side (str): 'r', 'l', or 'b' for 'right', 'left' or 'both'
+                     */
+                }
+                else if (type == "enclosure.eyes.color") {
+                    // Let's party
+                    /* Change the eye color to the given RGB color
+                     * Args:
+                     *       r (int): 0-255, red value
+                     *       g (int): 0-255, green value
+                     *       b (int): 0-255, blue value
+                     */
+                }
+                else if (type == "enclosure.eyes.spin") {
+                    // Now I'm drunk
+                }
+                else if (type == "enclosure.eyes.timedspin") {
+                    /* Make the eyes 'roll' for the given time.
+                     * Args:
+                     *    length (int): duration in milliseconds of roll, None = forever
+                     */
+                }
+                else if (type == "enclosure.eyes.narrow") {
+                    // Make the eyes look narrow, like a squint
+                }
+                else if (type == "enclosure.eyes.look") {
+                    /* Make the eyes look to the given side
+                     * Args:
+                     *   side (str): 'r' for right
+                     *               'l' for left
+                     *               'u' for up
+                     *               'd' for down
+                     *               'c' for crossed
+                     */
+                }
+                else if (type == "enclosure.eyes.level") {
+                    /* Set the brightness of the eyes in the display.
+                     * Args:
+                     *   level (int): 1-30, bigger numbers being brighter
+                     */
+                }
+                else if (type == "enclosure.eyes.volume") {
+                    /* Indicate the volume using the eyes
+                     * Args:
+                     *     volume (int): 0 to 11
+                     */
+                }
+                else if (type == "enclosure.eyes.fill") {
+                    /* Use the eyes as a type of progress meter
+                     *   Args:
+                     *       amount (int): 0-49 fills the right eye, 50-100 also covers left
+                     *       percentage (int) : 0-100 for both eyes
+                     */
+                }
+                else if (type == "enclosure.eyes.on") {
+                    // Highly suspiscious
+                }
+                else if (type == "enclosure.eyes.off") {
+                    // Highly suspiscious
+                }
+                else if (type == "enclosure.eyes.reset") {
+                    // Highly suspiscious
+                }
+
+                // MOUTH FEATURE SIGNALS ///////////////////////////////////////////////////
+                else if (type == "enclosure.mouth.smile") {
+                    // Ha ha I am happy
+                }
+                else if (type == "enclosure.mouth.think") {
+                    // Ha ha I am happy
+                }
+                else if (type == "enclosure.mouth.talk") {
+                    // Ha ha I am happy
+                }
+                else if (type == "enclosure.mouth.text") {
+                    /* Display text (scrolling as needed)
+                     * Args:
+                     *     text (str): text string to display
+                     */
+                }
+                else if (type == "enclosure.mouth.viseme_list") {
+                    /* Send mouth visemes as a list in a single message.
+                     * Arguments:
+                     *      start (int):    Timestamp for start of speech
+                     *      viseme_pairs:   Pairs of viseme id and cumulative end times
+                     *                      (code, end time)
+                     *                      codes:
+                     *                       0 = shape for sounds like 'y' or 'aa'
+                     *                       1 = shape for sounds like 'aw'
+                     *                       2 = shape for sounds like 'uh' or 'r'
+                     *                       3 = shape for sounds like 'th' or 'sh'
+                     *                       4 = neutral shape for no sound
+                     *                       5 = shape for sounds like 'f' or 'v'
+                     *                       6 = shape for sounds like 'oy' or 'ao'
+                     */
+                }
+                else if (type == "enclosure.mouth.display") {
+                    // Ha ha I am happy
+                }
+                else if (type == "enclosure.mouth.display_image") {
+                    /* Send an image to the enclosure.
+                     * Args:
+                     *       image_absolute_path (string): The absolute path of the image
+                     *       invert (bool): inverts the image being drawn.
+                     *       x (int): x offset for image
+                     *       y (int): y offset for image
+                     *       refresh (bool): specify whether to clear the faceplate before
+                     *                       displaying the new image or not.
+                     *                       Useful if you'd like to display muliple images
+                     *                       on the faceplate at once.
+                     */
                 }
                 else if (type == "enclosure.mouth.reset") {
                     // Neutral face
-                    warning ("[ HEMERA DEBUG ] Connected");
                 }
                 else if (type == "enclosure.mouth.events.activate") {
                     // I have emotion too
-                    warning ("[ HEMERA DEBUG ] Connected");
                 }
                 else if (type == "enclosure.mouth.events.deactivate") {
                     // I stopped showing emotions
-                    warning ("[ HEMERA DEBUG ] Connected");
-                }
-                else if (type == "enclosure.eyes.volume") {
-                    // Turn it all the way up
-                    warning ("[ HEMERA DEBUG ] Connected");
                 }
             }
             catch (Error e) {
                 stderr.printf ("Something went wrong, but this may be helpful: %s", e.message);
             }
         }
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+// Send messages to Mycroft                                                                //
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
 
         public bool send_utterance (string val) {
             if (ws_connection.ws_connected) {
@@ -137,6 +279,10 @@ namespace Hemera.Services {
                 return false;
             }
         }
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+// Enable Mycroft Mic to listen for query                                                  //
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
         public bool send_wake () {
             if (ws_connection.ws_connected) {
