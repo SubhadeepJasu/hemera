@@ -51,9 +51,6 @@ namespace Hemera.Services {
                     // Notify that I am connected to Mycroft server
                     warning ("Mycroft connection established");
                 }
-                else if (type == "speak") {
-                    // I am supposed to speaking something
-                }
                 else if (type == "mycroft.not.paired") {
                     // I need some love as well
                     warning ("Hemera isn't paired with Mycroft. Run the Mycroft Pairing wizard");
@@ -168,13 +165,13 @@ namespace Hemera.Services {
                      */
                 }
                 else if (type == "enclosure.eyes.on") {
-                    // Highly suspiscious
+                    // Eyes on
                 }
                 else if (type == "enclosure.eyes.off") {
-                    // Highly suspiscious
+                    // No eyes
                 }
                 else if (type == "enclosure.eyes.reset") {
-                    // Highly suspiscious
+                    // Neutral eyes
                 }
 
                 // MOUTH FEATURE SIGNALS ///////////////////////////////////////////////////
@@ -182,10 +179,10 @@ namespace Hemera.Services {
                     // Ha ha I am happy
                 }
                 else if (type == "enclosure.mouth.think") {
-                    // Ha ha I am happy
+                    // Thinking...
                 }
                 else if (type == "enclosure.mouth.talk") {
-                    // Ha ha I am happy
+                    // Talking...
                 }
                 else if (type == "enclosure.mouth.text") {
                     /* Display text (scrolling as needed)
@@ -209,9 +206,6 @@ namespace Hemera.Services {
                      *                       6 = shape for sounds like 'oy' or 'ao'
                      */
                 }
-                else if (type == "enclosure.mouth.display") {
-                    // Ha ha I am happy
-                }
                 else if (type == "enclosure.mouth.display_image") {
                     /* Send an image to the enclosure.
                      * Args:
@@ -233,6 +227,25 @@ namespace Hemera.Services {
                 }
                 else if (type == "enclosure.mouth.events.deactivate") {
                     // I stopped showing emotions
+                }
+                
+                // PLAYBACK CONTROL SIGNALS ///////////////////////////////////////////////
+                else if (type == "mycroft.audio.service.next") {
+                    // Next Track
+                }
+                else if (type == "mycroft.audio.service.pause") {
+                    // Pause Playback
+                }
+                else if (type == "mycroft.audio.service.prev") {
+                    // Previous Track
+                }
+                else if (type == "mycroft.audio.service.resume") {
+                    // Resume Track
+                }
+                
+                // ALARM DISPLAY AND CONTROLS ////////////////////////////////////////////
+                else if (type == "mycroft-alarm.mycroftai:Flash") {
+                    // Beep Beep
                 }
             }
             catch (Error e) {
@@ -302,6 +315,43 @@ namespace Hemera.Services {
                 }
                 catch (Error e) {
                     warning ("[Hemera]: Wake Mic Error: %s", (string)e);
+                    return false;
+                }
+                return true;
+            }
+            else {
+                warning ("[Hemera]: No web socket");
+                return false;
+            }
+        }
+
+        public bool send_speech (string val, string? localle = "en-us") {
+            if (ws_connection.ws_connected) {
+                Json.Builder builder = new Json.Builder ();
+                builder.begin_object ();                                        // {
+                builder.set_member_name ("type");                               //     "type" : 
+                builder.add_string_value ("speak");                             //          "speak",
+                builder.set_member_name ("data");                               //     "data" : 
+                builder.begin_object ();                                        //      {
+                builder.set_member_name ("utterance");                          //          "utternance" : 
+                builder.add_string_value (val);                                 //              val
+                builder.end_object ();                                          //
+                builder.begin_object ();                                        //
+                builder.set_member_name ("lang");                               //          "lang" :
+                builder.add_string_value (localle);                             //              localle
+                builder.end_object ();                                          //      }
+                builder.end_object ();                                          // }
+
+                Json.Generator generator = new Json.Generator ();
+	            Json.Node root = builder.get_root ();
+	            generator.set_root (root);
+	            string str = generator.to_data (null);
+
+                try {
+                    ws_connection.get_web_socket ().send_text (str);
+                }
+                catch (Error e) {
+                    warning ("[Hemera]: Send Message error %s", (string)e);
                     return false;
                 }
                 return true;
