@@ -20,8 +20,8 @@
  *              Hannes Schulze
  */
 
-using Gtk;
-
+// using Gtk;
+/*
 namespace Hemera.App {
     // Below main function is supposed to be cut from this file
     int main (string[] args) {
@@ -50,4 +50,4 @@ namespace Hemera.App {
         Gtk.main ();
         return 0;
     }
-}
+}*/
