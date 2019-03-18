@@ -20,9 +20,15 @@
  */
 
 namespace Hemera.App {
-    public class MainWindow : Gtk.Dialog {
-        construct {
-            
+    public class MainWindow : Gtk.Window {
+        public MainWindow () {
+            icon_name = "com.github.SubhadeepJasu.hemera";
+            make_ui ();
+        }
+        private void make_ui () {
+            Gtk.Button button = new Gtk.Button.with_label ("Send");
+            add (button);
+            show_all ();
         }
     }
 }

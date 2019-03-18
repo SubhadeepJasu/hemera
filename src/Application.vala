@@ -22,26 +22,30 @@
 
 namespace Hemera.App {
     public class HemeraApp : Gtk.Application {
-        private static HemeraApp? _instance = null;
-        private MainWindow mainwindow { get; private set; default = null; }
-
-
-        private string version_string;
-
-        private bool show_main_window = false;
-        private bool show_preferences = false;
-        private bool version = false;
-
-        construct {
-            application_id = "com.github.SubhadeepJasu.hemera";
-            flags = ApplicationFlags.HANDLES_COMMAND_LINE;
-            version_string = "0.1.0";
+        static HemeraApp _instance = null;
+        public static HemeraApp instance {
+            get {
+                if (_instance == null) {
+                    _instance = new HemeraApp ();
+                }
+                return _instance;
+            }
         }
+
+
+        public HemeraApp (){
+            Object (
+                application_id: "com.github.SubhadeepJasu.hemera",
+                flags: ApplicationFlags.FLAGS_NONE
+            );
+            warning ("initialized");
+        }
+        public MainWindow mainwindow { get; private set; default = null; }
         protected override void activate () {
-            if (mainwindow == null && show_main_window && !show_preferences) {
+            warning ("opened");
+            if (mainwindow == null) {
                 mainwindow = new MainWindow ();
                 add_window (mainwindow);
-                mainwindow.close.connect (close_window);
             }
             var css_provider = new Gtk.CssProvider();
             try {
@@ -57,54 +61,16 @@ namespace Hemera.App {
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
         }
-        public override int command_line (ApplicationCommandLine cmd) {
-            command_line_interpreter (cmd);
-            return 0;
-        }
-        private void command_line_interpreter (ApplicationCommandLine cmd) {
-            show_main_window = show_preferences = false;
-            string[] cmd_args = cmd.get_arguments ();
-            unowned string[] args = cmd_args;
-            
-            bool mem_to_clip = false;
-            
-            GLib.OptionEntry [] option = new OptionEntry [3];
-            option [0] = { "version", 0, 0, OptionArg.NONE, ref version, "Display version number", null };
-            option [1] = { "show_ui", 0, 0, OptionArg.NONE, ref show_main_window, "Display main window", null };
-            option [2] = { "preferences", 0, 0, OptionArg.NONE, ref show_preferences, "Display preferences window", null };
-            option [3] = { null };
-            
-            var option_context = new OptionContext ("actions");
-            option_context.add_main_entries (option, null);
-            try {
-                option_context.parse (ref args);
-            } catch (Error err) {
-                warning (err.message);
-                return;
-            }
-            
-            if (version) {
-			    stdout.printf ("%s\n", version_string);
-			    return;
-            }
-            activate ();
-        }
         private void close_window () {
             if (mainwindow != null) {
                 mainwindow.destroy ();
                 mainwindow = null;
             }
         }
-        public static new HemeraApp get_default () {
-            if (_instance == null) {
-                _instance = new HemeraApp ();
-            }
-            return _instance;
+        
+        public static int main (string[] args) {
+            var app = new Hemera.App.HemeraApp ();
+            return app.run (args);
         }
     }
-}
-
-int main (string[] args) {
-    var app = Hemera.App.HemeraApp.get_default ();
-    return app.run (args);
 }
