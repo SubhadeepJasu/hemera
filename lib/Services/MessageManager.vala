@@ -247,6 +247,21 @@ namespace Hemera.Services {
                 else if (type == "mycroft-alarm.mycroftai:Flash") {
                     // Beep Beep
                 }
+                
+                // QUESTION ANSWER SYSTEM ////////////////////////////////////////////////
+                else if (type == "question:query.response") {
+                    /*
+                    {"type": "question:query.response", "data": {"phrase": "who is bill gates", "skill_id": "fallback-wolfram-alpha.mycroftai", "answer": "William Henry Gates III (born October 28, 1955) is an American business magnate, investor, author, philanthropist, and humanitarian. He is best known as the principal founder of Microsoft Corporation.", "callback_data": {"query": "who is bill gates", "answer": "William Henry Gates III (born October 28, 1955) is an American business magnate, investor, author, philanthropist, and humanitarian. He is best known as the principal founder of Microsoft Corporation."}, "conf": 0.6}, "context": {}}
+                    */
+                }
+                
+                // SKILL DOWNLOAD SYSTEM /////////////////////////////////////////////////
+                else if (type == "padatious:register_intent") {
+                    // {"type": "padatious:register_intent", "data": {"file_name": "/opt/mycroft/skills/count.andlo/vocab/en-us/count.intent", "name": "count.andlo:count.intent"}, "context": {}}
+                }
+                else if (type == "mycroft-configuration.mycroftai:ConfigurationSkillupdate_remote") {
+                    // data: UpdateRemote
+                }
             }
             catch (Error e) {
                 stderr.printf ("Something went wrong, but this may be helpful: %s", e.message);
