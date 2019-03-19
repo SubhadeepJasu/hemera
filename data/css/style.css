@@ -1,6 +1,7 @@
 /* style.css
  *
  * Copyright 2019 Hannes Schulze
+ * Copyright 2019 Subhadeep Jasu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,3 +16,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+.main_wake_button {
+	opacity: 1;
+	margin: 35px;
+	border-radius: 100px;
+	border: 1px solid alpha (#000, 0.2);
+	background: radial-gradient(ellipse at center, alpha (#000, 0.02), alpha (#fafafa, 0.0));
+	box-shadow: 0 10px 9px alpha (#000, 0.2),
+              0 -10px 9px #fff,
+              inset 0 1px 0px #fff,
+	      inset 0px -1px 0px alpha (#000, 0.1);
+	transition:all 0.4s ease;
+}
+
+.main_wake_button:active {
+	transition:all 0.3s ease-out;
+	outline: none;
+	background: radial-gradient(ellipse at 50% 80%, alpha (#fff, 0.05), alpha (#000, 0.05));
+	box-shadow: 0 10px 15px alpha (#000, 0.2),
+              0 -10px 15px #fff,
+              inset 0 -1px 3px alpha (#000, 0.1);
+}
+
+.main_wake_button:focus {
+	outline: none;
+}
+
+.main_wake_button_pre_load {
+	border: 1px solid alpha (#000, 0);
+	opacity: 0;
+	margin: 0px;
+	transition:all 0.0s ease-out;
+}

@@ -48,7 +48,7 @@ namespace Hemera.App {
             }
             var css_provider = new Gtk.CssProvider();
             try {
-                css_provider.load_from_resource ("/com/github/SubhadeepJasu/hemera/Application.css");
+                css_provider.load_from_resource ("/com/github/SubhadeepJasu/hemera/css/style.css");
             }
             catch (Error e) {
                 warning("%s", e.message);

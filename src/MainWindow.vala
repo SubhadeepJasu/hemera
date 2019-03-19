@@ -31,7 +31,7 @@ namespace Hemera.App {
             settings_button.image = new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
             settings_button.tooltip_text = _("Menu");
             settings_button.valign = Gtk.Align.CENTER;
-        
+            
         
         
             this.set_default_size (560, 280);
@@ -44,8 +44,8 @@ namespace Hemera.App {
             headerbar.pack_end(settings_button);
             this.set_titlebar (headerbar);
 
-		    Gtk.Label label = new Gtk.Label ("Hello, GTK");
-		    this.add (label);
+		    Hemera.App.DisplayEnclosure enc = new Hemera.App.DisplayEnclosure ();
+		    this.add (enc);
 		    this.get_style_context ().add_class ("rounded");
 		    this.set_resizable (false);
 		    this.show_all ();

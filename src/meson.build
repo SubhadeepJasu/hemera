@@ -12,6 +12,8 @@ hemera_sources = files(
   'Application.vala',
   'MainWindow.vala',
   'PreferencesWindow.vala',
+  'views/DisplayEnclosure.vala',
+  'views/MainDynamicButton.vala',
 )
 
 hemera_sources += constants_header
