@@ -46,6 +46,7 @@ namespace Hemera.App {
 
 		    Gtk.Label label = new Gtk.Label ("Hello, GTK");
 		    this.add (label);
+		    this.get_style_context ().add_class ("rounded");
 		    this.set_resizable (false);
 		    this.show_all ();
         }

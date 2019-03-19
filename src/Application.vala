@@ -61,7 +61,7 @@ namespace Hemera.App {
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
-
+            mainwindow.present ();
         }
         private void close_window () {
             if (mainwindow != null) {
