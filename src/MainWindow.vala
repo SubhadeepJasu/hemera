@@ -22,13 +22,17 @@
 namespace Hemera.App {
     public class MainWindow : Gtk.Window {
         public MainWindow () {
-            icon_name = "com.github.SubhadeepJasu.hemera";
+            //icon_name = "com.github.SubhadeepJasu.hemera";
             make_ui ();
+            warning ("window");
         }
         private void make_ui () {
-            Gtk.Button button = new Gtk.Button.with_label ("Send");
-            add (button);
-            show_all ();
+            this.set_default_size (400, 400);
+		this.title = "My Gtk.Application";
+
+		Gtk.Label label = new Gtk.Label ("Hello, GTK");
+		this.add (label);
+		this.show_all ();
         }
     }
 }

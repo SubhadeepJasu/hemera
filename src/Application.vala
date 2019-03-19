@@ -40,8 +40,9 @@ namespace Hemera.App {
             );
             warning ("initialized");
         }
-        public MainWindow mainwindow { get; private set; default = null; }
+        public MainWindow mainwindow;
         protected override void activate () {
+
             warning ("opened");
             if (mainwindow == null) {
                 mainwindow = new MainWindow ();
@@ -60,6 +61,7 @@ namespace Hemera.App {
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
+
         }
         private void close_window () {
             if (mainwindow != null) {
