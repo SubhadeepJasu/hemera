@@ -11,6 +11,7 @@ constants_header = configure_file(
 hemera_sources = files(
   'Application.vala',
   'MainWindow.vala',
+  'PreferencesWindow.vala',
 )
 
 hemera_sources += constants_header

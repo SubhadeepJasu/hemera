@@ -6,3 +6,11 @@ Terminal=false
 Type=Application
 Categories=GTK;
 StartupNotify=true
+Actions=Preferences;
+
+[Desktop Action Preferences]
+Name=Hemera Preferences
+Name[lt]=Hemera nuostatos
+Name[pt_BR]=Preferências do Hemera
+Exec=com.github.SubhadeepJasu.hemera --show-preferences
+Icon=open-menu-symbolic

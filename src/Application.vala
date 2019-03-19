@@ -31,19 +31,17 @@ namespace Hemera.App {
                 return _instance;
             }
         }
-
+        private string version_string = "";
 
         public HemeraApp (){
             Object (
                 application_id: "com.github.SubhadeepJasu.hemera",
-                flags: ApplicationFlags.FLAGS_NONE
+                flags: ApplicationFlags.HANDLES_COMMAND_LINE
             );
-            warning ("initialized");
+            version_string = "0.1.0";
         }
         public MainWindow mainwindow;
         protected override void activate () {
-
-            warning ("opened");
             if (mainwindow == null) {
                 mainwindow = new MainWindow ();
                 add_window (mainwindow);
@@ -62,6 +60,41 @@ namespace Hemera.App {
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
             mainwindow.present ();
+        }
+        public override int command_line (ApplicationCommandLine cmd) {
+            command_line_interpreter (cmd);
+            return 0;
+        }
+        private void command_line_interpreter (ApplicationCommandLine cmd) {
+            string[] cmd_args = cmd.get_arguments ();
+            unowned string[] args = cmd_args;
+            
+            bool version = false, show_preferences = false;
+            OptionEntry[] option = new OptionEntry[3];
+		    option[0] = { "version", 0, 0, OptionArg.NONE, ref version, "Display version number", null };
+            option[1] = { "show-preferences", 0, 0, OptionArg.NONE, ref show_preferences, "Display Preferences Window", null };
+            option[2] = { null };
+            
+            var option_context = new OptionContext ("actions");
+            option_context.add_main_entries (option, null);
+            try {
+                option_context.parse (ref args);
+            } catch (Error err) {
+                warning (err.message);
+                return;
+            }
+            
+            if (version) {
+                cmd.print ("%s\n",version_string);
+            }
+            else if (show_preferences) {
+                var prefs = new PreferencesWindow ();
+                prefs.show_all ();
+                add_window (prefs);
+            }
+            else {
+                activate ();
+            }
         }
         private void close_window () {
             if (mainwindow != null) {
