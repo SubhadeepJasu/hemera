@@ -45,7 +45,17 @@ namespace Hemera.App {
             this.set_titlebar (headerbar);
 
 		    Hemera.App.DisplayEnclosure enc = new Hemera.App.DisplayEnclosure ();
-		    this.add (enc);
+		    var separator = new Gtk.Separator (Gtk.Orientation.VERTICAL);
+		    
+		    var chatbox = new ChatView ();
+		    
+		    
+		    var main_grid = new Gtk.Grid ();
+		    main_grid.attach (enc, 0, 0, 1, 1);
+		    main_grid.attach (separator, 1, 0, 1, 1);
+		    main_grid.attach (chatbox, 2, 0, 1, 1);
+		    main_grid.valign = Gtk.Align.CENTER;
+		    this.add (main_grid);
 		    this.get_style_context ().add_class ("rounded");
 		    this.set_resizable (false);
 		    this.show_all ();

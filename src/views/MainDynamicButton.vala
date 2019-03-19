@@ -35,7 +35,8 @@ namespace Hemera.App {
             height_request= 200;
             halign = Gtk.Align.CENTER;
             valign = Gtk.Align.CENTER;
-            margin = 20;
+            margin_top = 10;
+            margin_bottom = 20;
             animate_button ();
         }
         private void animate_button () {

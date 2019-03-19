@@ -28,8 +28,8 @@ namespace Hemera.App {
             invoke_mode_button = new Granite.Widgets.ModeButton ();
             invoke_mode_button.append_text ("Verbal Invoke");
             invoke_mode_button.append_text ("Manual Invoke");
-            invoke_mode_button.margin_start = 100;
-            invoke_mode_button.margin_end = 100;
+            invoke_mode_button.margin_start = 18;
+            invoke_mode_button.margin_end = 18;
             
             
             attach (main_button, 0, 0, 1, 1);
