@@ -21,18 +21,33 @@
 
 namespace Hemera.App {
     public class MainWindow : Gtk.Window {
+        private Gtk.HeaderBar headerbar;
         public MainWindow () {
-            //icon_name = "com.github.SubhadeepJasu.hemera";
+            icon_name = "com.github.SubhadeepJasu.hemera";
             make_ui ();
-            warning ("window");
         }
         private void make_ui () {
-            this.set_default_size (400, 400);
-		this.title = "My Gtk.Application";
+            Gtk.Button settings_button = new Gtk.Button ();
+            settings_button.image = new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+            settings_button.tooltip_text = _("Menu");
+            settings_button.valign = Gtk.Align.CENTER;
+        
+        
+        
+            this.set_default_size (560, 280);
+		    headerbar = new Gtk.HeaderBar ();
+            headerbar.has_subtitle = false;
+            headerbar.show_close_button = true;
+            headerbar.title = _("Hemera");
+            headerbar.get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
+            headerbar.get_style_context().add_class("headerbar");
+            headerbar.pack_end(settings_button);
+            this.set_titlebar (headerbar);
 
-		Gtk.Label label = new Gtk.Label ("Hello, GTK");
-		this.add (label);
-		this.show_all ();
+		    Gtk.Label label = new Gtk.Label ("Hello, GTK");
+		    this.add (label);
+		    this.set_resizable (false);
+		    this.show_all ();
         }
     }
 }
