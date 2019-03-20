@@ -382,6 +382,59 @@ namespace Hemera.Services {
                 return false;
             }
         }
+        public bool send_mic_on () {
+            if (ws_connection.ws_connected) {
+                Json.Builder builder = new Json.Builder ();
+                builder.begin_object ();                                        // {
+                builder.set_member_name ("type");                               //     "type" : 
+                builder.add_string_value ("mycroft.mic.unmute");                //          "mycroft.mic.unmute"
+                builder.end_object ();                                          // }
 
+                Json.Generator generator = new Json.Generator ();
+	            Json.Node root = builder.get_root ();
+	            generator.set_root (root);
+	            string str = generator.to_data (null);
+
+                try {
+                    ws_connection.get_web_socket ().send_text (str);
+                }
+                catch (Error e) {
+                    warning ("[Hemera]: Mic Error: %s", (string)e);
+                    return false;
+                }
+                return true;
+            }
+            else {
+                warning ("[Hemera]: No web socket");
+                return false;
+            }
+        }
+        public bool send_mic_off () {
+            if (ws_connection.ws_connected) {
+                Json.Builder builder = new Json.Builder ();
+                builder.begin_object ();                                        // {
+                builder.set_member_name ("type");                               //     "type" : 
+                builder.add_string_value ("mycroft.mic.mute");                  //          "mycroft.mic.mute"
+                builder.end_object ();                                          // }
+
+                Json.Generator generator = new Json.Generator ();
+	            Json.Node root = builder.get_root ();
+	            generator.set_root (root);
+	            string str = generator.to_data (null);
+
+                try {
+                    ws_connection.get_web_socket ().send_text (str);
+                }
+                catch (Error e) {
+                    warning ("[Hemera]: Mic Error: %s", (string)e);
+                    return false;
+                }
+                return true;
+            }
+            else {
+                warning ("[Hemera]: No web socket");
+                return false;
+            }
+        }
     }
 }
