@@ -55,6 +55,13 @@ namespace Hemera.Services {
                     // I need some love as well
                     warning ("Hemera isn't paired with Mycroft. Run the Mycroft Pairing wizard");
                 }
+                else if (type == "speak") {
+                    // Speaking it.
+                    // "data": {"utterance": "Sorry, I didn't catch that.", "expect_response": false}
+                }
+                else if (type == "mycroft.skills.initialized") {
+                    // Ready to roll!
+                }
                 else if (type == "recognizer_loop:audio_output_start") {
                     // I started speaking something... blah, blah, blah
                 }
