@@ -59,7 +59,13 @@ namespace Hemera.Services {
                     // I started speaking something... blah, blah, blah
                 }
                 else if (type == "recognizer_loop:audio_output_end") {
-                    // I stopped speaking. Shshh!
+                    // I stopped speaking.
+                }
+                else if (type == "recognizer_loop:record_begin") {
+                    // I started listening.
+                }
+                else if (type == "recognizer_loop:end") {
+                    // I stopped listening.
                 }
                 else if (type == "configuration.updated") {
                     // Just got back from school
