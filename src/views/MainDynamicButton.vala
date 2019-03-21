@@ -22,9 +22,10 @@
 namespace Hemera.App {
     public class MainDynamicButton : Gtk.Overlay {
         private Gtk.Button wake_button;
-        
+        public signal void clicked ();
         construct {
             make_ui ();
+            make_events ();
         }
         private void make_ui () {
             wake_button = new Gtk.Button.with_label ("Wake");
@@ -38,6 +39,11 @@ namespace Hemera.App {
             margin_top = 10;
             margin_bottom = 20;
             animate_button ();
+        }
+        private void make_events () {
+            wake_button.clicked.connect (() => {
+                this.clicked ();
+            });
         }
         private void animate_button () {
             Timeout.add (100, () => {

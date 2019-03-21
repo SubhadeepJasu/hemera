@@ -21,19 +21,34 @@
 
 namespace Hemera.App {
     public class DisplayEnclosure : Gtk.Grid {
-        MainDynamicButton main_button;
-        Granite.Widgets.ModeButton invoke_mode_button;
+        private MainDynamicButton main_button;
+        private Granite.Widgets.ModeButton invoke_mode_button;
+
+        public signal void wake_button_clicked ();
+        public signal void invoke_mode_changed (int mode);
+
         public DisplayEnclosure () {
+            make_ui ();
+            make_events ();
+        }
+        private void make_ui () {
             main_button = new Hemera.App.MainDynamicButton ();
             invoke_mode_button = new Granite.Widgets.ModeButton ();
             invoke_mode_button.append_text ("Verbal Invoke");
             invoke_mode_button.append_text ("Manual Invoke");
             invoke_mode_button.margin_start = 18;
             invoke_mode_button.margin_end = 18;
-            
-            
+
             attach (main_button, 0, 0, 1, 1);
             attach (invoke_mode_button, 0, 1, 1, 1);
+        }
+        private void make_events () {
+            main_button.clicked.connect (() => {
+                wake_button_clicked ();
+            });
+            invoke_mode_button.mode_changed.connect (() => {
+                invoke_mode_changed (invoke_mode_button.selected);
+            });
         }
     }
 }

@@ -32,18 +32,22 @@ namespace Hemera.App {
             }
         }
         private string version_string = "";
+        public Hemera.Services.Connection mycroft_connection;
+        public Hemera.Services.MessageManager mycroft_message_manager;
 
-        public HemeraApp (){
+        public HemeraApp () {
             Object (
                 application_id: "com.github.SubhadeepJasu.hemera",
                 flags: ApplicationFlags.HANDLES_COMMAND_LINE
             );
             version_string = "0.1.0";
+            mycroft_connection = new Hemera.Services.Connection ("127.0.0.1", "8181");
+            mycroft_message_manager = new Hemera.Services.MessageManager (mycroft_connection);
         }
         public MainWindow mainwindow;
         protected override void activate () {
             if (mainwindow == null) {
-                mainwindow = new MainWindow ();
+                mainwindow = new MainWindow (this);
                 add_window (mainwindow);
             }
             var css_provider = new Gtk.CssProvider();
@@ -61,10 +65,12 @@ namespace Hemera.App {
             );
             mainwindow.present ();
         }
+
         public override int command_line (ApplicationCommandLine cmd) {
             command_line_interpreter (cmd);
             return 0;
         }
+
         private void command_line_interpreter (ApplicationCommandLine cmd) {
             string[] cmd_args = cmd.get_arguments ();
             unowned string[] args = cmd_args;

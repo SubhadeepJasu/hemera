@@ -29,13 +29,12 @@ namespace Hemera.App {
             var chat_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
             chat_box.height_request = 230;
             utterance_entry = new Gtk.Entry ();
-            utterance_entry.width_chars = 41;
-            utterance_entry.max_width_chars = 41;
+            utterance_entry.width_chars = 39;
+            utterance_entry.max_width_chars = 39;
             utterance_entry.set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, "mail-send-symbolic");
             attach (chat_box, 0, 0, 1, 1);
             attach (utterance_entry, 0, 1, 1, 1);
-            margin_start = 8;
-            margin_end = 8;
+            margin_start = 15;
         }
     }
 }

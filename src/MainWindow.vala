@@ -21,19 +21,24 @@
 
 namespace Hemera.App {
     public class MainWindow : Gtk.Window {
+        private Hemera.App.DisplayEnclosure enclosure_display;
+        private ChatView chatbox;
         private Gtk.HeaderBar headerbar;
-        public MainWindow () {
+        private Gtk.Stack main_stack;
+        private Hemera.App.HemeraApp app_reference;
+
+        public MainWindow (Hemera.App.HemeraApp application) {
             icon_name = "com.github.SubhadeepJasu.hemera";
+            this.app_reference = application;
             make_ui ();
+            make_events ();
         }
         private void make_ui () {
             Gtk.Button settings_button = new Gtk.Button ();
             settings_button.image = new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
             settings_button.tooltip_text = _("Menu");
             settings_button.valign = Gtk.Align.CENTER;
-            
-        
-        
+
             this.set_default_size (560, 280);
 		    headerbar = new Gtk.HeaderBar ();
             headerbar.has_subtitle = false;
@@ -44,21 +49,29 @@ namespace Hemera.App {
             headerbar.pack_end(settings_button);
             this.set_titlebar (headerbar);
 
-		    Hemera.App.DisplayEnclosure enc = new Hemera.App.DisplayEnclosure ();
+		    enclosure_display = new Hemera.App.DisplayEnclosure ();
 		    var separator = new Gtk.Separator (Gtk.Orientation.VERTICAL);
-		    
-		    var chatbox = new ChatView ();
-		    
-		    
+
+		    chatbox = new ChatView ();
+
 		    var main_grid = new Gtk.Grid ();
-		    main_grid.attach (enc, 0, 0, 1, 1);
+		    main_grid.attach (enclosure_display, 0, 0, 1, 1);
 		    main_grid.attach (separator, 1, 0, 1, 1);
 		    main_grid.attach (chatbox, 2, 0, 1, 1);
 		    main_grid.valign = Gtk.Align.CENTER;
-		    this.add (main_grid);
+
+            main_stack = new Gtk.Stack ();
+            main_stack.add_named (main_grid, "Interaction View");
+
+		    this.add (main_stack);
 		    this.get_style_context ().add_class ("rounded");
 		    this.set_resizable (false);
 		    this.show_all ();
+        }
+        private void make_events () {
+            enclosure_display.wake_button_clicked.connect (() => {
+                app_reference.mycroft_message_manager.send_wake ();
+            });
         }
     }
 }
