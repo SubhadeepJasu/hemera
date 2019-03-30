@@ -1,16 +1,19 @@
 <div>
     <h1 align="center">Hemera</h1>
     <h3 align="center">Your own personal assistant for elementary OS based on Mycroft AI</h3>
-![](Concept.png)
-<i><sup>UI Mockup</sup></i>
 </div>
+
+![screenshot](screenshots/Concept.png)
+
+<h6 align="center"><i>UI Mockup</i></h6>
+<br>
 Hemera is an interactive personal assistant application based in Vala, Gtk and Mycroft.
 
 ## Get it on elementary OS Appcenter
 To be declared
 
 ## Install from source
-YOu can install Hemera by compiling it from source, here's a list of required dependencies:
+You can install Hemera by compiling it from source, here's a list of required dependencies:
  - `gtk+-3.0>=3.18`
  - `granite>=0.5.0`
  - `glib-2.0`
@@ -22,7 +25,7 @@ Install dependencies
 ```
 sudo apt install libsoup2.4-dev 
 ```
-<h5>For non-elementary distros, (such as Arch, Debian, etc) you are required to install "vala" as additional dependency.</h5>
+<i>For non-elementary distros, (such as Arch, Debian, etc) you are required to install "vala" as additional dependency.</i>
 
 Clone repository and change directory
 ```
@@ -38,4 +41,4 @@ sudo ninja install
 com.github.SubhadeepJasu.hemera
 ```
 
-**License**: GNU GPLv3
+<sup>**License**: GNU GPLv3</sup>
