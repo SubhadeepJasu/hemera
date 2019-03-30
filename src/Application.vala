@@ -101,6 +101,7 @@ namespace Hemera.App {
             else {
                 activate ();
             }
+            //mycroft_connection.init_ws ();
         }
         private void close_window () {
             if (mainwindow != null) {
@@ -111,7 +112,9 @@ namespace Hemera.App {
         
         public static int main (string[] args) {
             var app = new Hemera.App.HemeraApp ();
-            return app.run (args);
+            var ret = app.run (args);
+            app.mycroft_connection.init_ws ();
+            return ret;
         }
     }
 }

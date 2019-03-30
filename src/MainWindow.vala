@@ -25,7 +25,7 @@ namespace Hemera.App {
         private ChatView chatbox;
         private Gtk.HeaderBar headerbar;
         private Gtk.Stack main_stack;
-        private Hemera.App.HemeraApp app_reference;
+        public Hemera.App.HemeraApp app_reference;
 
         public MainWindow (Hemera.App.HemeraApp application) {
             icon_name = "com.github.SubhadeepJasu.hemera";
@@ -49,7 +49,7 @@ namespace Hemera.App {
             headerbar.pack_end(settings_button);
             this.set_titlebar (headerbar);
 
-		    enclosure_display = new Hemera.App.DisplayEnclosure ();
+		    enclosure_display = new Hemera.App.DisplayEnclosure (this);
 		    var separator = new Gtk.Separator (Gtk.Orientation.VERTICAL);
 
 		    chatbox = new ChatView ();
