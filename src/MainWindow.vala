@@ -72,6 +72,14 @@ namespace Hemera.App {
             enclosure_display.wake_button_clicked.connect (() => {
                 app_reference.mycroft_message_manager.send_wake ();
             });
+            enclosure_display.invoke_mode_changed.connect ((opt) => {
+                if (opt == 0) {
+                    app_reference.mycroft_message_manager.send_mic_on ();
+                }
+                else {
+                    app_reference.mycroft_message_manager.send_mic_off ();
+                }
+            });
         }
     }
 }

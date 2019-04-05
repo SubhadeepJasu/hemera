@@ -40,6 +40,7 @@ namespace Hemera.App {
             invoke_mode_button.append_text ("Manual Invoke");
             invoke_mode_button.margin_start = 18;
             invoke_mode_button.margin_end = 18;
+            invoke_mode_button.set_active (0);
 
             attach (main_button, 0, 0, 1, 1);
             attach (invoke_mode_button, 0, 1, 1, 1);
