@@ -22,8 +22,10 @@
 namespace Hemera.App {
     public class MainDynamicButton : Gtk.Overlay {
         private Gtk.Button wake_button;
+        private MainWindow window;
         public signal void clicked ();
-        construct {
+        public MainDynamicButton (MainWindow window) {
+            this.window = window;
             make_ui ();
             make_events ();
         }
@@ -48,6 +50,7 @@ namespace Hemera.App {
         private void animate_button () {
             Timeout.add (100, () => {
                 wake_button.get_style_context ().remove_class ("main_wake_button_pre_load");
+                window.app_reference.mycroft_connection.init_ws ();
                 return false;
             });
         }
