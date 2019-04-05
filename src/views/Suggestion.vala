@@ -20,27 +20,27 @@
  */
 
 namespace Hemera.App {
-    public class ChatView : Gtk.Grid {
-        Gtk.Entry utterance_entry;
-        SuggestionArea suggest_area;
-        public ChatView () {
-            make_ui ();
+    public class SuggestionBox : Gtk.Grid {
+        private Gtk.Label label;
+        public SuggestionBox (string suggestion, int type = 0) {
+            label = new Gtk.Label (suggestion);
+            halign = Gtk.Align.CENTER;
+            valign = Gtk.Align.CENTER;
+            if (type == 0) {
+                get_style_context ().add_class ("suggest_box_red");
+            }
+            attach (label, 0, 0, 1, 1);
+            label.margin = 4;
+            label.margin_start = 12;
+            label.margin_end = 12;
+            label.justify = Gtk.Justification.CENTER;
         }
-        private void make_ui () {
-            var chat_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-            chat_box.height_request = 197;
-            utterance_entry = new Gtk.Entry ();
-            utterance_entry.width_chars = 39;
-            utterance_entry.max_width_chars = 39;
-            utterance_entry.set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, "mail-send-symbolic");
-            
-            suggest_area = new SuggestionArea ();
-            suggest_area.margin_bottom = 8;
-
-            attach (chat_box, 0, 0, 1, 1);
-            attach (suggest_area, 0, 1, 1, 1);
-            attach (utterance_entry, 0, 2, 1, 1);
-            margin_start = 15;
+    }
+    public class SuggestionArea : Gtk.Grid {
+        SuggestionBox suggest_box;
+        construct {
+            suggest_box = new SuggestionBox ("How's the weather now?", 0);
+            attach (suggest_box, 0, 0, 1, 1);
         }
     }
 }

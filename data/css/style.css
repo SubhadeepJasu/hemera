@@ -54,3 +54,8 @@
     margin: 0px;
     border-radius: 50px;
 }
+
+.suggest_box_red {
+	border-radius: 2px;
+	background-color: alpha (#a10705, 0.1);
+}
