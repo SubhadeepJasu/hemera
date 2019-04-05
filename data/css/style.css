@@ -49,3 +49,8 @@
 	margin: 0px;
 	transition:all 0.0s ease-out;
 }
+
+.rounded_button {
+    margin: 0px;
+    border-radius: 50px;
+}

@@ -28,6 +28,7 @@ namespace Hemera.App {
             this.window = window;
             make_ui ();
             make_events ();
+            animate_button ();
         }
         private void make_ui () {
             wake_button = new Gtk.Button.with_label ("Wake");
@@ -38,9 +39,8 @@ namespace Hemera.App {
             height_request= 200;
             halign = Gtk.Align.CENTER;
             valign = Gtk.Align.CENTER;
-            margin_top = 10;
-            margin_bottom = 20;
-            animate_button ();
+            margin_top = 0;
+            margin_bottom = 0;
         }
         private void make_events () {
             wake_button.clicked.connect (() => {

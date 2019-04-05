@@ -23,6 +23,7 @@ namespace Hemera.App {
     public class DisplayEnclosure : Gtk.Grid {
         private MainDynamicButton main_button;
         private Granite.Widgets.ModeButton invoke_mode_button;
+        private Gtk.Button stop_button;
         private MainWindow window;
 
         public signal void wake_button_clicked ();
@@ -35,6 +36,13 @@ namespace Hemera.App {
         }
         private void make_ui () {
             main_button = new Hemera.App.MainDynamicButton (window);
+            stop_button = new Gtk.Button.from_icon_name ("media-playback-stop-symbolic", Gtk.IconSize.BUTTON);
+            stop_button.margin_start = 90;
+            stop_button.margin_end = 90;
+            stop_button.margin_bottom = 6;
+            stop_button.get_style_context ().add_class (Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
+            stop_button.get_style_context ().add_class ("rounded_button");
+            stop_button.tooltip_text = "Stop";
             invoke_mode_button = new Granite.Widgets.ModeButton ();
             invoke_mode_button.append_text ("Verbal Invoke");
             invoke_mode_button.append_text ("Manual Invoke");
@@ -43,7 +51,8 @@ namespace Hemera.App {
             invoke_mode_button.set_active (0);
 
             attach (main_button, 0, 0, 1, 1);
-            attach (invoke_mode_button, 0, 1, 1, 1);
+            attach (stop_button, 0, 1, 1, 1);
+            attach (invoke_mode_button, 0, 2, 1, 1);
         }
         private void make_events () {
             main_button.clicked.connect (() => {
