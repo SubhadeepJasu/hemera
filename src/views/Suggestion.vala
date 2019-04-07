@@ -29,6 +29,21 @@ namespace Hemera.App {
             if (type == 0) {
                 get_style_context ().add_class ("suggest_box_red");
             }
+            else if (type == 1) {
+                get_style_context ().add_class ("suggest_box_purple");
+            }
+            else if (type == 2) {
+                get_style_context ().add_class ("suggest_box_blue");
+            }
+            else if (type == 3) {
+                get_style_context ().add_class ("suggest_box_green");
+            }
+            else if (type == 4) {
+                get_style_context ().add_class ("suggest_box_orange");
+            }
+            else if (type == 5) {
+                get_style_context ().add_class ("suggest_box_yellow");
+            }
             attach (label, 0, 0, 1, 1);
             label.margin = 4;
             label.margin_start = 12;
@@ -36,11 +51,30 @@ namespace Hemera.App {
             label.justify = Gtk.Justification.CENTER;
         }
     }
-    public class SuggestionArea : Gtk.Grid {
-        SuggestionBox suggest_box;
+    public class SuggestionArea : Gtk.ScrolledWindow {
+        SuggestionBox suggest_box1;
+        SuggestionBox suggest_box2;
+        SuggestionBox suggest_box3;
+        SuggestionBox suggest_box4;
+        SuggestionBox suggest_box5;
+        SuggestionBox suggest_box6;
         construct {
-            suggest_box = new SuggestionBox ("How's the weather now?", 0);
-            attach (suggest_box, 0, 0, 1, 1);
+            var suggest_grid = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 4);
+            suggest_box1 = new SuggestionBox ("How's the weather now?", 2);
+            suggest_box2 = new SuggestionBox ("What time is it?", 1);
+            suggest_box3 = new SuggestionBox ("What's in the news?", 0);
+            suggest_box4 = new SuggestionBox ("What is Linux?",5);
+            suggest_box5 = new SuggestionBox ("Play my music", 4);
+            suggest_box6 = new SuggestionBox ("Open Melody",3);
+            suggest_grid.pack_start (suggest_box1);
+            suggest_grid.pack_start (suggest_box2);
+            suggest_grid.pack_start (suggest_box3);
+            suggest_grid.pack_start (suggest_box4);
+            suggest_grid.pack_start (suggest_box5);
+            suggest_grid.pack_start (suggest_box6);
+            suggest_grid.halign = Gtk.Align.START;
+            suggest_grid.margin_bottom = 4;
+            add (suggest_grid);
         }
     }
 }

@@ -28,16 +28,22 @@ namespace Hemera.App {
         }
         private void make_ui () {
             var chat_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-            chat_box.height_request = 197;
+            var bubble  = new SpeechBubble (true, "Who are you");
+            var bubble2 = new SpeechBubble (false, "I am Hemera. Nice to meet you!");
+            chat_box.pack_start (bubble);
+            chat_box.pack_start (bubble2);
+            chat_box.valign = Gtk.Align.START;
+            var scrollable = new Gtk.ScrolledWindow (null, null);
+            scrollable.height_request = 196;
+            scrollable.add (chat_box);
             utterance_entry = new Gtk.Entry ();
             utterance_entry.width_chars = 39;
             utterance_entry.max_width_chars = 39;
             utterance_entry.set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, "mail-send-symbolic");
             
             suggest_area = new SuggestionArea ();
-            suggest_area.margin_bottom = 8;
 
-            attach (chat_box, 0, 0, 1, 1);
+            attach (scrollable, 0, 0, 1, 1);
             attach (suggest_area, 0, 1, 1, 1);
             attach (utterance_entry, 0, 2, 1, 1);
             margin_start = 15;

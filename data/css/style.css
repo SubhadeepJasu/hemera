@@ -57,5 +57,43 @@
 
 .suggest_box_red {
 	border-radius: 2px;
-	background-color: alpha (#a10705, 0.1);
+	background-color: alpha (#c6262e, 0.1);
+	color: alpha (#a10705, 0.7);
+}
+.suggest_box_purple {
+	border-radius: 2px;
+	background-color: alpha (#7239b3, 0.1);
+	color: alpha (#452981, 0.7);
+}
+.suggest_box_blue {
+	border-radius: 2px;
+	background-color: alpha (#3689e6, 0.1);
+	color: alpha (#0d52bf, 0.7);
+}
+.suggest_box_yellow {
+	border-radius: 2px;
+	background-color: alpha (#f9c440, 0.1);
+	color: alpha (#d48e15, 0.7);
+}
+.suggest_box_orange {
+	border-radius: 2px;
+	background-color: alpha (#f37329, 0.1);
+	color: alpha (#cc3b02, 0.7);
+}
+.suggest_box_green {
+	border-radius: 2px;
+	background-color: alpha (#68b723, 0.1);
+	color: alpha (#3a9104, 0.7);
+}
+.speech_bubble_right {
+	background-color: #ececec;
+	border: 1px solid #aeaeae;
+	border-radius: 4px;
+	color: #555761;
+}
+.speech_bubble_left {
+	background-color: #e1edfb;
+	border: 1px solid #729ac4;
+	border-radius: 4px;
+	color: #0d52bf;
 }

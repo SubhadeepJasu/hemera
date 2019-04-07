@@ -15,6 +15,8 @@ hemera_sources = files(
   'views/DisplayEnclosure.vala',
   'views/MainDynamicButton.vala',
   'views/Suggestion.vala',
+  'bubbles/SVGData.vala',
+  'bubbles/SpeechBubble.vala',
   'views/ChatView.vala',
 )
 
