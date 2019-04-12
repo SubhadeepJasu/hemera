@@ -32,6 +32,7 @@ namespace Hemera.App {
             this.app_reference = application;
             make_ui ();
             make_events ();
+            make_mycroft_incoming_events ();
         }
         private void make_ui () {
             Gtk.Button settings_button = new Gtk.Button ();
@@ -79,6 +80,33 @@ namespace Hemera.App {
                 else {
                     app_reference.mycroft_message_manager.send_mic_off ();
                 }
+            });
+        }
+        private void make_mycroft_incoming_events () {
+            app_reference.mycroft_message_manager.connection_established.connect (() => {
+                Timeout.add (500, () => {
+                chatbox.push_mycroft_text ("Hi! I am Hemera");
+                return false;
+                });
+                Timeout.add (800, () => {
+                    var randomizer = new Rand();
+                    var rand = randomizer.int_range (0, 3);
+                    switch (rand) {
+                        case 0:
+                            chatbox.push_mycroft_text ("How may I help you?");
+                            break;
+                        case 1:
+                            chatbox.push_mycroft_text ("How may I be of service?");
+                            break;
+                        case 2:
+                            chatbox.push_mycroft_text ("May I help you?");
+                            break;
+                        default:
+                            chatbox.push_mycroft_text ("Ask me anything you want!");
+                            break;
+                    }
+                    return false;
+                });
             });
         }
     }

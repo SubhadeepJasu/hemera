@@ -82,5 +82,19 @@ namespace Hemera.App {
                 }
             }
         }
+        public void push_mycroft_text (string message) {
+            if (message != "" && message != null) {
+                if (number_of_messages < max_number_of_messages) {
+                    chat_box.pack_start (new SpeechBubble (false, message));
+                    number_of_messages++;
+                }
+                else {
+                    var bubble_list = chat_box.get_children ();
+                    chat_box.remove (bubble_list.first ().nth_data (0));
+                    chat_box.pack_start (new SpeechBubble (false, message));
+                    number_of_messages++;
+                }
+            }
+        }
     }
 }

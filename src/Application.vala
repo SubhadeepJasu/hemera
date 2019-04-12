@@ -113,7 +113,7 @@ namespace Hemera.App {
         public static int main (string[] args) {
             var app = new Hemera.App.HemeraApp ();
             var ret = app.run (args);
-            app.mycroft_connection.init_ws ();
+            //app.mycroft_connection.init_ws ();
             return ret;
         }
     }

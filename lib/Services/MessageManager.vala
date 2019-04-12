@@ -34,9 +34,11 @@ namespace Hemera.Services {
                 readJSON (message);
             });
         }
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 // Parse events from Mycroft                                                               //
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+        public signal void connection_established ();   
 
         private void readJSON (string json_message) {
             try {
@@ -49,6 +51,7 @@ namespace Hemera.Services {
                 // SYSTEM MESSAGES /////////////////////////////////////////////////////////
                 if (type == "connected") {
                     // Notify that I am connected to Mycroft server
+                    connection_established ();
                     warning ("Mycroft connection established");
                 }
                 else if (type == "mycroft.not.paired") {
