@@ -23,17 +23,23 @@ namespace Hemera.App {
     public class ChatView : Gtk.Grid {
         Gtk.Entry utterance_entry;
         SuggestionArea suggest_area;
+        Gtk.ScrolledWindow scrollable;
+        Gtk.Box chat_box;
+        private int number_of_messages;
+        private int max_number_of_messages = 15;
+        
         public ChatView () {
             make_ui ();
+            make_events ();
         }
         private void make_ui () {
-            var chat_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-            var bubble  = new SpeechBubble (true, "Who are you");
-            var bubble2 = new SpeechBubble (false, "I am Hemera. Nice to meet you!");
-            chat_box.pack_start (bubble);
-            chat_box.pack_start (bubble2);
+            chat_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+            //var bubble  = new SpeechBubble (true, "Who are you");
+            //var bubble2 = new SpeechBubble (false, "I am Hemera. Nice to meet you!");
+            //chat_box.pack_start (bubble);
+            //chat_box.pack_start (bubble2);
             chat_box.valign = Gtk.Align.START;
-            var scrollable = new Gtk.ScrolledWindow (null, null);
+            scrollable = new Gtk.ScrolledWindow (null, null);
             scrollable.height_request = 196;
             scrollable.add (chat_box);
             utterance_entry = new Gtk.Entry ();
@@ -47,6 +53,34 @@ namespace Hemera.App {
             attach (suggest_area, 0, 1, 1, 1);
             attach (utterance_entry, 0, 2, 1, 1);
             margin_start = 15;
+        }
+        private void make_events () {
+            number_of_messages = 0;
+            utterance_entry.activate.connect (() => {
+                push_user_text ();
+            });
+            utterance_entry.icon_release.connect (() => {
+                push_user_text ();
+            });
+            chat_box.size_allocate.connect (() => {
+                var adj = scrollable.get_vadjustment ();
+                adj.set_value (adj.get_upper () - adj.get_page_size ());
+                utterance_entry.set_text ("");
+            });
+        }
+        private void push_user_text () {
+            if (utterance_entry.get_text () != "") {
+                if (number_of_messages < max_number_of_messages) {
+                    chat_box.pack_start (new SpeechBubble (true, utterance_entry.get_text ()));
+                    number_of_messages++;
+                }
+                else {
+                    var bubble_list = chat_box.get_children ();
+                    chat_box.remove (bubble_list.first ().nth_data (0));
+                    chat_box.pack_start (new SpeechBubble (true, utterance_entry.get_text ()));
+                    number_of_messages++;
+                }
+            }
         }
     }
 }

@@ -36,6 +36,7 @@ namespace Hemera.App {
             }
             speech_text.max_width_chars = 30;
             speech_text.wrap = true;
+            speech_text.wrap_mode = Pango.WrapMode.WORD_CHAR;
             
             var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             box.pack_start (speech_text);
@@ -70,6 +71,15 @@ namespace Hemera.App {
             }
             valign = Gtk.Align.START;
             margin_bottom = 8;
+            show_all ();
+            animate_bubble ();
+        }
+        
+        private void animate_bubble () {
+            Timeout.add (0, () => {
+                get_style_context ().add_class ("speech_bubble_start_animate");
+                return false;
+            });
         }
     }
 }
