@@ -38,7 +38,9 @@ namespace Hemera.Services {
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 // Parse events from Mycroft                                                               //
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-        public signal void connection_established ();   
+        public signal void connection_established ();
+        public signal void receive_speak (string utterance, bool response_expected);
+        public signal void receive_utterance (string utterance);
 
         private void readJSON (string json_message) {
             try {
@@ -46,7 +48,7 @@ namespace Hemera.Services {
                 parser.load_from_data (json_message);
                 var root_object = parser.get_root ().get_object ();
                 string type = root_object.get_string_member ("type");
-                warning (type);
+                warning (json_message); // DEBUG ONLY
 
                 // SYSTEM MESSAGES /////////////////////////////////////////////////////////
                 if (type == "connected") {
@@ -61,6 +63,11 @@ namespace Hemera.Services {
                 else if (type == "speak") {
                     // Speaking it.
                     // "data": {"utterance": "Sorry, I didn't catch that.", "expect_response": false}
+                    
+                    var data = root_object.get_object_member ("data");
+                    string utterance = data.get_string_member ("utterance");
+                    bool expect_response = data.get_boolean_member ("expect_response");
+                    receive_speak (utterance, expect_response);
                 }
                 else if (type == "mycroft.skills.initialized") {
                     // Ready to roll!
@@ -82,6 +89,11 @@ namespace Hemera.Services {
                 }
                 else if (type == "recognizer_loop:utterance") {
                     // I heard you say...
+                    var data = root_object.get_object_member ("data");
+                    var utterances = data.get_array_member ("utterances");
+                    string utterance = utterances.get_string_element (0);
+                    
+                    receive_utterance (utterance);
                 }
                 else if (type == "intent_failure") {
                     // Sorry. I didn't hear you.

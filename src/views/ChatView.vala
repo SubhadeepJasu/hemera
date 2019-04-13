@@ -28,6 +28,8 @@ namespace Hemera.App {
         private int number_of_messages;
         private int max_number_of_messages = 15;
         
+        public signal void send_message_text (string message);
+        
         public ChatView () {
             make_ui ();
             make_events ();
@@ -57,27 +59,28 @@ namespace Hemera.App {
         private void make_events () {
             number_of_messages = 0;
             utterance_entry.activate.connect (() => {
-                push_user_text ();
+                send_message_text (utterance_entry.get_text ());
+                utterance_entry.set_text ("");
             });
             utterance_entry.icon_release.connect (() => {
-                push_user_text ();
+                send_message_text (utterance_entry.get_text ());
+                utterance_entry.set_text ("");
             });
             chat_box.size_allocate.connect (() => {
                 var adj = scrollable.get_vadjustment ();
                 adj.set_value (adj.get_upper () - adj.get_page_size ());
-                utterance_entry.set_text ("");
             });
         }
-        private void push_user_text () {
-            if (utterance_entry.get_text () != "") {
+        public void push_user_text (string utterance) {
+            if (utterance != "") {
                 if (number_of_messages < max_number_of_messages) {
-                    chat_box.pack_start (new SpeechBubble (true, utterance_entry.get_text ()));
+                    chat_box.pack_start (new SpeechBubble (true, utterance));
                     number_of_messages++;
                 }
                 else {
                     var bubble_list = chat_box.get_children ();
                     chat_box.remove (bubble_list.first ().nth_data (0));
-                    chat_box.pack_start (new SpeechBubble (true, utterance_entry.get_text ()));
+                    chat_box.pack_start (new SpeechBubble (true, utterance));
                     number_of_messages++;
                 }
             }
