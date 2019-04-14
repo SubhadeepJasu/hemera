@@ -13,4 +13,8 @@
         <file alias="64-com.github.SubhadeepJasu.hemera.svg" compressed="true" preprocess="xml-stripblanks">images/icons/64/com.github.SubhadeepJasu.hemera.svg</file>
         <file alias="128-com.github.SubhadeepJasu.hemera.svg" compressed="true" preprocess="xml-stripblanks">images/icons/128/com.github.SubhadeepJasu.hemera.svg</file>
     </gresource>
+
+    <gresource prefix="/com/github/SubhadeepJasu/hemera/images/logos">
+        <file alias="wikipedia.svg" compressed="true" preprocess="xml-stripblanks">images/logos/wikipedia.svg</file>
+    </gresource>
 </gresources>
