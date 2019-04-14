@@ -41,6 +41,7 @@ namespace Hemera.Services {
         public signal void connection_established ();
         public signal void receive_speak (string utterance, bool response_expected);
         public signal void receive_utterance (string utterance);
+        public signal void receive_qna (string phrase, string answer, string skill_id, double confidence);
 
         private void readJSON (string json_message) {
             try {
@@ -281,8 +282,15 @@ namespace Hemera.Services {
                     /*
                     {"type": "question:query.response", "data": {"phrase": "who is bill gates", "skill_id": "fallback-wolfram-alpha.mycroftai", "answer": "William Henry Gates III (born October 28, 1955) is an American business magnate, investor, author, philanthropist, and humanitarian. He is best known as the principal founder of Microsoft Corporation.", "callback_data": {"query": "who is bill gates", "answer": "William Henry Gates III (born October 28, 1955) is an American business magnate, investor, author, philanthropist, and humanitarian. He is best known as the principal founder of Microsoft Corporation."}, "conf": 0.6}, "context": {}}
                     */
+                    var data = root_object.get_object_member ("data");
+                    string answer = data.get_string_member ("answer");
+                    string phrase = data.get_string_member ("phrase");
+                    string skill_id = data.get_string_member ("skill_id");
+                    double confidence = data.get_double_member ("conf");
+
+                    receive_qna (phrase, answer, skill_id, confidence);
                 }
-                
+
                 // SKILL DOWNLOAD SYSTEM /////////////////////////////////////////////////
                 else if (type == "padatious:register_intent") {
                     // {"type": "padatious:register_intent", "data": {"file_name": "/opt/mycroft/skills/count.andlo/vocab/en-us/count.intent", "name": "count.andlo:count.intent"}, "context": {}}

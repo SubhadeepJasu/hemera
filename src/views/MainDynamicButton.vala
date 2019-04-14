@@ -29,10 +29,6 @@ namespace Hemera.App {
             make_ui ();
             make_events ();
             animate_button ();
-            Timeout.add (200, () => {
-                window.app_reference.mycroft_connection.init_ws ();
-                return false;
-            });
         }
         private void make_ui () {
             wake_button = new Gtk.Button.with_label ("Wake");
@@ -54,6 +50,10 @@ namespace Hemera.App {
         private void animate_button () {
             Timeout.add (100, () => {
                 wake_button.get_style_context ().remove_class ("main_wake_button_pre_load");
+                Timeout.add (500, () => {
+                    window.app_reference.mycroft_connection.init_ws ();
+                    return false;
+                });
                 return false;
             });
         }

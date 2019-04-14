@@ -55,6 +55,24 @@
     border-radius: 50px;
 }
 
+.chat-window undershoot.top {
+	background:
+        linear-gradient(
+            to top,
+            alpha(@bg_color, 0) 40%,
+            alpha(@bg_color, 1) 100%
+	);
+}
+
+.chat-window undershoot.bottom {
+	background:
+        linear-gradient(
+            to bottom,
+            alpha(@bg_color, 0) 50%,
+            alpha(@bg_color, 1) 100%
+	);
+}
+
 .suggest_box_red {
 	border-radius: 2px;
 	background-color: alpha (#c6262e, 0.1);
@@ -105,4 +123,17 @@
 	border: 1px solid #729ac4;
 	border-radius: 4px;
 	color: #0d52bf;
+}
+.qna_bubble {
+	background-color: #fafafa;
+	border: 1px solid #abacae;
+	border-radius: 4px;
+	color: #333333;
+}
+.qna_launch_button {
+	border-radius: 0px 0px 4px 4px;
+	border: none;
+	border-top: 1px solid @border_color;
+	background-image: none;
+	box-shadow:none;
 }

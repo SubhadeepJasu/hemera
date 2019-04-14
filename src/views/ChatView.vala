@@ -25,6 +25,7 @@ namespace Hemera.App {
         SuggestionArea suggest_area;
         Gtk.ScrolledWindow scrollable;
         Gtk.Box chat_box;
+        private string received_bubble_text;
         private int number_of_messages;
         private int max_number_of_messages = 15;
         
@@ -43,6 +44,7 @@ namespace Hemera.App {
             chat_box.valign = Gtk.Align.START;
             scrollable = new Gtk.ScrolledWindow (null, null);
             scrollable.height_request = 196;
+            scrollable.get_style_context ().add_class ("chat-window");
             scrollable.add (chat_box);
             utterance_entry = new Gtk.Entry ();
             utterance_entry.width_chars = 39;
@@ -58,6 +60,7 @@ namespace Hemera.App {
         }
         private void make_events () {
             number_of_messages = 0;
+            received_bubble_text = "";
             utterance_entry.activate.connect (() => {
                 send_message_text (utterance_entry.get_text ());
                 utterance_entry.set_text ("");
@@ -86,7 +89,7 @@ namespace Hemera.App {
             }
         }
         public void push_mycroft_text (string message) {
-            if (message != "" && message != null) {
+            if (message != "" && message != null && (received_bubble_text != message)) {
                 if (number_of_messages < max_number_of_messages) {
                     chat_box.pack_start (new SpeechBubble (false, message));
                     number_of_messages++;
@@ -97,6 +100,22 @@ namespace Hemera.App {
                     chat_box.pack_start (new SpeechBubble (false, message));
                     number_of_messages++;
                 }
+                received_bubble_text = message;
+            }
+        }
+        public void push_qna (string query, string answer, string skill, double? confidence = 0.5) {
+            if (answer != "" && answer != null) {
+                if (number_of_messages < max_number_of_messages) {
+                    chat_box.pack_start (new QnABubble (query, answer, skill, confidence));
+                    number_of_messages++;
+                }
+                else {
+                    var bubble_list = chat_box.get_children ();
+                    chat_box.remove (bubble_list.first ().nth_data (0));
+                    chat_box.pack_start (new QnABubble (query, answer, skill, confidence));
+                    number_of_messages++;
+                }
+                received_bubble_text = answer;
             }
         }
     }
