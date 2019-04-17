@@ -42,6 +42,7 @@ namespace Hemera.Services {
         public signal void receive_speak (string utterance, bool response_expected);
         public signal void receive_utterance (string utterance);
         public signal void receive_qna (string phrase, string answer, string skill_id, double confidence);
+        public signal void receive_current_weather (string icon, string current, string min, string max, string location, string condition, double humidity, double wind);
 
         private void readJSON (string json_message) {
             try {
@@ -103,6 +104,20 @@ namespace Hemera.Services {
                     // See this, yeah that icon tells you something
                     // {"type": "gui.value.set", "data": {"current": "11", "min": "3", "max": "14", "location": "Lawrence\nKansas\nUnited States", "condition": "clear", "icon": "01d", "weathercode": 0, "humidity": 51, "wind": "--", "__from": "mycroft-weather.mycroftai"}, "context": {}}
                     // 
+                    var data = root_object.get_object_member ("data");
+                    var provider = data.get_string_member ("__from");
+                    if (provider == "mycroft-weather.mycroftai") {
+                        string icon         = data.get_string_member ("icon");
+                        string current_temp = data.get_string_member ("current");
+                        string min_temp     = data.get_string_member ("min");
+                        string max_temp     = data.get_string_member ("max");
+                        string location     = data.get_string_member ("location");
+                        string condition    = data.get_string_member ("condition");
+                        double humidity     = data.get_double_member ("humidity");
+                        double wind         = data.get_double_member ("wind");
+                        warning ("WEATHER///////////////////");
+                        receive_current_weather (icon, current_temp, min_temp, max_temp, location, condition, humidity, wind);
+                    }
                 }
 
                 // COMMON DISPLAY SIGNALS //////////////////////////////////////////////////

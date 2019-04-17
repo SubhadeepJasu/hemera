@@ -137,3 +137,21 @@
 	background-image: none;
 	box-shadow:none;
 }
+.weather_bubble {
+	background-color: #273445;
+	border: 1px solid #0e141f;
+	border-radius: 4px;
+	padding: 8px;
+	color: #fafafa;
+}
+.weather_h1 {
+	font-size: 30px;
+}
+.weather_h3 {
+	font-size: 12px;
+	font-weight: bold;
+}
+.weather_h4 {
+	font-size: 10px;
+	color: alpha (#fff, 0.5);
+}

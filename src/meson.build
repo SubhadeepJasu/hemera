@@ -18,6 +18,7 @@ hemera_sources = files(
   'bubbles/SVGData.vala',
   'bubbles/SpeechBubble.vala',
   'bubbles/QnABubble.vala',
+  'bubbles/WeatherBubbleCurrent.vala',
   'views/ChatView.vala',
 )
 

@@ -118,5 +118,17 @@ namespace Hemera.App {
                 received_bubble_text = answer;
             }
         }
+        public void push_current_weather (string icon, string current_temp, string min_temp, string max_temp, string location, string condition, double humidity, double wind) {
+            if (number_of_messages < max_number_of_messages) {
+                chat_box.pack_start (new WeatherBubbleCurrent (icon, current_temp, min_temp, max_temp, location, condition, humidity, wind));
+                number_of_messages++;
+            }
+            else {
+                var bubble_list = chat_box.get_children ();
+                chat_box.remove (bubble_list.first ().nth_data (0));
+                chat_box.pack_start (new WeatherBubbleCurrent (icon, current_temp, min_temp, max_temp, location, condition, humidity, wind));
+                number_of_messages++;
+            }
+        }
     }
 }

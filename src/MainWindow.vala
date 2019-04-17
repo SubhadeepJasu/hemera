@@ -120,6 +120,9 @@ namespace Hemera.App {
             app_reference.mycroft_message_manager.receive_qna.connect ((query, answer, skill, conf) => {
                 chatbox.push_qna (query, answer, skill, conf);
             });
+            app_reference.mycroft_message_manager.receive_current_weather.connect ((icon, current_temp, min_temp, max_temp, location, condition, humidity, wind) => {
+                chatbox.push_current_weather (icon, current_temp, min_temp, max_temp, location, condition, humidity, wind);
+            });
         }
     }
 }
