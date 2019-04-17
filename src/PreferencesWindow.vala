@@ -1,7 +1,5 @@
 /*-
  * Copyright (c) 2018-2019 Subhadeep Jasu <subhajasu@gmail.com>
- * Copyright (c) 2018-2019 Hannes Schulze
- * Copyright (c) 2018-2019 Christopher M
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

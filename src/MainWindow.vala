@@ -1,7 +1,6 @@
 /*-
  * Copyright (c) 2018-2019 Subhadeep Jasu <subhajasu@gmail.com>
- * Copyright (c) 2018-2019 Hannes Schulze
- * Copyright (c) 2018-2019 Christopher M
+ * Copyright (c) 2018-2019 Hannes Schulze <haschu0103@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -16,7 +15,8 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Authored by: Subhadeep Jasu <subhajasu@gmail.com>
+ * Authored by: Subhadeep Jasu
+ *              Hannes Schulze
  */
 
 namespace Hemera.App {
