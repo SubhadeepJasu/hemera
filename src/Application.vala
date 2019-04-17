@@ -63,7 +63,21 @@ namespace Hemera.App {
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
-            mainwindow.present ();
+            Timeout.add (100, () => {
+                    mycroft_connection.init_ws ();
+                    return false;
+            });
+            mycroft_connection.connection_established.connect (() => {
+                Timeout.add (100, () => {
+                    mainwindow.present ();
+                    mainwindow.set_screen (1);
+                    return false;
+                });
+            });
+            mycroft_connection.connection_failed.connect (() => {
+                mainwindow.present ();
+                mainwindow.set_screen (0);
+            });
         }
 
         public override int command_line (ApplicationCommandLine cmd) {

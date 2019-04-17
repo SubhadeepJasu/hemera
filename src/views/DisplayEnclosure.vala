@@ -62,5 +62,8 @@ namespace Hemera.App {
                 invoke_mode_changed (invoke_mode_button.selected);
             });
         }
+        public void animate_button () {
+            main_button.animate_button ();
+        }
     }
 }
