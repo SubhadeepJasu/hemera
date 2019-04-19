@@ -61,7 +61,7 @@
 	background:
         linear-gradient(
             to top,
-            alpha(@bg_color, 0) 40%,
+            alpha(@bg_color, 0) 70%,
             alpha(@bg_color, 1) 100%
 	);
 }
@@ -70,7 +70,7 @@
 	background:
         linear-gradient(
             to bottom,
-            alpha(@bg_color, 0) 50%,
+            alpha(@bg_color, 0) 70%,
             alpha(@bg_color, 1) 100%
 	);
 }
@@ -140,8 +140,9 @@
 	box-shadow:none;
 }
 .weather_bubble {
-	background-color: #273445;
-	border: 1px solid #0e141f;
+	background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
 	border-radius: 4px;
 	padding: 8px;
 	color: #fafafa;

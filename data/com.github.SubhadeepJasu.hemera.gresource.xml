@@ -17,4 +17,17 @@
     <gresource prefix="/com/github/SubhadeepJasu/hemera/images/logos">
         <file alias="wikipedia.svg" compressed="true" preprocess="xml-stripblanks">images/logos/wikipedia.svg</file>
     </gresource>
+    <gresource prefix="/com/github/SubhadeepJasu/hemera/images/weather">
+        <file alias="clear_day_card.png" compressed="true">images/weather/clear_day_card.png</file>
+        <file alias="clear_night_card.png" compressed="true">images/weather/clear_night_card.png</file>
+        <file alias="cloudy_day_card.png" compressed="true">images/weather/cloudy_day_card.png</file>
+        <file alias="cloudy_night_card.png" compressed="true">images/weather/cloudy_night_card.png</file>
+        <file alias="foggy_card.png" compressed="true">images/weather/foggy_card.png</file>
+        <file alias="heavy_rain_card.png" compressed="true">images/weather/heavy_rain_card.png</file>
+        <file alias="light_rain_card.png" compressed="true">images/weather/light_rain_card.png</file>
+        <file alias="overcast_card.png" compressed="true">images/weather/overcast_card.png</file>
+        <file alias="snowy_card.png" compressed="true">images/weather/snowy_card.png</file>
+        <file alias="t_storm_card.png" compressed="true">images/weather/t_storm_card.png</file>
+        <file alias="unknown_card.png" compressed="true">images/weather/unknown_card.png</file>
+    </gresource>
 </gresources>

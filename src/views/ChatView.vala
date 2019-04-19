@@ -71,6 +71,7 @@ namespace Hemera.App {
             chat_box.size_allocate.connect (() => {
                 var adj = scrollable.get_vadjustment ();
                 adj.set_value (adj.get_upper () - adj.get_page_size ());
+                chat_box.queue_draw ();
             });
         }
         public void push_user_text (string utterance) {
