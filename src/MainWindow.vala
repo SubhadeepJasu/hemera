@@ -91,7 +91,7 @@ namespace Hemera.App {
                 app_reference.mycroft_connection.init_ws ();
             });
         }
-        public void set_screen (int? screen = 0) {
+        public void set_launch_screen (int? screen = 0) {
             switch (screen) {
                 case 1:
                     main_stack.set_visible_child (main_grid);
@@ -146,7 +146,7 @@ namespace Hemera.App {
             
         }
         public void chat_launch_app (Hemera.Core.AppEntry app) {
-            
+            chatbox.push_app_launch (app);
         }
     }
 }

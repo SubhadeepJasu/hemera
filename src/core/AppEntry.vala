@@ -20,14 +20,13 @@ using GLib;
 
 namespace Hemera.Core {
     public class AppEntry {
-        private const int ICON_SIZE = 64;
         public Icon   app_icon;
         public string app_name;
         public string app_exec;
 	    public string app_desc;
 	    public string desktop_file_name;
         public GLib.AppInfo app_info;
-        private DesktopAppInfo desktop_app_info;
+        public DesktopAppInfo desktop_app_info;
         public bool options_available = false;
         public List<string> app_action_name;
         public List<string> app_action_command;
@@ -56,7 +55,6 @@ namespace Hemera.Core {
 		    try {
                 if(app_info != null) {
 			        app_info.launch(null, null);
-                    //window.close();
                 }
 		    }
 		    catch (Error e) {

@@ -130,5 +130,17 @@ namespace Hemera.App {
                 number_of_messages++;
             }
         }
+        public void push_app_launch (Hemera.Core.AppEntry app) {
+            if (number_of_messages < max_number_of_messages) {
+                chat_box.pack_start (new AppBubble (app));
+                number_of_messages++;
+            }
+            else {
+                var bubble_list = chat_box.get_children ();
+                chat_box.remove (bubble_list.first ().nth_data (0));
+                chat_box.pack_start (new AppBubble (app));
+                number_of_messages++;
+            }
+        }
     }
 }

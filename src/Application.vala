@@ -70,13 +70,13 @@ namespace Hemera.App {
             mycroft_connection.connection_established.connect (() => {
                 Timeout.add (100, () => {
                     mainwindow.present ();
-                    mainwindow.set_screen (1);
+                    mainwindow.set_launch_screen (1);
                     return false;
                 });
             });
             mycroft_connection.connection_failed.connect (() => {
                 mainwindow.present ();
-                mainwindow.set_screen (0);
+                mainwindow.set_launch_screen (0);
             });
             app_search_provider = new Hemera.Core.AppSearch ();
             mycroft_message_manager.receive_hemera_launch_app.connect ((query) => {
