@@ -21,6 +21,10 @@ hemera_sources = files(
   'bubbles/QnABubble.vala',
   'bubbles/WeatherBubbleCurrent.vala',
   'views/ChatView.vala',
+  'core/AppEntry.vala',
+  'core/AppDiscovery.vala',
+  'core/AppSearch.vala',
+  'core/LevenshteinDistanceSearch.vala',
 )
 
 hemera_sources += constants_header

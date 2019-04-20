@@ -33,6 +33,7 @@ namespace Hemera.App {
         private string version_string = "";
         public Hemera.Services.Connection mycroft_connection;
         public Hemera.Services.MessageManager mycroft_message_manager;
+        public Hemera.Core.AppSearch app_search_provider;
 
         public HemeraApp () {
             Object (
@@ -76,6 +77,14 @@ namespace Hemera.App {
             mycroft_connection.connection_failed.connect (() => {
                 mainwindow.present ();
                 mainwindow.set_screen (0);
+            });
+            app_search_provider = new Hemera.Core.AppSearch ();
+            mycroft_message_manager.receive_hemera_launch_app.connect ((query) => {
+                Hemera.Core.AppEntry launchable_app = app_search_provider.get_app_by_search (query);
+                launchable_app.launch ();
+                if (mainwindow != null) {
+                    mainwindow.chat_launch_app (launchable_app);
+                }
             });
         }
 
