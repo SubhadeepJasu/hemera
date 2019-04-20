@@ -43,6 +43,7 @@ namespace Hemera.Services {
         public signal void receive_utterance (string utterance);
         public signal void receive_qna (string phrase, string answer, string skill_id, double confidence);
         public signal void receive_current_weather (string icon, string current, string min, string max, string location, string condition, double humidity, double wind);
+        public signal void receive_hemera_launch_app_signal (string app);
 
         private void readJSON (string json_message) {
             try {
@@ -117,6 +118,15 @@ namespace Hemera.Services {
                         double wind         = data.get_double_member ("wind");
                         warning ("WEATHER///////////////////");
                         receive_current_weather (icon, current_temp, min_temp, max_temp, location, condition, humidity, wind);
+                    }
+                }
+                // HEMERA SKILL SIGNALS ////////////////////////////////////////////////////
+                else if (type == "hemera_action") {
+                    var data = root_object.get_object_member ("data");
+                    string type_of_action = data.get_string_member ("type");
+                    if (type_of_action == "launch") {
+                        string app_name = data.get_string_member ("app");
+                        receive_hemera_launch_app_signal (app_name);
                     }
                 }
 
