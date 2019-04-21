@@ -43,7 +43,7 @@ namespace Hemera.App {
             settings_button.valign = Gtk.Align.CENTER;
 
             this.set_default_size (560, 280);
-		    headerbar = new Gtk.HeaderBar ();
+            headerbar = new Gtk.HeaderBar ();
             headerbar.has_subtitle = false;
             headerbar.show_close_button = true;
             headerbar.title = _("Hemera");
@@ -52,28 +52,28 @@ namespace Hemera.App {
             headerbar.pack_end(settings_button);
             this.set_titlebar (headerbar);
 
-		    enclosure_display = new Hemera.App.DisplayEnclosure (this);
-		    var separator = new Gtk.Separator (Gtk.Orientation.VERTICAL);
+            enclosure_display = new Hemera.App.DisplayEnclosure (this);
+            var separator = new Gtk.Separator (Gtk.Orientation.VERTICAL);
 
-		    chatbox = new ChatView ();
+            chatbox = new ChatView ();
 
-		    main_grid = new Gtk.Grid ();
-		    main_grid.attach (enclosure_display, 0, 0, 1, 1);
-		    main_grid.attach (separator, 1, 0, 1, 1);
-		    main_grid.attach (chatbox, 2, 0, 1, 1);
-		    main_grid.valign = Gtk.Align.CENTER;
-		    
-		    welcome_screen = new InitSplash ();
+            main_grid = new Gtk.Grid ();
+            main_grid.attach (enclosure_display, 0, 0, 1, 1);
+            main_grid.attach (separator, 1, 0, 1, 1);
+            main_grid.attach (chatbox, 2, 0, 1, 1);
+            main_grid.valign = Gtk.Align.CENTER;
+
+            welcome_screen = new InitSplash ();
 
             main_stack = new Gtk.Stack ();
             main_stack.add_named (main_grid, "Interaction View");
             main_stack.add_named (welcome_screen, "Welcome View");
 
             main_stack.transition_type = Gtk.StackTransitionType.OVER_LEFT_RIGHT;
-		    this.add (main_stack);
-		    this.get_style_context ().add_class ("rounded");
-		    this.set_resizable (false);
-		    this.show_all ();
+            this.add (main_stack);
+            this.get_style_context ().add_class ("rounded");
+            this.set_resizable (false);
+            this.show_all ();
         }
         private void make_events () {
             enclosure_display.wake_button_clicked.connect (() => {

@@ -28,24 +28,24 @@ namespace Hemera.App {
             speech_text.margin = 16;
             speech_text.margin_top = 6;
             speech_text.margin_bottom = 6;
+
+            var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+            box.pack_start (speech_text);
+
             if (direction) {
                 speech_text.justify = Gtk.Justification.RIGHT;
-            }
-            else {
+                svg = new SVGData ("#ececec", "#7e8087");
+                box.get_style_context ().add_class ("speech_bubble_right");
+                halign = Gtk.Align.END;
+            } else {
                 speech_text.justify = Gtk.Justification.LEFT;
+                svg = new SVGData ("#e1edfb", "#0d52bf");
+                box.get_style_context ().add_class ("speech_bubble_left");
+                halign = Gtk.Align.START;
             }
             speech_text.max_width_chars = 30;
             speech_text.wrap = true;
             speech_text.wrap_mode = Pango.WrapMode.WORD_CHAR;
-            
-            var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            box.pack_start (speech_text);
-            if (direction) {
-                svg = new SVGData ("#ececec", "#7e8087");
-            }
-            else {
-                svg = new SVGData ("#e1edfb", "#0d52bf");
-            }
             var image = new Gtk.Image.from_pixbuf (svg.get_call_out_image (direction));
             image.margin_bottom = 4;
 
@@ -54,27 +54,18 @@ namespace Hemera.App {
                 image.valign = Gtk.Align.END;
                 attach (box, 0, 0, 1, 1);
                 attach (image, 1, 0, 1, 1);
-            }
-            else {
+            } else {
                 image.halign = Gtk.Align.START;
                 image.valign = Gtk.Align.END;
                 attach (image, 0, 0, 1, 1);
                 attach (box, 1, 0, 1, 1);
-            }
-            if (direction) {
-                box.get_style_context ().add_class ("speech_bubble_right");
-                halign = Gtk.Align.END;
-            }
-            else {
-                box.get_style_context ().add_class ("speech_bubble_left");
-                halign = Gtk.Align.START;
             }
             valign = Gtk.Align.START;
             margin_bottom = 8;
             show_all ();
             animate_bubble ();
         }
-        
+
         private void animate_bubble () {
             Timeout.add (0, () => {
                 get_style_context ().add_class ("speech_bubble_start_animate");

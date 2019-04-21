@@ -35,42 +35,42 @@ namespace Hemera.Core {
             }
             return index;
         }
-        private static int compute_distance (string s, string t) {
-            int n = s.length;
-            int m = t.length;
-            int[,] d = new int [n + 1, m + 1];
+        private static int compute_distance (string required_string, string query_string) {
+            int required_string_length = required_string.length;
+            int query_string_length = query_string.length;
+            /* For all i and j, distance[i,j] will hold the Levenshtein distance
+             * between the first i characters of required_string and the first
+             * j characters of query_string, note that distance has
+             * (required_string_length+1)*(query_string_length+1) values
+             */
+            int[,] distance = new int [required_string_length + 1, query_string_length + 1];
 
-            // Step 1
-            if (n == 0)
-            {
-                return m;
+            // Base case: empty strings
+            if (required_string_length == 0) {
+                return query_string_length;
             }
-            if (m == 0)
-            {
-                return n;
+            if (query_string_length == 0) {
+                return required_string_length;
             }
-            // Step 2
-            for (int i = 0; i <= n; d[i, 0] = i++);
+            // Source prefixes can be transformed into empty string by
+            // dropping all characters
+            for (int i = 0; i <= required_string_length; distance[i, 0] = i++);
 
-            for (int j = 0; j <= m; d[0, j] = j++);
+            // Target prefixes can be reached from empty source prefix
+            // by inserting every character
+            for (int j = 0; j <= query_string_length; distance[0, j] = j++);
 
-            // Step 3
-            for (int i = 1; i <= n; i++)
-            {
-                //Step 4
-                for (int j = 1; j <= m; j++)
-                {
-                    // Step 5
-                    int cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
+            for (int i = 1; i <= required_string_length; i++) {
+                for (int j = 1; j <= query_string_length; j++) {
+                    int cost = (query_string[j - 1] == required_string[i - 1]) ? 0 : 1;
 
-                    // Step 6
-                    d[i, j] = int.min(
-                        int.min(d[i - 1, j] + 1, d[i, j - 1] + 1),
-                        d[i - 1, j - 1] + cost);
+                    distance[i, j] = int.min(
+                        int.min(distance[i - 1, j] + 1,          // deletion
+                        distance[i, j - 1] + 1),                 // insertion
+                        distance[i - 1, j - 1] + cost);          // substitution
                 }
             }
-            // Step 7
-            return d[n, m];
+            return distance[required_string_length, query_string_length];
         }
     }
 }

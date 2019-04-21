@@ -22,7 +22,7 @@ namespace Hemera.App {
         public signal void user_attempt_reconnect ();
         public class InitSplash () {
             var welcome = new Granite.Widgets.Welcome ("Hemera", "Your own personal digital assistant");
-            welcome.append ("media-playback-start","Start Mycroft", "Mycroft is my soul and I need it to function");
+            welcome.append ("media-playback-start", "Start Mycroft", "Mycroft is my soul and I need it to function");
             welcome.append ("application-default-icon", "Setup Mycroft", "Mycroft not installed? Let me help you");
 
             welcome.activated.connect ((index) => {

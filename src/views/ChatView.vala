@@ -36,15 +36,13 @@ namespace Hemera.App {
         }
         private void make_ui () {
             chat_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-            //var bubble  = new SpeechBubble (true, "Who are you");
-            //var bubble2 = new SpeechBubble (false, "I am Hemera. Nice to meet you!");
-            //chat_box.pack_start (bubble);
-            //chat_box.pack_start (bubble2);
             chat_box.valign = Gtk.Align.START;
+
             scrollable = new Gtk.ScrolledWindow (null, null);
             scrollable.height_request = 196;
             scrollable.get_style_context ().add_class ("chat-window");
             scrollable.add (chat_box);
+
             utterance_entry = new Gtk.Entry ();
             utterance_entry.width_chars = 39;
             utterance_entry.max_width_chars = 39;
@@ -55,6 +53,7 @@ namespace Hemera.App {
             attach (scrollable, 0, 0, 1, 1);
             attach (suggest_area, 0, 1, 1, 1);
             attach (utterance_entry, 0, 2, 1, 1);
+
             margin_start = 15;
         }
         private void make_events () {
@@ -76,71 +75,51 @@ namespace Hemera.App {
         }
         public void push_user_text (string utterance) {
             if (utterance != "") {
-                if (number_of_messages < max_number_of_messages) {
-                    chat_box.pack_start (new SpeechBubble (true, utterance));
-                    number_of_messages++;
-                }
-                else {
+                if (number_of_messages >= max_number_of_messages) {
                     var bubble_list = chat_box.get_children ();
                     chat_box.remove (bubble_list.first ().nth_data (0));
-                    chat_box.pack_start (new SpeechBubble (true, utterance));
-                    number_of_messages++;
                 }
+                chat_box.pack_start (new SpeechBubble (true, utterance));
+                number_of_messages++;
             }
         }
         public void push_mycroft_text (string message) {
             if (message != "" && message != null && (received_bubble_text != message)) {
-                if (number_of_messages < max_number_of_messages) {
-                    chat_box.pack_start (new SpeechBubble (false, message));
-                    number_of_messages++;
-                }
-                else {
+                if (number_of_messages >= max_number_of_messages) {
                     var bubble_list = chat_box.get_children ();
                     chat_box.remove (bubble_list.first ().nth_data (0));
-                    chat_box.pack_start (new SpeechBubble (false, message));
-                    number_of_messages++;
                 }
+                chat_box.pack_start (new SpeechBubble (false, message));
+                number_of_messages++;
                 received_bubble_text = message;
             }
         }
         public void push_qna (string query, string answer, string skill, double? confidence = 0.5) {
             if (answer != "" && answer != null) {
-                if (number_of_messages < max_number_of_messages) {
-                    chat_box.pack_start (new QnABubble (query, answer, skill, confidence));
-                    number_of_messages++;
-                }
-                else {
+                if (number_of_messages >= max_number_of_messages) {
                     var bubble_list = chat_box.get_children ();
                     chat_box.remove (bubble_list.first ().nth_data (0));
-                    chat_box.pack_start (new QnABubble (query, answer, skill, confidence));
-                    number_of_messages++;
                 }
+                chat_box.pack_start (new QnABubble (query, answer, skill, confidence));
+                number_of_messages++;
                 received_bubble_text = answer;
             }
         }
         public void push_current_weather (string icon, string current_temp, string min_temp, string max_temp, string location, string condition, double humidity, double wind) {
-            if (number_of_messages < max_number_of_messages) {
-                chat_box.pack_start (new WeatherBubbleCurrent (icon, current_temp, min_temp, max_temp, location, condition, humidity, wind));
-                number_of_messages++;
-            }
-            else {
+            if (number_of_messages >= max_number_of_messages) {
                 var bubble_list = chat_box.get_children ();
                 chat_box.remove (bubble_list.first ().nth_data (0));
-                chat_box.pack_start (new WeatherBubbleCurrent (icon, current_temp, min_temp, max_temp, location, condition, humidity, wind));
-                number_of_messages++;
             }
+            chat_box.pack_start (new WeatherBubbleCurrent (icon, current_temp, min_temp, max_temp, location, condition, humidity, wind));
+            number_of_messages++;
         }
         public void push_app_launch (Hemera.Core.AppEntry app) {
-            if (number_of_messages < max_number_of_messages) {
-                chat_box.pack_start (new AppBubble (app));
-                number_of_messages++;
-            }
-            else {
+            if (number_of_messages >= max_number_of_messages) {
                 var bubble_list = chat_box.get_children ();
                 chat_box.remove (bubble_list.first ().nth_data (0));
-                chat_box.pack_start (new AppBubble (app));
-                number_of_messages++;
             }
+            chat_box.pack_start (new AppBubble (app));
+            number_of_messages++;
         }
     }
 }

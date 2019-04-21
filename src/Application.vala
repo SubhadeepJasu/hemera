@@ -63,7 +63,7 @@ namespace Hemera.App {
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
-            Timeout.add (100, () => {
+            Timeout.add (150, () => {
                     mycroft_connection.init_ws ();
                     return false;
             });
@@ -99,7 +99,7 @@ namespace Hemera.App {
             
             bool version = false, show_preferences = false;
             OptionEntry[] option = new OptionEntry[3];
-		    option[0] = { "version", 0, 0, OptionArg.NONE, ref version, "Display version number", null };
+            option[0] = { "version", 0, 0, OptionArg.NONE, ref version, "Display version number", null };
             option[1] = { "show-preferences", 0, 0, OptionArg.NONE, ref show_preferences, "Display Preferences Window", null };
             option[2] = { null };
             
@@ -123,7 +123,6 @@ namespace Hemera.App {
             else {
                 activate ();
             }
-            //mycroft_connection.init_ws ();
         }
         private void close_window () {
             if (mainwindow != null) {
@@ -135,7 +134,6 @@ namespace Hemera.App {
         public static int main (string[] args) {
             var app = new Hemera.App.HemeraApp ();
             var ret = app.run (args);
-            //app.mycroft_connection.init_ws ();
             return ret;
         }
     }

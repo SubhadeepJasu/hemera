@@ -49,10 +49,6 @@ namespace Hemera.App {
         public void animate_button () {
             Timeout.add (100, () => {
                 wake_button.get_style_context ().remove_class ("main_wake_button_pre_load");
-                //Timeout.add (500, () => {
-                //    window.app_reference.mycroft_connection.init_ws ();
-                //    return false;
-                //});
                 return false;
             });
         }

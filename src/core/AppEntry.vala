@@ -23,8 +23,8 @@ namespace Hemera.Core {
         public Icon   app_icon;
         public string app_name;
         public string app_exec;
-	    public string app_desc;
-	    public string desktop_file_name;
+        public string app_desc;
+        public string desktop_file_name;
         public GLib.AppInfo app_info;
         public DesktopAppInfo desktop_app_info;
         public bool options_available = false;
@@ -37,29 +37,29 @@ namespace Hemera.Core {
             app_name = this.app_info.get_display_name ();
             app_icon = this.app_info.get_icon ();
             if (app_icon == null) {
-			    app_icon = new ThemedIcon ("application-default-icon");
-		    }
-		    app_exec = this.app_info.get_commandline();
-	        app_desc = this.app_info.get_description () ?? app_name;
+                app_icon = new ThemedIcon ("application-default-icon");
+            }
+            app_exec = this.app_info.get_commandline();
+            app_desc = this.app_info.get_description () ?? app_name;
 
             app_action_name    = new List<string> ();
             app_action_command = new List<string> ();
 
-	        foreach (unowned string _action in desktop_app_info.list_actions()) {
+            foreach (unowned string _action in desktop_app_info.list_actions()) {
                 string action = _action.dup ();
                 app_action_name.append (desktop_app_info.get_action_name (action));
                 app_action_command.append (action);
             }
         }
         public void launch () {
-		    try {
+            try {
                 if(app_info != null) {
-			        app_info.launch(null, null);
+                    app_info.launch(null, null);
                 }
-		    }
-		    catch (Error e) {
-			    warning ("Failed to launch %s: %s", app_name, app_exec);
-		    }
-	    }
+            }
+            catch (Error e) {
+                warning ("Failed to launch %s: %s", app_name, app_exec);
+            }
+        }
     }
 }
