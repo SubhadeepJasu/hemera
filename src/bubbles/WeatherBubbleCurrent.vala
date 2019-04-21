@@ -47,59 +47,66 @@ namespace Hemera.App {
             condition_label.get_style_context ().add_class ("weather_h3");
             
             int card_number = 0;
-            if (icon == "01d") {
-                // Clear Day
-                condition_icon = new Gtk.Image.from_icon_name ("weather-clear-symbolic", Gtk.IconSize.DIALOG);
-                card_number = 1;
-            }
-            else if (icon == "01n") {
-                // Clear Night
-                condition_icon = new Gtk.Image.from_icon_name ("weather-clear-night-symbolic", Gtk.IconSize.DIALOG);
-                card_number = 2;
-            }
-            else if (icon == "03d" || icon == "03n") {
-                // Overcast
-                condition_icon = new Gtk.Image.from_icon_name ("weather-overcast-symbolic", Gtk.IconSize.DIALOG);
-                card_number = 3;
-            }
-            else if (icon == "04d") {
-                // Partly Cloudy Day
-                condition_icon = new Gtk.Image.from_icon_name ("weather-few-clouds-symbolic", Gtk.IconSize.DIALOG);
-                card_number = 4;
-            }
-            else if (icon == "04d") {
-                // Partly Cloudy Night
-                condition_icon = new Gtk.Image.from_icon_name ("weather-few-clouds-night-symbolic", Gtk.IconSize.DIALOG);
-                card_number = 5;
-            }
-            else if (icon == "09d" || icon == "09n") {
-                // Showers or Heavy Rain
-                condition_icon = new Gtk.Image.from_icon_name ("weather-showers-symbolic", Gtk.IconSize.DIALOG);
-                card_number = 6;
-            }
-            else if (icon == "10d" || icon == "10n") {
-                // Partly Rainy
-                condition_icon = new Gtk.Image.from_icon_name ("weather-showers-scattered-symbolic", Gtk.IconSize.DIALOG);
-                card_number = 7;
-            }
-            else if (icon == "11d" || icon == "11n") {
-                // Thunder Storm
-                condition_icon = new Gtk.Image.from_icon_name ("weather-storm-symbolic", Gtk.IconSize.DIALOG);
-                card_number = 8;
-            }
-            else if (icon == "13d" || icon == "13n") {
-                // Snowy
-                condition_icon = new Gtk.Image.from_icon_name ("weather-snow-symbolic", Gtk.IconSize.DIALOG);
-                card_number = 9;
-            }
-            else if (icon == "50d") {
-                // Foggy or Misty
-                condition_icon = new Gtk.Image.from_icon_name ("weather-fog-symbolic", Gtk.IconSize.DIALOG);
-                card_number = 10;
-            }
-            else {
+            switch (icon) {
+                case "01d":
+                    // Clear Day
+                    condition_icon = new Gtk.Image.from_icon_name ("weather-clear-symbolic", Gtk.IconSize.DIALOG);
+                    card_number = 1;
+                    break;
+                case "01n":
+                    // Clear Night
+                    condition_icon = new Gtk.Image.from_icon_name ("weather-clear-night-symbolic", Gtk.IconSize.DIALOG);
+                    card_number = 2;
+                    break;
+                case "03d":
+                case "03n":
+                    // Overcast
+                    condition_icon = new Gtk.Image.from_icon_name ("weather-overcast-symbolic", Gtk.IconSize.DIALOG);
+                    card_number = 3;
+                    break;
+                case "04d":
+                    // Partly Cloudy Day
+                    condition_icon = new Gtk.Image.from_icon_name ("weather-few-clouds-symbolic", Gtk.IconSize.DIALOG);
+                    card_number = 4;
+                    break;
+                case "04n":
+                    // Partly Cloudy Night
+                    condition_icon = new Gtk.Image.from_icon_name ("weather-few-clouds-night-symbolic", Gtk.IconSize.DIALOG);
+                    card_number = 5;
+                    break;
+                case "09d":
+                case "09n":
+                    // Showers or Heavy Rain
+                    condition_icon = new Gtk.Image.from_icon_name ("weather-showers-symbolic", Gtk.IconSize.DIALOG);
+                    card_number = 6;
+                    break;
+                case "10d":
+                case "10n":
+                    // Partly Rainy
+                    condition_icon = new Gtk.Image.from_icon_name ("weather-showers-scattered-symbolic", Gtk.IconSize.DIALOG);
+                    card_number = 7;
+                    break;
+                case "11d":
+                case "11n":
+                    // Thunder Storm
+                    condition_icon = new Gtk.Image.from_icon_name ("weather-storm-symbolic", Gtk.IconSize.DIALOG);
+                    card_number = 8;
+                    break;
+                case "13d":
+                case "13n":
+                    // Snowy
+                    condition_icon = new Gtk.Image.from_icon_name ("weather-snow-symbolic", Gtk.IconSize.DIALOG);
+                    card_number = 9;
+                    break;
+                case "50d":
+                    // Foggy or Misty
+                    condition_icon = new Gtk.Image.from_icon_name ("weather-fog-symbolic", Gtk.IconSize.DIALOG);
+                    card_number = 10;
+                    break;
+                default:
                 // Unknown or Possibly Bad Condition
                 condition_icon = new Gtk.Image.from_icon_name ("weather-severe-alert-symbolic", Gtk.IconSize.DIALOG);
+                break;
             }
             try {
                 var provider = new Gtk.CssProvider ();
@@ -232,17 +239,17 @@ namespace Hemera.App {
             }
         }
         private static string get_proper_weather_condition (string cond) {
-            if (cond == "clear") {
-                return "Clear";
-            }
-            else if (cond == "light rain") {
-                return "Light Rain";
-            }
-            else if (cond == "broken clouds") {
-                return "Broken Clouds";
-            }
-            else {
-                return cond;
+            switch (cond) {
+                case "clear":
+                    return "Clear";
+                case "light rain":
+                    return "Light Rain";
+                case "broken clouds":
+                    return "Partly Cloudy";
+                case "heavy intensity rain":
+                    return "Heavy Rain";
+                default:
+                    return cond;
             }
         }
         private static string one_line (string str) {
