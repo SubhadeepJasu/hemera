@@ -104,9 +104,9 @@ namespace Hemera.App {
                     card_number = 10;
                     break;
                 default:
-                // Unknown or Possibly Bad Condition
-                condition_icon = new Gtk.Image.from_icon_name ("weather-severe-alert-symbolic", Gtk.IconSize.DIALOG);
-                break;
+                    // Unknown or Possibly Bad Condition
+                    condition_icon = new Gtk.Image.from_icon_name ("weather-severe-alert-symbolic", Gtk.IconSize.DIALOG);
+                    break;
             }
             try {
                 var provider = new Gtk.CssProvider ();
