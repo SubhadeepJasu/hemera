@@ -14,21 +14,23 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Authored by: Subhadeep Jasu <subhajasu@gmail.com>
+ * Authored by: Subhadeep Jasu
  */
+using GLib;
 
-namespace Hemera.App {
-    public class PreferencesWindow : Gtk.Dialog {
-        private const int MIN_WIDTH = 450;
-        private const int MIN_HEIGHT = 400;
-        public PreferencesWindow () {
-
-            // Window properties
-            title = _("Preferences");
-            set_size_request (MIN_WIDTH, MIN_HEIGHT);
-            resizable = false;
-            window_position = Gtk.WindowPosition.CENTER;
-
+namespace Hemera.Core {
+    public class AppDiscovery {
+        public static AppInfo[] discover_apps () {
+            List <AppInfo?> infos = AppInfo.get_all();
+            AppInfo[] app_infos = new AppInfo[0];
+            int i = 0;
+            infos.foreach ((app_item) => {
+                if (app_item.should_show()) {
+                    app_infos.resize (app_infos.length + 1);
+                    app_infos[i++] = app_item;
+                }
+            });
+            return app_infos;
         }
     }
 }

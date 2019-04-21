@@ -1,6 +1,6 @@
 /*-
  * Copyright (c) 2018-2019 Subhadeep Jasu <subhajasu@gmail.com>
- * Copyright (c) 2018-2019 Hannes Schulze
+ * Copyright (c) 2018-2019 Hannes Schulze <haschu0103@gmail.com>
  * Copyright (c) 2018-2019 Christopher M
  *
  * This program is free software; you can redistribute it and/or
@@ -38,19 +38,17 @@ namespace Hemera.App {
             height_request= 200;
             halign = Gtk.Align.CENTER;
             valign = Gtk.Align.CENTER;
-            margin_top = 10;
-            margin_bottom = 20;
-            animate_button ();
+            margin_top = 0;
+            margin_bottom = 0;
         }
         private void make_events () {
             wake_button.clicked.connect (() => {
                 this.clicked ();
             });
         }
-        private void animate_button () {
+        public void animate_button () {
             Timeout.add (100, () => {
                 wake_button.get_style_context ().remove_class ("main_wake_button_pre_load");
-                window.app_reference.mycroft_connection.init_ws ();
                 return false;
             });
         }

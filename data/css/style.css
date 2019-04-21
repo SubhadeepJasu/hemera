@@ -15,6 +15,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Authored by: Subhadeep Jasu
  */
 
 .main_wake_button {
@@ -48,4 +50,162 @@
 	opacity: 0;
 	margin: 0px;
 	transition:all 0.0s ease-out;
+}
+
+.rounded_button {
+    margin: 0px;
+    border-radius: 50px;
+}
+
+.chat-window undershoot.top {
+	background:
+        linear-gradient(
+            to top,
+            alpha(@bg_color, 0) 70%,
+            alpha(@bg_color, 1) 100%
+	);
+}
+
+.chat-window undershoot.bottom {
+	background:
+        linear-gradient(
+            to bottom,
+            alpha(@bg_color, 0) 70%,
+            alpha(@bg_color, 1) 100%
+	);
+}
+
+.suggest_box_red {
+	border-radius: 2px;
+	background-color: alpha (#c6262e, 0.1);
+	color: alpha (#a10705, 0.7);
+}
+.suggest_box_purple {
+	border-radius: 2px;
+	background-color: alpha (#7239b3, 0.1);
+	color: alpha (#452981, 0.7);
+}
+.suggest_box_blue {
+	border-radius: 2px;
+	background-color: alpha (#3689e6, 0.1);
+	color: alpha (#0d52bf, 0.7);
+}
+.suggest_box_yellow {
+	border-radius: 2px;
+	background-color: alpha (#f9c440, 0.1);
+	color: alpha (#d48e15, 0.7);
+}
+.suggest_box_orange {
+	border-radius: 2px;
+	background-color: alpha (#f37329, 0.1);
+	color: alpha (#cc3b02, 0.7);
+}
+.suggest_box_green {
+	border-radius: 2px;
+	background-color: alpha (#68b723, 0.1);
+	color: alpha (#3a9104, 0.7);
+}
+.speech_bubble_start_animate {
+	animation: pop_up 500ms;
+}
+@keyframes pop_up {
+	0% {opacity: 0; padding-bottom: 0px; padding-top: 0px; margin-top: 5px}
+	50% {padding-bottom: 10px; padding-top: 10px; margin-top: 5px; opacity: 0.5}
+	90% {padding-bottom: 0px; padding-top: 0px;margin-top: 0; opacity: 0.9}
+	100%{padding-bottom: 0px; padding-top: 0px;margin-top: 0; opacity: 1}
+}
+.speech_bubble_right {
+	background-color: #ececec;
+	border: 1px solid #aeaeae;
+	border-radius: 4px;
+	color: #555761;
+}
+.speech_bubble_left {
+	background-color: #e1edfb;
+	border: 1px solid #729ac4;
+	border-radius: 4px;
+	color: #0d52bf;
+}
+.qna_bubble {
+	background-color: #fafafa;
+	border: 1px solid #abacae;
+	border-radius: 4px;
+	color: #333333;
+}
+.qna_launch_button {
+	border-radius: 0px 0px 4px 4px;
+	border: none;
+	border-top: 1px solid @border_color;
+	background-image: none;
+	box-shadow:none;
+}
+.weather_bubble {
+	background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+	border-radius: 4px;
+	color: #fafafa;
+}
+.weather_h1 {
+	font-size: 30px;
+}
+.weather_h3 {
+	font-size: 12px;
+	font-weight: bold;
+}
+.weather_h4 {
+	font-size: 10px;
+	color: alpha (#fff, 0.5);
+}
+.reveal_button_dark {
+	border-radius: 0px 0px 4px 4px;
+	border: none;
+	border-top: 1px solid @border_color;
+	background-color: alpha (#000, 0.2);
+	box-shadow:none;
+	color: alpha (#fff, 0.8);
+	-gtk-icon-shadow: none;
+}
+.reveal_button_dark:active {
+	border-radius: 0px 0px 4px 4px;
+	border: none;
+	border-top: 1px solid @border_color;
+	background-image: linear-gradient(to right, alpha (#000, 0), alpha (#fff, 0.1), alpha (#000, 0.1));
+	box-shadow:none;
+	color: alpha (#fff, 0.8);
+	-gtk-icon-shadow: none;
+}
+.app_bubble {
+	background-color: #fafafa;
+	border: 1px solid #b2b3b5;
+	border-radius: 4px;
+	color: #333333;
+}
+.h4 {
+
+	padding: 0px;
+	margin: 0px;
+}
+.h2 {
+	padding: 0px;
+	margin: 0px;
+}
+.app_bubble_h4 {
+	font-size: 11px;
+	color: alpha (#000, 0.5);
+}
+.reveal_button_light {
+	border-radius: 0px 0px 4px 4px;
+	border: none;
+	border-top: 1px solid @border_color;
+	background-image: none;
+	box-shadow:none;
+}
+.app_bubble_button {
+	border-radius: 0;
+	border: none;
+	border-top: 1px solid @border_color;
+	background-image: none;
+	box-shadow:none;
+	color: #4d4d4d;
 }

@@ -1,7 +1,6 @@
 /*-
  * Copyright (c) 2018-2019 Subhadeep Jasu <subhajasu@gmail.com>
- * Copyright (c) 2018-2019 Hannes Schulze
- * Copyright (c) 2018-2019 Christopher M
+ * Copyright (c) 2018-2019 Hannes Schulze <haschu0103@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -16,7 +15,7 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Authored by: Subhadeep Jasu <subhajasu@gmail.com>
+ * Authored by: Subhadeep Jasu
  *              Hannes Schulze
  */
 
@@ -34,6 +33,7 @@ namespace Hemera.App {
         private string version_string = "";
         public Hemera.Services.Connection mycroft_connection;
         public Hemera.Services.MessageManager mycroft_message_manager;
+        public Hemera.Core.AppSearch app_search_provider;
 
         public HemeraApp () {
             Object (
@@ -63,7 +63,29 @@ namespace Hemera.App {
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
-            mainwindow.present ();
+            Timeout.add (150, () => {
+                    mycroft_connection.init_ws ();
+                    return false;
+            });
+            mycroft_connection.connection_established.connect (() => {
+                Timeout.add (100, () => {
+                    mainwindow.present ();
+                    mainwindow.set_launch_screen (1);
+                    return false;
+                });
+            });
+            mycroft_connection.connection_failed.connect (() => {
+                mainwindow.present ();
+                mainwindow.set_launch_screen (0);
+            });
+            app_search_provider = new Hemera.Core.AppSearch ();
+            mycroft_message_manager.receive_hemera_launch_app.connect ((query) => {
+                Hemera.Core.AppEntry launchable_app = app_search_provider.get_app_by_search (query);
+                launchable_app.launch ();
+                if (mainwindow != null) {
+                    mainwindow.chat_launch_app (launchable_app);
+                }
+            });
         }
 
         public override int command_line (ApplicationCommandLine cmd) {
@@ -77,7 +99,7 @@ namespace Hemera.App {
             
             bool version = false, show_preferences = false;
             OptionEntry[] option = new OptionEntry[3];
-		    option[0] = { "version", 0, 0, OptionArg.NONE, ref version, "Display version number", null };
+            option[0] = { "version", 0, 0, OptionArg.NONE, ref version, "Display version number", null };
             option[1] = { "show-preferences", 0, 0, OptionArg.NONE, ref show_preferences, "Display Preferences Window", null };
             option[2] = { null };
             
@@ -101,7 +123,6 @@ namespace Hemera.App {
             else {
                 activate ();
             }
-            //mycroft_connection.init_ws ();
         }
         private void close_window () {
             if (mainwindow != null) {
@@ -113,7 +134,6 @@ namespace Hemera.App {
         public static int main (string[] args) {
             var app = new Hemera.App.HemeraApp ();
             var ret = app.run (args);
-            app.mycroft_connection.init_ws ();
             return ret;
         }
     }
