@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Authored by: Subhadeep Jasu
@@ -28,7 +28,7 @@ namespace Hemera.App {
         Gtk.Label min_max_temp_label;
         Gtk.Label wind_label;
         Gtk.Label location_label;
-        
+
         private SVGData svg;
 
         public WeatherBubbleCurrent (string icon, string current_temp, string min_temp, string max_temp, string location, string condition, double humidity, double wind) {
@@ -45,7 +45,7 @@ namespace Hemera.App {
             condition_label.margin_end = 16;
             condition_label.xalign = 0;
             condition_label.get_style_context ().add_class ("weather_h3");
-            
+
             int card_number = 0;
             switch (icon) {
                 case "01d":
@@ -108,17 +108,22 @@ namespace Hemera.App {
                     condition_icon = new Gtk.Image.from_icon_name ("weather-severe-alert-symbolic", Gtk.IconSize.DIALOG);
                     break;
             }
+
+
+            string weather_color;
+            string weather_card = get_weather_card (card_number, out weather_color);
+
             try {
                 var provider = new Gtk.CssProvider ();
                 string provider_data = (".weather_bubble {background-image: url(\"resource://com/github/SubhadeepJasu/hemera/images/weather/%s_card.png\");
-                border: 1px solid %s;}").printf (get_weather_card(card_number), get_weather_color (card_number));
+                border: 1px solid %s;}").printf (weather_card, weather_color);
                 provider.load_from_data (provider_data);
                 Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
             }
             catch (Error e) {
                 error (e.message);
             }
-            
+
             condition_icon.valign = Gtk.Align.START;
             condition_icon.margin_top = 6;
             condition_icon.margin_end = 16;
@@ -129,26 +134,26 @@ namespace Hemera.App {
             wind_label = new Gtk.Label (("Wind: %.0lf").printf (wind));
             wind_label.halign = Gtk.Align.START;
             wind_label.get_style_context ().add_class ("weather_h3");
-            
+
             location_label = new Gtk.Label (one_line (location));
             location_label.halign = Gtk.Align.START;
             location_label.get_style_context ().add_class ("weather_h4");
-            
+
             var reveal_button = new Gtk.Button.from_icon_name ("view-more-horizontal-symbolic", Gtk.IconSize.BUTTON);
             reveal_button.get_style_context ().add_class ("reveal_button_dark");
             reveal_button.margin_top = 8;
-            
+
             var weather_grid = new Gtk.Grid ();
             weather_grid.attach (current_temp_label, 0, 0, 1, 1);
             weather_grid.attach (condition_icon, 1, 0, 1, 2);
             weather_grid.attach (condition_label, 0, 1, 1, 1);
-            
+
             var extra_grid = new Gtk.Grid ();
-            
+
             extra_grid.attach (min_max_temp_label, 0, 0, 1, 1);
             extra_grid.attach (wind_label, 0, 1, 1, 1);
             extra_grid.attach (location_label, 0, 2, 1, 1);
-            
+
             var revealer = new Gtk.Revealer ();
             revealer.margin_start = 16;
             revealer.margin_end = 16;
@@ -163,13 +168,13 @@ namespace Hemera.App {
                 }
             });
             revealer.set_transition_type (Gtk.RevealerTransitionType.SLIDE_DOWN);
-            
-            
+
+
             var box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
             box.pack_start (weather_grid);
             box.pack_end (reveal_button);
-            
-            svg = new SVGData (get_weather_color (card_number), get_weather_color (card_number));
+
+            svg = new SVGData (weather_color, weather_color);
             var image = new Gtk.Image.from_pixbuf (svg.get_call_out_image (false));
             image.margin_bottom = 4;
             image.halign = Gtk.Align.START;
@@ -186,56 +191,41 @@ namespace Hemera.App {
                 queue_draw ();
             });
         }
-        private static string get_weather_card (int card_number) {
+        private static string get_weather_card (int card_number, out string color) {
             switch (card_number) {
                 case 1:
+                    color = "#204879";
                     return "clear_day";
                 case 2:
+                    color = "#010101";
                     return "clear_night";
                 case 3:
+                    color = "#413f48";
                     return "overcast";
                 case 4:
+                    color = "#134451";
                     return "cloudy_day";
                 case 5:
+                    color = "#0b1320";
                     return "cloudy_night";
                 case 6:
+                    color = "#021019";
                     return "heavy_rain";
                 case 7:
+                    color = "#1c393c";
                     return "light_rain";
                 case 8:
+                    color = "#1e1e1e";
                     return "t_storm";
                 case 9:
+                    color = "#0c1011";
                     return "snowy";
                 case 10:
+                    color = "#364462";
                     return "foggy";
                 default:
+                    color = "#cb9800";
                     return "unknown";
-            }
-        }
-        private static string get_weather_color (int card_number) {
-            switch (card_number) {
-                case 1:
-                    return "#204879";
-                case 2:
-                    return "#010101";
-                case 3:
-                    return "#413f48";
-                case 4:
-                    return "#134451";
-                case 5:
-                    return "#0b1320";
-                case 6:
-                    return "#021019";
-                case 7:
-                    return "#1c393c";
-                case 8:
-                    return "#1e1e1e";
-                case 9:
-                    return "#0c1011";
-                case 10:
-                    return "#364462";
-                default:
-                    return "#cb9800";
             }
         }
         private static string get_proper_weather_condition (string cond) {
