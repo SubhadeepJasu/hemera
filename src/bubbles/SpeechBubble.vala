@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Authored by: Subhadeep Jasu
@@ -49,16 +49,20 @@ namespace Hemera.App {
             var image = new Gtk.Image.from_pixbuf (svg.get_call_out_image (direction));
             image.margin_bottom = 4;
 
+            var empty_space_overlay =
+                new EmptySpaceOverlay (direction ? "#ececec" : "#e1edfb", direction);
+            empty_space_overlay.add (box);
+
             if (direction) {
                 image.halign = Gtk.Align.END;
                 image.valign = Gtk.Align.END;
-                attach (box, 0, 0, 1, 1);
+                attach (empty_space_overlay, 0, 0, 1, 1);
                 attach (image, 1, 0, 1, 1);
             } else {
                 image.halign = Gtk.Align.START;
                 image.valign = Gtk.Align.END;
                 attach (image, 0, 0, 1, 1);
-                attach (box, 1, 0, 1, 1);
+                attach (empty_space_overlay, 1, 0, 1, 1);
             }
             valign = Gtk.Align.START;
             margin_bottom = 8;

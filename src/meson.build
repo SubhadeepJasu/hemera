@@ -17,6 +17,7 @@ hemera_sources = files(
   'views/MainDynamicButton.vala',
   'views/SuggestionBox.vala',
   'views/SuggestionArea.vala',
+  'bubbles/EmptySpaceOverlay.vala',
   'bubbles/SVGData.vala',
   'bubbles/SpeechBubble.vala',
   'bubbles/QnABubble.vala',
