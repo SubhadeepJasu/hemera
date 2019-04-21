@@ -5,11 +5,24 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg3508"
    height="16"
    width="16"
-   version="1.1">
+   version="1.1"
+   sodipodi:docname="right.svg">
+  <defs
+     id="defs11" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     id="namedview9"
+     showgrid="false" />
   <metadata
      id="metadata3513">
     <rdf:RDF>
@@ -18,19 +31,20 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      id="g815">
     <path
-       id="path833"
-       d="M 0.49823025,0.79978025 V 15.449769"
-       style="fill:none;stroke:%s;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       d="M-1 5C1.01926 7.45701 3.73493 8.76386 7.5 9.49765C5.33528 11.2567 2.7967 11.8098 -1 11.5V5Z"
+       fill="%s"
+       id="path5" />
     <path
-       id="path880"
-       d="M 0.5075453,0.79978025 C 0.89363775,9.4623042 14.821158,9.6828091 14.821158,9.6828091 c 0,0 -3.123468,3.1326539 -6.933412,4.5254399 -3.3580848,1.227601 -7.3802007,1.24152 -7.3802007,1.24152"
-       style="fill:%s;fill-opacity:1;stroke:%s;stroke-width:1.00269759;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:0.94117647;paint-order:normal" />
+       d="M-0.5 0V5.0888C1.51926 7.54581 3.73493 8.76385 7.5 9.49765C5.33528 11.2567 3.2967 11.9695 -0.5 11.6597V16"
+       stroke="%s"
+       id="path7"
+       style="fill:none" />
   </g>
 </svg>
