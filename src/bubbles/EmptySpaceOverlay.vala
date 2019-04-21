@@ -24,10 +24,10 @@ namespace Hemera.App {
             public string background { get; set; }
 
             public OverlayWidget (string background, bool direction) {
-                set_size_request (2, 16);
+                set_size_request (2, 5);
                 this.background = background;
                 notify.connect (() => { queue_draw (); });
-                margin_bottom = 4;
+                margin_bottom = 9;
 
                 if (direction) {
                     halign = Gtk.Align.END;
@@ -44,8 +44,8 @@ namespace Hemera.App {
             }
 
             public override void get_preferred_height (out int min_h, out int natural_h) {
-                min_h = 16;
-                natural_h = 16;
+                min_h = 5;
+                natural_h = 5;
             }
 
             public override bool draw (Cairo.Context cr) {
@@ -59,7 +59,7 @@ namespace Hemera.App {
                 double blue = (double) parsed_color.blue / (double) uint16.MAX;
 
                 cr.set_source_rgb (red, green, blue);
-                cr.rectangle (0, 0, 2, 16);
+                cr.rectangle (0, 0, 2, 5);
                 cr.fill ();
 
                 cr.restore ();

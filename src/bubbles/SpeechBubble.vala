@@ -34,12 +34,12 @@ namespace Hemera.App {
 
             if (direction) {
                 speech_text.justify = Gtk.Justification.RIGHT;
-                svg = new SVGData ("#ececec", "#7e8087");
+                svg = new SVGData ("#ececec", "#aeaeae");
                 box.get_style_context ().add_class ("speech_bubble_right");
                 halign = Gtk.Align.END;
             } else {
                 speech_text.justify = Gtk.Justification.LEFT;
-                svg = new SVGData ("#e1edfb", "#0d52bf");
+                svg = new SVGData ("#e1edfb", "#729ac4");
                 box.get_style_context ().add_class ("speech_bubble_left");
                 halign = Gtk.Align.START;
             }
