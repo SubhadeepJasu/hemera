@@ -35,10 +35,14 @@ namespace Hemera.App {
             current_temp_label = new Gtk.Label (("%s°").printf (current_temp));
             current_temp_label.get_style_context ().add_class ("weather_h1");
             current_temp_label.halign = Gtk.Align.START;
+            current_temp_label.margin_top = 6;
+            current_temp_label.margin_start = 16;
             string cond = ("%s, %s° ~ %s°").printf (get_proper_weather_condition(condition), min_temp, max_temp);
             condition_label = new Gtk.Label (cond);
             condition_label.width_chars = 14;
             condition_label.halign = Gtk.Align.START;
+            condition_label.margin_start = 16;
+            condition_label.margin_end = 16;
             condition_label.xalign = 0;
             condition_label.get_style_context ().add_class ("weather_h3");
             
@@ -109,6 +113,8 @@ namespace Hemera.App {
             }
             
             condition_icon.valign = Gtk.Align.START;
+            condition_icon.margin_top = 6;
+            condition_icon.margin_end = 16;
             string humid = ("Humidity: %s%%").printf(humidity.to_string ());
             min_max_temp_label = new Gtk.Label (humid);
             min_max_temp_label.halign = Gtk.Align.START;
@@ -122,6 +128,8 @@ namespace Hemera.App {
             location_label.get_style_context ().add_class ("weather_h4");
             
             var reveal_button = new Gtk.Button.from_icon_name ("view-more-horizontal-symbolic", Gtk.IconSize.BUTTON);
+            reveal_button.get_style_context ().add_class ("reveal_button_dark");
+            reveal_button.margin_top = 8;
             
             var weather_grid = new Gtk.Grid ();
             weather_grid.attach (current_temp_label, 0, 0, 1, 1);
@@ -135,6 +143,8 @@ namespace Hemera.App {
             extra_grid.attach (location_label, 0, 2, 1, 1);
             
             var revealer = new Gtk.Revealer ();
+            revealer.margin_start = 16;
+            revealer.margin_end = 16;
             revealer.add (extra_grid);
             weather_grid.attach (revealer, 0, 2, 2, 1);
             reveal_button.clicked.connect (() => {
@@ -164,7 +174,7 @@ namespace Hemera.App {
             valign = Gtk.Align.START;
             margin_bottom = 8;
             show_all ();
-            
+            animate_bubble ();
             size_allocate.connect (() => {
                 queue_draw ();
             });
@@ -198,32 +208,35 @@ namespace Hemera.App {
         private static string get_weather_color (int card_number) {
             switch (card_number) {
                 case 1:
-                    return "#295c9a";
+                    return "#204879";
                 case 2:
-                    return "#181517";
+                    return "#010101";
                 case 3:
-                    return "#53505c";
+                    return "#413f48";
                 case 4:
-                    return "#195767";
+                    return "#134451";
                 case 5:
-                    return "#0f1829";
+                    return "#0b1320";
                 case 6:
-                    return "#031520";
+                    return "#021019";
                 case 7:
-                    return "#24484c";
+                    return "#1c393c";
                 case 8:
-                    return "#262626";
+                    return "#1e1e1e";
                 case 9:
-                    return "#16191b";
+                    return "#0c1011";
                 case 10:
-                    return "#44567b";
+                    return "#364462";
                 default:
-                    return "#fabc00";
+                    return "#cb9800";
             }
         }
         private static string get_proper_weather_condition (string cond) {
             if (cond == "clear") {
                 return "Clear";
+            }
+            else if (cond == "light rain") {
+                return "Light Rain";
             }
             else if (cond == "broken clouds") {
                 return "Broken Clouds";
@@ -234,6 +247,12 @@ namespace Hemera.App {
         }
         private static string one_line (string str) {
             return str.replace ("\n", ", ");
+        }
+        private void animate_bubble () {
+            Timeout.add (0, () => {
+                get_style_context ().add_class ("speech_bubble_start_animate");
+                return false;
+            });
         }
     }
 }

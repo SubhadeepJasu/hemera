@@ -144,7 +144,6 @@
     background-size: cover;
     background-position: center center;
 	border-radius: 4px;
-	padding: 8px;
 	color: #fafafa;
 }
 .weather_h1 {
@@ -158,9 +157,55 @@
 	font-size: 10px;
 	color: alpha (#fff, 0.5);
 }
+.reveal_button_dark {
+	border-radius: 0px 0px 4px 4px;
+	border: none;
+	border-top: 1px solid @border_color;
+	background-color: alpha (#000, 0.2);
+	box-shadow:none;
+	color: alpha (#fff, 0.8);
+	-gtk-icon-shadow: none;
+}
+.reveal_button_dark:active {
+	border-radius: 0px 0px 4px 4px;
+	border: none;
+	border-top: 1px solid @border_color;
+	background-image: linear-gradient(to right, alpha (#000, 0), alpha (#fff, 0.1), alpha (#000, 0.1));
+	box-shadow:none;
+	color: alpha (#fff, 0.8);
+	-gtk-icon-shadow: none;
+}
 .app_bubble {
 	background-color: #fafafa;
 	border: 1px solid #b2b3b5;
 	border-radius: 4px;
 	color: #333333;
+}
+.h4 {
+
+	padding: 0px;
+	margin: 0px;
+}
+.h2 {
+	padding: 0px;
+	margin: 0px;
+}
+.app_bubble_h4 {
+	font-size: 11px;
+	color: alpha (#000, 0.5);
+}
+.reveal_button_light {
+	border-radius: 0px 0px 4px 4px;
+	border: none;
+	border-top: 1px solid @border_color;
+	background-image: none;
+	box-shadow:none;
+}
+.app_bubble_button {
+	border-radius: 0;
+	border: none;
+	border-top: 1px solid @border_color;
+	background-image: none;
+	box-shadow:none;
+	color: #4d4d4d;
 }
