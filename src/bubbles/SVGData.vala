@@ -47,7 +47,7 @@ namespace Hemera.App {
             uint8[] resource_out;
             File file = File.new_for_uri ("resource:/" + resource_path);
             file.load_contents (null, out resource_out, null);
-            return ((string) resource_out).printf (background, background, edge);
+            return ((string) resource_out).printf (background, edge);
         }
     }
 }

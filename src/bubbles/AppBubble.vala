@@ -12,10 +12,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Authored by: Subhadeep Jasu
+ *              Hannes Schulze
  */
 
 namespace Hemera.App {
@@ -106,8 +107,11 @@ namespace Hemera.App {
             box.attach (revealer,       	 0, 2, 2, 1);
             box.attach (reveal_button,       0, 3, 2, 1);
 
+            var empty_space_overlay = new EmptySpaceOverlay ("#fafafa", false);
+            empty_space_overlay.add (box);
+
             attach (svg_image, 0, 0, 1, 1);
-            attach (box, 1, 0, 1, 1);
+            attach (empty_space_overlay, 1, 0, 1, 1);
 
             halign = Gtk.Align.START;
             valign = Gtk.Align.START;

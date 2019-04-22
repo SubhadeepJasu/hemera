@@ -13,10 +13,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Authored by: Subhadeep Jasu
+ *              Hannes Schulze
  */
 
 namespace Hemera.App {
@@ -34,7 +35,7 @@ namespace Hemera.App {
             speech_text.wrap_mode = Pango.WrapMode.WORD_CHAR;
             var box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
             box.pack_start (speech_text);
-            
+
             var launch_button = new Gtk.Button.from_icon_name ("internet-web-browser", Gtk.IconSize.LARGE_TOOLBAR);
             launch_button.get_style_context ().add_class ("qna_launch_button");
             box.pack_end (launch_button);
@@ -44,15 +45,17 @@ namespace Hemera.App {
             image.margin_bottom = 4;
             image.halign = Gtk.Align.START;
             image.valign = Gtk.Align.END;
+            var empty_space_overlay = new EmptySpaceOverlay ("#fafafa", false);
+            empty_space_overlay.add (box);
             attach (image, 0, 0, 1, 1);
-            attach (box, 1, 0, 1, 1);
+            attach (empty_space_overlay, 1, 0, 1, 1);
             box.get_style_context ().add_class ("qna_bubble");
             halign = Gtk.Align.START;
             valign = Gtk.Align.START;
             margin_bottom = 8;
             show_all ();
-            
-            
+
+
             if (skill_id == "fallback-wolfram-alpha.mycroftai") {
                 launch_button.clicked.connect (() => {
                     var qry = query.replace ("%", "%25");
