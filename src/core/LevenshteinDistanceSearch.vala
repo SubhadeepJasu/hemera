@@ -24,7 +24,7 @@ namespace Hemera.Core {
             int min = 1000;
             int index = 0;
             for (int i = 0; i < list_of_apps.length; i++) {
-                int distance = compute_distance (list_of_apps [i].app_name, query);
+                int distance = compute_distance (simplify(list_of_apps [i].app_name), simplify(query));
                 if (distance < min) {
                     min = distance;
                     index = i;
@@ -71,6 +71,13 @@ namespace Hemera.Core {
                 }
             }
             return distance[required_string_length, query_string_length];
+        }
+        private static string simplify (string given_string) {
+            string output_string = given_string.replace (" ", "");
+            output_string = output_string.replace ("-", "");
+            output_string = output_string.replace (".", "");
+            output_string = output_string.replace (",", "");
+            return output_string.down ();
         }
     }
 }
