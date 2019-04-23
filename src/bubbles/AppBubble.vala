@@ -33,15 +33,16 @@ namespace Hemera.App {
 
         public AppBubble (Hemera.Core.AppEntry app_data) {
             app_name_label = new Gtk.Label (app_data.app_name);
-            app_name_label.get_style_context ().add_class ("h2");
+            app_name_label.set_lines (1);
+            app_name_label.set_ellipsize (Pango.EllipsizeMode.END);
+            app_name_label.max_width_chars = 10;
             app_name_label.justify = Gtk.Justification.LEFT;
             app_name_label.xalign = 0;
             app_name_label.margin_end = 16;
-            app_name_label.set_lines (1);
-            app_name_label.set_ellipsize (Pango.EllipsizeMode.END);
             app_name_label.set_hexpand (true);
             app_name_label.halign = Gtk.Align.START;
             app_name_label.valign = Gtk.Align.END;
+            app_name_label.get_style_context ().add_class ("h2");
 
             var app_launching_label = new Gtk.Label ("Opening");
             app_launching_label.halign = Gtk.Align.START;

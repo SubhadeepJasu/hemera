@@ -19,6 +19,11 @@
 using GLib;
 
 namespace Hemera.Core {
+    public errordomain SEARCH_ERROR {
+        NO_SEARCH_RESULTS,
+        SAME_APP
+    }
+
     public class AppSearch {
         AppEntry[] apps;
         AppInfo[]  app_info;
@@ -40,10 +45,13 @@ namespace Hemera.Core {
             list_populated ();
             return 0;
         }
-        public AppEntry get_app_by_search (string query) {
+        public AppEntry get_app_by_search (string query) throws SEARCH_ERROR.NO_SEARCH_RESULTS, SEARCH_ERROR.SAME_APP {
             int search_index = LevenshteinDistanceSearch.search (apps, query);
             if (search_index == -1) {
-                return null;
+                throw new SEARCH_ERROR.NO_SEARCH_RESULTS ("Sorry, I couldn't find the app");
+            }
+            if (apps[search_index].app_name == "Hemera") {
+                throw new SEARCH_ERROR.SAME_APP ("Hey, that's me!");
             }
             return apps [search_index];
         }

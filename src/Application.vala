@@ -78,14 +78,7 @@ namespace Hemera.App {
                 mainwindow.present ();
                 mainwindow.set_launch_screen (0);
             });
-            app_search_provider = new Hemera.Core.AppSearch ();
-            mycroft_message_manager.receive_hemera_launch_app.connect ((query) => {
-                Hemera.Core.AppEntry launchable_app = app_search_provider.get_app_by_search (query);
-                launchable_app.launch ();
-                if (mainwindow != null) {
-                    mainwindow.chat_launch_app (launchable_app);
-                }
-            });
+            handle_application_launch_system ();
         }
 
         public override int command_line (ApplicationCommandLine cmd) {
@@ -123,6 +116,42 @@ namespace Hemera.App {
             else {
                 activate ();
             }
+        }
+        private void handle_application_launch_system () {
+            app_search_provider = new Hemera.Core.AppSearch ();
+            mycroft_message_manager.receive_hemera_launch_app.connect ((query) => {
+                try {
+                    Hemera.Core.AppEntry launchable_app = app_search_provider.get_app_by_search (query);
+                    launchable_app.launch ();
+                    if (mainwindow != null) {
+                        mainwindow.chat_launch_app (launchable_app);
+                        Rand randomizer = new Rand ();
+                        int random = randomizer.int_range (1, 4);
+                        string open_word = "";
+                        switch (random) {
+                            case 1:
+                                open_word = ("Opening %s").printf (launchable_app.app_name);
+                                break;
+                            case 2:
+                                open_word = ("Alright, opening %s").printf (launchable_app.app_name);
+                                break;
+                            case 3:
+                                open_word = ("Here's %s for you").printf (launchable_app.app_name);
+                                break;
+                            default:
+                                open_word = ("Okay, launching %s").printf (launchable_app.app_name);
+                                break;
+                        }
+                        mycroft_message_manager.send_speech (open_word);
+                        if (mainwindow != null) {
+                            mainwindow.set_chat_message_override (open_word);
+                        }
+                    }
+                } catch (Error e) {
+                    mycroft_message_manager.send_speech (e.message);
+                    warning (e.message);
+                }
+            });
         }
         private void close_window () {
             if (mainwindow != null) {

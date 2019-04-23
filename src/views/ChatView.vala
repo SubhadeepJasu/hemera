@@ -24,7 +24,7 @@ namespace Hemera.App {
         SuggestionArea suggest_area;
         Gtk.ScrolledWindow scrollable;
         Gtk.Box chat_box;
-        private string received_bubble_text;
+        public string received_bubble_text;
         private int number_of_messages;
         private int max_number_of_messages = 15;
         
