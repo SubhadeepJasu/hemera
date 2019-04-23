@@ -15,6 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Authored by: Hannes Schulze
+ *              Subhadeep Jasu
  */
 
 namespace Hemera.App {
@@ -80,6 +81,8 @@ namespace Hemera.App {
         }
 
         public EmptySpaceOverlay (string background, bool direction) {
+            set_hexpand_set (true);
+            set_hexpand (false);
             overlay_widget = new OverlayWidget (background, direction);
             add_overlay (overlay_widget);
         }
