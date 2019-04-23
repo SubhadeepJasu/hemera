@@ -19,7 +19,7 @@
 using GLib;
 
 namespace Hemera.Core {
-    public class LevenshteinDistanceSearch {
+    public class LevenshteinDistanceSearch{
         public static int search (AppEntry[] list_of_apps, string query) {
             int min = 1000;
             int index = 0;
@@ -31,7 +31,7 @@ namespace Hemera.Core {
                 }
             }
             if (min > 2) {
-                return (0 - 1);
+                return -1;
             }
             return index;
         }

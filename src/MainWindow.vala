@@ -148,5 +148,8 @@ namespace Hemera.App {
         public void chat_launch_app (Hemera.Core.AppEntry app) {
             chatbox.push_app_launch (app);
         }
+        public void set_chat_message_override (string message) {
+            chatbox.received_bubble_text = message;
+        }
     }
 }
