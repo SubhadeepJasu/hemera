@@ -71,6 +71,7 @@ namespace Hemera.App {
                 Timeout.add (100, () => {
                     mainwindow.present ();
                     mainwindow.set_launch_screen (1);
+                    mainwindow.queue_draw ();
                     return false;
                 });
             });

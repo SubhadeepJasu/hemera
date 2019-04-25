@@ -19,26 +19,72 @@
  * Authored by: Subhadeep Jasu
  */
 
+
+.enclosure-face {
+	background-image: linear-gradient(#F8F8F8, #f8f8f8);
+	margin: 40px;
+	border-radius: 100px;
+	border: 1px solid alpha(#000, 0.2);
+	box-shadow: inset 0 1px 0 #fff,
+		    inset 0 -1px 0 alpha (#000, 0.07);
+}
+
+.default-mic-icon {
+    animation: none;
+    min-width: 48px;
+    opacity: 1;
+    transition: none;
+    -gtk-icon-source: -gtk-icontheme("audio-input-microphone-symbolic");
+}
+
+.enclosure-face {
+	background-image: linear-gradient(#F8F8F8, #f8f8f8);
+	margin: 40px;
+	border-radius: 100px;
+	border: 1px solid alpha(#000, 0.2);
+	box-shadow: inset 0 1px 0 #fff,
+		    inset 0 -1px 0 alpha (#000, 0.07);
+	padding-top: 35px;
+	padding-left: 35px;
+	transition:all 0.1s ease-out;
+}
+
+.enclosure-face.look-left {
+	padding-top: 35px;
+	padding-left: 15px;
+}
+
+.enclosure-face.look-right {
+	padding-top: 35px;
+	padding-left: 55px;
+}
+
+.enclosure-face.look-up {
+	padding-top: 15px;
+	padding-left: 35px;
+}
+
+.enclosure-face.look-down {
+	padding-top: 55px;
+	padding-left: 35px;
+}
+
 .main_wake_button {
 	opacity: 1;
 	margin: 35px;
-	border-radius: 100px;
-	border: 1px solid alpha (#000, 0.2);
-	background: radial-gradient(ellipse at center, alpha (#000, 0.02), alpha (#fafafa, 0.0));
+	border-radius: 150px;
+	border: 1px solid alpha (#000, 0.15);
+	background: linear-gradient(to bottom, #CD9EF7 0%, #8fbef7 50%, #64FFE3 100%);
 	box-shadow: 0 10px 9px alpha (#000, 0.2),
-              0 -10px 9px #fff,
-              inset 0 1px 0px #fff,
-	      inset 0px -1px 0px alpha (#000, 0.1);
+              0 -10px 9px #fff;
 	transition:all 0.4s ease;
 }
 
 .main_wake_button:active {
 	transition:all 0.3s ease-out;
 	outline: none;
-	background: radial-gradient(ellipse at 50% 80%, alpha (#fff, 0.05), alpha (#000, 0.05));
 	box-shadow: 0 10px 15px alpha (#000, 0.2),
-              0 -10px 15px #fff,
-              inset 0 -1px 3px alpha (#000, 0.1);
+              0 -10px 15px #fff;
 }
 
 .main_wake_button:focus {

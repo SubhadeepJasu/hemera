@@ -22,6 +22,7 @@
 namespace Hemera.App {
     public class MainDynamicButton : Gtk.Overlay {
         private Gtk.Button wake_button;
+        private EnclosureFace face;
         private MainWindow window;
         public signal void clicked ();
         public MainDynamicButton (MainWindow window) {
@@ -31,9 +32,12 @@ namespace Hemera.App {
         }
         private void make_ui () {
             wake_button = new Gtk.Button.with_label ("Wake");
+            face = new EnclosureFace ();
             wake_button.get_style_context ().add_class ("main_wake_button_pre_load");
             wake_button.get_style_context ().add_class ("main_wake_button");
             add_overlay (wake_button);
+            add_overlay (face);
+            set_overlay_pass_through (face, true);
             width_request = 200;
             height_request= 200;
             halign = Gtk.Align.CENTER;

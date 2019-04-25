@@ -45,6 +45,20 @@ namespace Hemera.Services {
         public signal void receive_current_weather (string icon, string current, string min, string max, string location, string condition, double humidity, double wind);
         public signal void receive_hemera_launch_app(string app);
 
+        public signal void receive_audio_output_start ();
+        public signal void receive_audio_output_end ();
+        public signal void receive_record_begin ();
+        public signal void receive_record_end ();
+
+        public signal void receive_system_blink (int64 times);
+        public signal void receive_system_mute ();
+        public signal void receive_system_unmute ();
+
+        public signal void receive_eyes_blink (string side);
+        public signal void receive_eyes_narrow ();
+        public signal void receive_eyes_look (string side);
+        public signal void receive_eyes_off ();
+
         private void readJSON (string json_message) {
             try {
                 Json.Parser parser = new Json.Parser ();
@@ -77,15 +91,19 @@ namespace Hemera.Services {
                         break;
                     case "recognizer_loop:audio_output_start":
                         // I started speaking something... blah, blah, blah
+                        receive_audio_output_start ();
                         break;
                     case "recognizer_loop:audio_output_end":
                         // I stopped speaking.
+                        receive_audio_output_end ();
                         break;
                     case "recognizer_loop:record_begin":
                         // I started listening.
+                        receive_record_begin ();
                         break;
                     case "recognizer_loop:end":
                         // I stopped listening.
+                        receive_record_end ();
                         break;
                     case "configuration.updated":
                         // Just got back from school
@@ -95,7 +113,7 @@ namespace Hemera.Services {
                         Json.Object data = root_object.get_object_member ("data");
                         Json.Array utterances = data.get_array_member ("utterances");
                         string utterance = utterances.get_string_element (0);
-                        
+
                         receive_utterance (utterance);
                         break;
                     case "intent_failure":
@@ -136,12 +154,17 @@ namespace Hemera.Services {
                          * Args:
                          * times (int): number of times to blink
                          */
+                        Json.Object data = root_object.get_object_member ("data");
+                        int64 times = data.get_int_member ("times");
+                        receive_system_blink (times);
                         break;
                     case "enclosure.system.mute":
                         // Mute (turn off) the system speaker
+                        receive_system_mute ();
                         break;
                     case "enclosure.system.unmute":
                         // Unmute (turn on) the system speaker
+                        receive_system_unmute ();
                         break;
                     case "enclosure.weather.display":
                         // I heard there will be some thunder storms in your area
@@ -167,6 +190,9 @@ namespace Hemera.Services {
                          * Args:
                          * side (str): 'r', 'l', or 'b' for 'right', 'left' or 'both'
                          */
+                        Json.Object data = root_object.get_object_member ("data");
+                        string side = data.get_string_member ("side");
+                        receive_eyes_blink (side);
                         break;
                     case "enclosure.eyes.color":
                         // Let's party
@@ -188,6 +214,7 @@ namespace Hemera.Services {
                          break;
                     case "enclosure.eyes.narrow":
                          // Make the eyes look narrow, like a squint
+                         receive_eyes_narrow ();
                          break;
                     case "enclosure.eyes.look":
                          /* Make the eyes look to the given side
@@ -198,6 +225,9 @@ namespace Hemera.Services {
                           *               'd' for down
                           *               'c' for crossed
                           */
+                         Json.Object data = root_object.get_object_member ("data");
+                         string side = data.get_string_member ("side");
+                         receive_eyes_look (side);
                          break;
                     case "enclosure.eyes.level":
                          /* Set the brightness of the eyes in the display.
@@ -223,9 +253,11 @@ namespace Hemera.Services {
                         break;
                     case "enclosure.eyes.off":
                         // No eyes
+                        receive_eyes_off ();
                         break;
                     case "enclosure.eyes.reset":
                         // Neutral eyes
+                        receive_eyes_off ();
                         break;
 
                     // MOUTH FEATURE SIGNALS ///////////////////////////////////////////////////
