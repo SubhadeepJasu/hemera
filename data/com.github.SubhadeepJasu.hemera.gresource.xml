@@ -18,6 +18,12 @@
         <file alias="wikipedia.svg" compressed="true" preprocess="xml-stripblanks">images/logos/wikipedia.svg</file>
     </gresource>
 
+    <gresource prefix="/com/github/SubhadeepJasu/hemera/images/face">
+        <file alias="hemera-mic-inactive.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-mic-inactive.svg</file>
+        <file alias="hemera-mic-listening.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-mic-listening.svg</file>
+        <file alias="hemera-mic-error.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-mic-error.svg</file>
+    </gresource>
+
     <gresource prefix="/com/github/SubhadeepJasu/hemera/images/weather">
         <file alias="clear_day_card.png" compressed="true">images/weather/clear_day_card.png</file>
         <file alias="clear_night_card.png" compressed="true">images/weather/clear_night_card.png</file>

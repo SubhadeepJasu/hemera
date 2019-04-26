@@ -23,11 +23,11 @@ namespace Hemera.App {
         public EnclosureFace () {
             main_icon = new Gtk.Spinner ();
             main_icon.active = true;
-            main_icon.get_style_context ().add_class ("default-mic-icon");
+            main_icon.get_style_context ().add_class ("mic-inactive");
             main_icon.halign = Gtk.Align.START;
             main_icon.valign = Gtk.Align.START;
-            main_icon.width_request = 48;
-            main_icon.height_request = 48;
+            main_icon.width_request = 64;
+            main_icon.height_request = 64;
             pack_start (main_icon);
             get_style_context ().add_class ("enclosure-face");
             
