@@ -24,6 +24,9 @@ namespace Hemera.App {
         private Gtk.Button wake_button;
         private EnclosureFace face;
         private MainWindow window;
+        private bool personify = false;
+        private bool talking  = false;
+
         public signal void clicked ();
         public MainDynamicButton (MainWindow window) {
             this.window = window;
@@ -48,6 +51,22 @@ namespace Hemera.App {
         private void make_events () {
             wake_button.clicked.connect (() => {
                 this.clicked ();
+            });
+            window.app_reference.mycroft_message_manager.receive_record_begin.connect (() => {
+                face.mic_set_listening ();
+            });
+            window.app_reference.mycroft_message_manager.receive_record_end.connect (() => {
+                face.mic_set_idle ();
+            });
+            window.app_reference.mycroft_message_manager.receive_record_failed.connect (() => {
+                face.mic_set_listen_failed ();
+            });
+        }
+        private void talk_timeout () {
+            this.talking = true;
+            Timeout.add (450, () => {
+                this.talking = false;
+                return false;
             });
         }
         public void animate_button () {

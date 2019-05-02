@@ -68,7 +68,7 @@ namespace Hemera.App {
                     return false;
             });
             mycroft_connection.connection_established.connect (() => {
-                Timeout.add (100, () => {
+                Timeout.add (200, () => {
                     mainwindow.present ();
                     mainwindow.set_launch_screen (1);
                     mainwindow.queue_draw ();

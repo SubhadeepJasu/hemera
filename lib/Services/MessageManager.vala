@@ -49,6 +49,7 @@ namespace Hemera.Services {
         public signal void receive_audio_output_end ();
         public signal void receive_record_begin ();
         public signal void receive_record_end ();
+        public signal void receive_record_failed ();
 
         public signal void receive_system_blink (int64 times);
         public signal void receive_system_mute ();
@@ -101,9 +102,13 @@ namespace Hemera.Services {
                         // I started listening.
                         receive_record_begin ();
                         break;
-                    case "recognizer_loop:end":
+                    case "recognizer_loop:record_end":
                         // I stopped listening.
                         receive_record_end ();
+                        break;
+                    case "mycroft.speech.recognition.unknown":
+                        // Sorry. I didn't hear you.
+                        receive_record_failed ();
                         break;
                     case "configuration.updated":
                         // Just got back from school
@@ -117,7 +122,6 @@ namespace Hemera.Services {
                         receive_utterance (utterance);
                         break;
                     case "intent_failure":
-                        // Sorry. I didn't hear you.
                         break;
                     case "gui.value.set":
                         // See this, yeah that icon tells you something

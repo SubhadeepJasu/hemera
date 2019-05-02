@@ -19,12 +19,20 @@
  * Authored by: Subhadeep Jasu
  */
 
-.mic-inactive {
+.mic {
     animation: none;
     min-width: 64px;
     opacity: 1;
-    transition: none;
+    transition: all 0.5s ease-out;
     -gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/hemera-mic-inactive.svg");
+}
+.mic.listening {
+	transition:all 0.2s ease-in;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/hemera-mic-listening.svg");
+}
+.mic.error {
+	transition:none;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/hemera-mic-error.svg");
 }
 
 .enclosure-face {

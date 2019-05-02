@@ -23,14 +23,26 @@ namespace Hemera.App {
         public EnclosureFace () {
             main_icon = new Gtk.Spinner ();
             main_icon.active = true;
-            main_icon.get_style_context ().add_class ("mic-inactive");
+            main_icon.get_style_context ().add_class ("mic");
             main_icon.halign = Gtk.Align.START;
             main_icon.valign = Gtk.Align.START;
             main_icon.width_request = 64;
             main_icon.height_request = 64;
             pack_start (main_icon);
             get_style_context ().add_class ("enclosure-face");
-            
+        }
+        public void mic_set_listening () {
+            main_icon.get_style_context ().add_class ("listening");
+        }
+        public void mic_set_idle () {
+            main_icon.get_style_context ().remove_class ("listening");
+        }
+        public void mic_set_listen_failed () {
+            main_icon.get_style_context ().add_class ("error");
+            Timeout.add (100, () => {
+                main_icon.get_style_context ().remove_class ("error");
+                return false;
+            });
         }
     }
 }
