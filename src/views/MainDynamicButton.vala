@@ -24,7 +24,26 @@ namespace Hemera.App {
         private Gtk.Button wake_button;
         private EnclosureFace face;
         private MainWindow window;
-        private bool personify = false;
+        private bool _personify = false;
+        private bool personify {
+            get {
+                return _personify;
+            }
+            set {
+                _personify = value;
+                set_face_personification ();
+            }
+        }
+        private bool _blink = false;
+        private bool blink {
+            get {
+                return _blink;
+            }
+            set {
+                _blink = value;
+                set_face_personification ();
+            }
+        }
         private bool talking  = false;
 
         public signal void clicked ();
@@ -56,16 +75,41 @@ namespace Hemera.App {
                 face.mic_set_listening ();
             });
             window.app_reference.mycroft_message_manager.receive_record_end.connect (() => {
-                face.mic_set_idle ();
+                face.mic_set_default ();
             });
             window.app_reference.mycroft_message_manager.receive_record_failed.connect (() => {
                 face.mic_set_listen_failed ();
             });
+            window.app_reference.mycroft_message_manager.receive_audio_output_start.connect (() => {
+                personify = true;
+            });
+            window.app_reference.mycroft_message_manager.receive_audio_output_end.connect (() => {
+                personify_timeout ();
+            });
+            window.app_reference.mycroft_message_manager.receive_eyes_blink.connect ((s_side) => {
+                blink = true;
+                int i_side;
+                switch (s_side) {
+                    case ("r"):
+                        face.mic_personify_blink (2);
+                        break;
+                    case ("l"):
+                        face.mic_personify_blink (1);
+                        break;
+                    default:
+                        face.mic_personify_blink (0);
+                        break;
+                }
+                Timeout.add (500, () => {
+                    blink = false;
+                    return false;
+                });
+            });
         }
-        private void talk_timeout () {
-            this.talking = true;
-            Timeout.add (450, () => {
-                this.talking = false;
+        private void personify_timeout () {
+            this.personify = true;
+            Timeout.add (1500, () => {
+                this.personify = false;
                 return false;
             });
         }
@@ -74,6 +118,14 @@ namespace Hemera.App {
                 wake_button.get_style_context ().remove_class ("main_wake_button_pre_load");
                 return false;
             });
+        }
+        public void set_face_personification () {
+            bool b_personification_enabled = personify || blink;
+            if (b_personification_enabled) {
+                face.mic_personify_idle ();
+            } else {
+                face.disable_personification ();
+            }
         }
     }
 }

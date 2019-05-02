@@ -22,6 +22,12 @@
         <file alias="hemera-mic-inactive.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-mic-inactive.svg</file>
         <file alias="hemera-mic-listening.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-mic-listening.svg</file>
         <file alias="hemera-mic-error.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-mic-error.svg</file>
+        <file alias="hemera-eyes-blink-both.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-eyes-blink-both.svg</file>
+        <file alias="hemera-eyes-blink-left.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-eyes-blink-left.svg</file>
+        <file alias="hemera-eyes-blink-right.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-eyes-blink-right.svg</file>
+        <file alias="hemera-eyes-default.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-eyes-default.svg</file>
+        <file alias="hemera-eyes-happy.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-eyes-happy.svg</file>
+        <file alias="hemera-eyes-inactive.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-eyes-inactive.svg</file>
     </gresource>
 
     <gresource prefix="/com/github/SubhadeepJasu/hemera/images/weather">

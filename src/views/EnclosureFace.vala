@@ -34,7 +34,7 @@ namespace Hemera.App {
         public void mic_set_listening () {
             main_icon.get_style_context ().add_class ("listening");
         }
-        public void mic_set_idle () {
+        public void mic_set_default () {
             main_icon.get_style_context ().remove_class ("listening");
         }
         public void mic_set_listen_failed () {
@@ -43,6 +43,41 @@ namespace Hemera.App {
                 main_icon.get_style_context ().remove_class ("error");
                 return false;
             });
+        }
+        public void mic_personify_idle () {
+            main_icon.get_style_context ().add_class ("personify-idle");
+        }
+        public void mic_personify_blink (int i_side) {
+            switch (i_side) {
+                case 0:
+                    main_icon.get_style_context ().add_class ("personify-blink-both");
+                    Timeout.add (100, () => {
+                        main_icon.get_style_context ().remove_class ("personify-blink-both");
+                        return false;
+                    });
+                    break;
+                case 1:
+                    main_icon.get_style_context ().add_class ("personify-blink-left");
+                    Timeout.add (100, () => {
+                        main_icon.get_style_context ().remove_class ("personify-blink-left");
+                        return false;
+                    });
+                    break;
+                case 2:
+                    main_icon.get_style_context ().add_class ("personify-blink-right");
+                    Timeout.add (10, () => {
+                        main_icon.get_style_context ().remove_class ("personify-blink-right");
+                        return false;
+                    });
+                    break;
+            }
+            warning ("BLINK////////////////////");
+        }
+        public void disable_personification () {
+            main_icon.get_style_context ().remove_class ("personify-idle");
+            main_icon.get_style_context ().remove_class ("personify-blink-both");
+            main_icon.get_style_context ().remove_class ("personify-blink-left");
+            main_icon.get_style_context ().remove_class ("personify-blink-right");
         }
     }
 }

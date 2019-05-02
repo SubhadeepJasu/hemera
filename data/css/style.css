@@ -34,6 +34,26 @@
 	transition:none;
 	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/hemera-mic-error.svg");
 }
+.mic.personify-idle {
+	transition:all 0.2s ease-in;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/hemera-eyes-default.svg");
+}
+.mic.personify-blink-left {
+	transition:none;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/hemera-eyes-blink-left.svg");
+}
+.mic.personify-blink-right {
+	transition:none;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/hemera-eyes-blink-right.svg");
+}
+.mic.personify-blink-both {
+	transition:none;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/hemera-eyes-blink-both.svg");
+}
+.mic.personify-happy {
+	transition:all 0.2 ease-in;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/hemera-eyes-happy.svg");
+}
 
 .enclosure-face {
 	background-image: linear-gradient(#F8F8F8, #f8f8f8);
