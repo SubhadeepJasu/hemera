@@ -15,6 +15,7 @@ hemera_sources = files(
   'views/InitSplash.vala',
   'views/DisplayEnclosure.vala',
   'views/EnclosureFace.vala',
+  'views/LightRingAnimator.vala',
   'views/MainDynamicButton.vala',
   'views/SuggestionBox.vala',
   'views/SuggestionArea.vala',

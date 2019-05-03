@@ -50,6 +50,9 @@ namespace Hemera.Services {
         public signal void receive_record_begin ();
         public signal void receive_record_end ();
         public signal void receive_record_failed ();
+        public signal void receive_intent_failure ();
+        public signal void receive_fallback_unknown ();
+        public signal void receive_query_timed_out ();
 
         public signal void receive_system_blink (int64 times);
         public signal void receive_system_mute ();
@@ -59,6 +62,8 @@ namespace Hemera.Services {
         public signal void receive_eyes_narrow ();
         public signal void receive_eyes_look (string side);
         public signal void receive_eyes_off ();
+
+        public signal void receive_thinking ();
 
         private void readJSON (string json_message) {
             try {
@@ -122,6 +127,17 @@ namespace Hemera.Services {
                         receive_utterance (utterance);
                         break;
                     case "intent_failure":
+                        receive_intent_failure ();
+                        break;
+                    case "active_skill_request":
+                        Json.Object data = root_object.get_object_member ("data");
+                        string skill_id = data.get_string_member ("skill_id");
+                        if (skill_id == "fallback-unknown.mycroftai") {
+                            receive_fallback_unknown ();
+                        }
+                        break;
+                    case "fallback-query.mycroftai:QuestionQueryTimeout":
+                        receive_query_timed_out ();
                         break;
                     case "gui.value.set":
                         // See this, yeah that icon tells you something
@@ -269,7 +285,7 @@ namespace Hemera.Services {
                         // Ha ha I am happy
                         break;
                     case "enclosure.mouth.think":
-                        // Thinking...
+                        receive_thinking ();
                         break;
                     case "enclosure.mouth.talk":
                         // Talking...

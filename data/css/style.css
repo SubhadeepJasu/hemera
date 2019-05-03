@@ -51,7 +51,7 @@
 	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/hemera-eyes-blink-both.svg");
 }
 .mic.personify-happy {
-	transition:all 0.2 ease-in;
+	transition:all 0.2s ease-in;
 	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/hemera-eyes-happy.svg");
 }
 
@@ -92,14 +92,14 @@
 	margin: 35px;
 	border-radius: 150px;
 	border: 1px solid alpha (#000, 0.15);
-	background: linear-gradient(to bottom, #CD9EF7 0%, #8fbef7 50%, #64FFE3 100%);
+	background: linear-gradient(to bottom, #808080 0%, #6b6b6b 50%, #595959 100%);
 	box-shadow: 0 10px 9px alpha (#000, 0.2),
               0 -10px 9px #fff;
-	transition:all 0.4s ease;
+	transition:all 0.2s ease-out;
 }
 
 .main_wake_button:active {
-	transition:all 0.3s ease-out;
+	transition:all 0.2s ease-out;
 	outline: none;
 	box-shadow: 0 10px 15px alpha (#000, 0.2),
               0 -10px 15px #fff;
@@ -111,6 +111,7 @@
 
 .main_wake_button_pre_load {
 	border: 1px solid alpha (#000, 0);
+	background: linear-gradient(to bottom, #f3f3f3 0%, #f0f0f0 50%, #eeeeee 100%);
 	opacity: 0;
 	margin: 0px;
 	transition:all 0.0s ease-out;

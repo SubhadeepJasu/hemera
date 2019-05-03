@@ -24,6 +24,7 @@ namespace Hemera.App {
         private Gtk.Button wake_button;
         private EnclosureFace face;
         private MainWindow window;
+        private LightRingAnimator animation_handle;
         private bool _personify = false;
         private bool personify {
             get {
@@ -44,7 +45,17 @@ namespace Hemera.App {
                 set_face_personification ();
             }
         }
-        private bool talking  = false;
+        private bool _talking = false;
+        private bool talking {
+            get {
+                return _talking;
+            }
+            set {
+                _talking = value;
+                animate_ring ();
+            }
+        }
+        private int talking_mode = 0;
 
         public signal void clicked ();
         public MainDynamicButton (MainWindow window) {
@@ -57,6 +68,7 @@ namespace Hemera.App {
             face = new EnclosureFace ();
             wake_button.get_style_context ().add_class ("main_wake_button_pre_load");
             wake_button.get_style_context ().add_class ("main_wake_button");
+            animation_handle = new LightRingAnimator (wake_button);
             add_overlay (wake_button);
             add_overlay (face);
             set_overlay_pass_through (face, true);
@@ -82,13 +94,14 @@ namespace Hemera.App {
             });
             window.app_reference.mycroft_message_manager.receive_audio_output_start.connect (() => {
                 personify = true;
+                talking = true;
             });
             window.app_reference.mycroft_message_manager.receive_audio_output_end.connect (() => {
+                talking = false;
                 personify_timeout ();
             });
             window.app_reference.mycroft_message_manager.receive_eyes_blink.connect ((s_side) => {
                 blink = true;
-                int i_side;
                 switch (s_side) {
                     case ("r"):
                         face.mic_personify_blink (2);
@@ -105,6 +118,15 @@ namespace Hemera.App {
                     return false;
                 });
             });
+            window.app_reference.mycroft_message_manager.receive_fallback_unknown.connect (() => {
+                talking_mode = 1;
+            });
+            window.app_reference.mycroft_message_manager.receive_thinking.connect (() => {
+                window.main_spinner.active = true;
+            });
+            window.app_reference.mycroft_message_manager.receive_query_timed_out.connect (() => {
+                window.main_spinner.active = false;
+            });
         }
         private void personify_timeout () {
             this.personify = true;
@@ -120,11 +142,28 @@ namespace Hemera.App {
             });
         }
         public void set_face_personification () {
-            bool b_personification_enabled = personify || blink;
+            bool b_personification_enabled = personify || blink || talking;
             if (b_personification_enabled) {
                 face.mic_personify_idle ();
             } else {
                 face.disable_personification ();
+            }
+        }
+        private void animate_ring () {
+            if (talking) {
+                animation_handle.begin_animation ();
+                switch (talking_mode) {
+                    case 1:
+                        animation_handle.set_animation_type (AnimationType.ERROR);
+                        break;
+                    default:
+                        animation_handle.set_animation_type (AnimationType.DEFAULT_SPEAKING);
+                        break;
+                }
+            } else {
+                animation_handle.end_animation ();
+                animation_handle.set_animation_type (AnimationType.IDLE);
+                talking_mode = 0;
             }
         }
     }

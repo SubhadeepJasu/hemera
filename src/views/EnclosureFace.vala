@@ -18,8 +18,24 @@
  */
  
 namespace Hemera.App {
+    public enum AnimationType {
+        IDLE = 0,
+        ERROR = 1,
+        DEFAULT_SPEAKING = 2,
+        SYSTEM_SPEAKING = 3,
+        HAPPY_SPEAKING = 4,
+        THINKING = 5,
+        ANXIOUS_SPEAKING = 6
+    }
     public class EnclosureFace : Gtk.Box {
         Gtk.Spinner main_icon;
+        private bool eyes_idle_animate_loop = false;
+        private int eye_position_left = 26;
+        private int eye_position_top = 28;
+        private Gtk.CssProvider provider;
+        private string provider_data;
+        private int eye_left = 0;
+        private int eye_top = 0;
         public EnclosureFace () {
             main_icon = new Gtk.Spinner ();
             main_icon.active = true;
@@ -30,6 +46,7 @@ namespace Hemera.App {
             main_icon.height_request = 64;
             pack_start (main_icon);
             get_style_context ().add_class ("enclosure-face");
+            provider = new Gtk.CssProvider ();
         }
         public void mic_set_listening () {
             main_icon.get_style_context ().add_class ("listening");
@@ -46,6 +63,7 @@ namespace Hemera.App {
         }
         public void mic_personify_idle () {
             main_icon.get_style_context ().add_class ("personify-idle");
+            enable_eyes_animation ();
         }
         public void mic_personify_blink (int i_side) {
             switch (i_side) {
@@ -65,19 +83,42 @@ namespace Hemera.App {
                     break;
                 case 2:
                     main_icon.get_style_context ().add_class ("personify-blink-right");
-                    Timeout.add (10, () => {
+                    Timeout.add (100, () => {
                         main_icon.get_style_context ().remove_class ("personify-blink-right");
                         return false;
                     });
                     break;
             }
-            warning ("BLINK////////////////////");
         }
         public void disable_personification () {
+            disable_eyes_animation ();
             main_icon.get_style_context ().remove_class ("personify-idle");
             main_icon.get_style_context ().remove_class ("personify-blink-both");
             main_icon.get_style_context ().remove_class ("personify-blink-left");
             main_icon.get_style_context ().remove_class ("personify-blink-right");
+        }
+        private void enable_eyes_animation () {
+            eyes_idle_animate_loop = true;
+            Timeout.add (1500, () => {
+                eye_top = GLib.Random.int_range (-2, 2);
+                eye_left = GLib.Random.int_range (-2, 2);
+                if (eyes_idle_animate_loop) {
+                    provider_data = (".enclosure-face {	padding-top: %dpx; padding-left: %dpx; }").printf (eye_top + eye_position_top, eye_left + eye_position_left);
+                } else {
+                    provider_data = ".enclosure-face {	padding-top: 28px; padding-left: 26px; }";
+                }
+                try {
+                    provider.load_from_data (provider_data);
+                    Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+                }
+                catch (Error e) {
+                    warning (e.message);
+                }
+                return eyes_idle_animate_loop;
+            });
+        }
+        private void disable_eyes_animation () {
+            eyes_idle_animate_loop = false;
         }
     }
 }

@@ -28,6 +28,7 @@ namespace Hemera.App {
         private Gtk.HeaderBar headerbar;
         private Gtk.Stack main_stack;
         public Hemera.App.HemeraApp app_reference;
+        public Gtk.Spinner main_spinner;
 
         public MainWindow (Hemera.App.HemeraApp application) {
             icon_name = "com.github.SubhadeepJasu.hemera";
@@ -41,6 +42,9 @@ namespace Hemera.App {
             settings_button.image = new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
             settings_button.tooltip_text = _("Menu");
             settings_button.valign = Gtk.Align.CENTER;
+            
+            main_spinner = new Gtk.Spinner ();
+            main_spinner.active = false;
 
             this.set_default_size (560, 280);
             headerbar = new Gtk.HeaderBar ();
@@ -50,6 +54,7 @@ namespace Hemera.App {
             headerbar.get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
             headerbar.get_style_context().add_class("headerbar");
             headerbar.pack_end(settings_button);
+            headerbar.pack_end(main_spinner);
             this.set_titlebar (headerbar);
 
             enclosure_display = new Hemera.App.DisplayEnclosure (this);
