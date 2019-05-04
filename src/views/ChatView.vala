@@ -121,5 +121,8 @@ namespace Hemera.App {
             chat_box.pack_start (new AppBubble (app));
             number_of_messages++;
         }
+        public void refocus () {
+            utterance_entry.grab_focus_without_selecting ();
+        }
     }
 }

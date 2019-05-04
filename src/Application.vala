@@ -63,12 +63,12 @@ namespace Hemera.App {
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
-            Timeout.add (150, () => {
+            Timeout.add (1000, () => {
                     mycroft_connection.init_ws ();
                     return false;
             });
             mycroft_connection.connection_established.connect (() => {
-                Timeout.add (200, () => {
+                Timeout.add (1000, () => {
                     mainwindow.present ();
                     mainwindow.set_launch_screen (1);
                     mainwindow.queue_draw ();

@@ -56,6 +56,7 @@ namespace Hemera.App {
             }
         }
         private int talking_mode = 0;
+        private int volume = 0;
 
         public signal void clicked ();
         public MainDynamicButton (MainWindow window) {
@@ -121,6 +122,11 @@ namespace Hemera.App {
             window.app_reference.mycroft_message_manager.receive_fallback_unknown.connect (() => {
                 talking_mode = 1;
             });
+            window.app_reference.mycroft_message_manager.receive_volume_change.connect ((i_volume) => {
+                talking_mode = 2;
+                this.volume = (int)i_volume;
+                face.set_volume_icon (volume);
+            });
             window.app_reference.mycroft_message_manager.receive_thinking.connect (() => {
                 window.main_spinner.active = true;
             });
@@ -138,6 +144,7 @@ namespace Hemera.App {
         public void animate_button () {
             Timeout.add (100, () => {
                 wake_button.get_style_context ().remove_class ("main_wake_button_pre_load");
+                face.animate_face ();
                 return false;
             });
         }
@@ -155,6 +162,9 @@ namespace Hemera.App {
                 switch (talking_mode) {
                     case 1:
                         animation_handle.set_animation_type (AnimationType.ERROR);
+                        break;
+                    case 2:
+                        animation_handle.set_animation_type (AnimationType.SYSTEM_SPEAKING);
                         break;
                     default:
                         animation_handle.set_animation_type (AnimationType.DEFAULT_SPEAKING);

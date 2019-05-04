@@ -28,6 +28,10 @@
         <file alias="hemera-eyes-default.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-eyes-default.svg</file>
         <file alias="hemera-eyes-happy.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-eyes-happy.svg</file>
         <file alias="hemera-eyes-inactive.svg" compressed="true" preprocess="xml-stripblanks">images/face/hemera-eyes-inactive.svg</file>
+        <file alias="system-volume-high.svg" compressed="true" preprocess="xml-stripblanks">images/face/system-volume-high.svg</file>
+        <file alias="system-volume-medium.svg" compressed="true" preprocess="xml-stripblanks">images/face/system-volume-medium.svg</file>
+        <file alias="system-volume-low.svg" compressed="true" preprocess="xml-stripblanks">images/face/system-volume-low.svg</file>
+        <file alias="system-volume-mute.svg" compressed="true" preprocess="xml-stripblanks">images/face/system-volume-mute.svg</file>
     </gresource>
 
     <gresource prefix="/com/github/SubhadeepJasu/hemera/images/weather">

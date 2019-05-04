@@ -62,6 +62,7 @@ namespace Hemera.Services {
         public signal void receive_eyes_narrow ();
         public signal void receive_eyes_look (string side);
         public signal void receive_eyes_off ();
+        public signal void receive_volume_change (int64 volume);
 
         public signal void receive_thinking ();
 
@@ -260,6 +261,14 @@ namespace Hemera.Services {
                          * Args:
                          *     volume (int): 0 to 11
                          */
+                         Json.Object data = root_object.get_object_member ("data");
+                         int64 volume = data.get_int_member ("volume");
+                         receive_volume_change (volume);
+                         break;
+                    case "mycroft-volume.mycroftai:SetVolume":
+                         Json.Object data = root_object.get_object_member ("data");
+                         string mycroft_volume_mycroftaiLevel = data.get_string_member ("mycroft_volume_mycroftaiLevel");
+                         receive_volume_change (int64.parse (mycroft_volume_mycroftaiLevel));
                          break;
                     case "enclosure.eyes.fill":
                         /* Use the eyes as a type of progress meter

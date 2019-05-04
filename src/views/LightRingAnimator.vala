@@ -45,6 +45,11 @@ namespace Hemera.App {
         }
         public void set_animation_type (AnimationType a_type) {
             switch (a_type) {
+                case AnimationType.SYSTEM_SPEAKING:
+                    s_top_color = "#ce9ef8";
+                    s_center_color = "#a56ce2";
+                    s_bottom_color = "#743bb5";
+                    break;
                 case AnimationType.ERROR:
                     s_top_color = "#7f7f7f";
                     s_center_color = "#c32830";

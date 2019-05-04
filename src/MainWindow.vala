@@ -79,10 +79,13 @@ namespace Hemera.App {
             this.get_style_context ().add_class ("rounded");
             this.set_resizable (false);
             this.show_all ();
+
+            chatbox.refocus ();
         }
         private void make_events () {
             enclosure_display.wake_button_clicked.connect (() => {
                 app_reference.mycroft_message_manager.send_wake ();
+                chatbox.refocus ();
             });
             enclosure_display.invoke_mode_changed.connect ((opt) => {
                 if (opt == 0) {

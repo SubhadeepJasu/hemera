@@ -54,6 +54,22 @@
 	transition:all 0.2s ease-in;
 	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/hemera-eyes-happy.svg");
 }
+.mic.system-volume-high {
+	transition:all 0.2s ease-in;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/system-volume-high.svg");
+}
+.mic.system-volume-medium {
+	transition:all 0.2s ease-in;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/system-volume-medium.svg");
+}
+.mic.system-volume-low {
+	transition:all 0.2s ease-in;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/system-volume-low.svg");
+}
+.mic.system-volume-mute {
+	transition:all 0.2s ease-in;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/face/system-volume-mute.svg");
+}
 
 .enclosure-face {
 	background-image: linear-gradient(#F8F8F8, #f8f8f8);
@@ -65,6 +81,14 @@
 	padding-top: 28px;
 	padding-left: 26px;
 	transition:all 0.1s ease-out;
+}
+
+.enclosure-face-preload {
+	background: #f3f3f3;
+	margin: 35px;
+	border-radius: 150px;
+	padding-top: 32px;
+	padding-left: 32px;
 }
 
 .enclosure-face.look-left {
