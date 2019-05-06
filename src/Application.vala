@@ -34,6 +34,7 @@ namespace Hemera.App {
         public Hemera.Services.Connection mycroft_connection;
         public Hemera.Services.MessageManager mycroft_message_manager;
         public Hemera.Core.AppSearch app_search_provider;
+        private Hemera.Core.MycroftManager mycroft_system;
 
         public HemeraApp () {
             Object (
@@ -46,6 +47,7 @@ namespace Hemera.App {
         }
         public MainWindow mainwindow;
         protected override void activate () {
+            mycroft_system = new Hemera.Core.MycroftManager ();
             if (mainwindow == null) {
                 mainwindow = new MainWindow (this);
                 add_window (mainwindow);
@@ -63,6 +65,7 @@ namespace Hemera.App {
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
+            handle_mycroft_launch_system ();
             Timeout.add (1000, () => {
                     mycroft_connection.init_ws ();
                     return false;
@@ -79,6 +82,7 @@ namespace Hemera.App {
                 mainwindow.present ();
                 mainwindow.set_launch_screen (0);
             });
+            mycroft_system.check_updates ();
             handle_application_launch_system ();
         }
 
@@ -152,6 +156,20 @@ namespace Hemera.App {
                     mycroft_message_manager.send_speech (e.message);
                     warning (e.message);
                 }
+            });
+        }
+        private void handle_mycroft_launch_system () {
+            mycroft_system.start_mycroft ();
+            mycroft_system.mycroft_launched.connect (() => {
+                warning ("Mycroft started");
+            });
+            mycroft_system.mycroft_launch_failed.connect (() => {
+                warning ("Mycroft location doesn't exist");
+            });
+            mycroft_system.mycroft_update_available.connect ((tag, body, download_url) => {
+                print ("Update Available! Version: %s\n%s\nDownloading...", tag, body);
+                mycroft_system.download_mycroft (download_url);
+                
             });
         }
         private void close_window () {

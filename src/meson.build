@@ -28,6 +28,7 @@ hemera_sources = files(
   'core/AppDiscovery.vala',
   'core/AppSearch.vala',
   'core/LevenshteinDistanceSearch.vala',
+  'core/MycroftManager.vala',
   'bubbles/AppBubble.vala',
   'views/ChatView.vala',
 )

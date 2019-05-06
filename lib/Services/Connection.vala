@@ -26,6 +26,7 @@ namespace Hemera.Services {
         public signal void connection_established ();
         public signal void connection_failed ();
         public signal void connection_disengaged ();
+        public signal void check_connection (bool connected);
 
         private Soup.WebsocketConnection websocket_connection;
         private string ip_address = "0.0.0.0";
@@ -39,6 +40,23 @@ namespace Hemera.Services {
         }
         public Soup.WebsocketConnection get_web_socket () {
             return websocket_connection;
+        }
+        public void init_ws_after_starting_mycroft () {
+            int count = 0;
+            Timeout.add (200, () => {
+                init_ws ();
+                if (count++ > 25) {
+                    connection_failed ();
+                }
+                return !(ws_connected || (count > 25));
+            });
+        }
+        public void init_ws_before_starting_mycroft () {
+            init_ws ();
+            Timeout.add (5000, () => {
+                check_connection (ws_connected);
+                return false;
+            });
         }
 
         public void init_ws () {
@@ -62,7 +80,6 @@ namespace Hemera.Services {
                     }
                 } catch (Error e) {
                     stderr.printf ("Remote error\n");
-                    connection_failed ();
                 }
             });
         }
