@@ -11,6 +11,7 @@ constants_header = configure_file(
 hemera_sources = files(
   'Application.vala',
   'MainWindow.vala',
+  'Settings.vala',
   'PreferencesWindow.vala',
   'views/InitSplash.vala',
   'views/DisplayEnclosure.vala',

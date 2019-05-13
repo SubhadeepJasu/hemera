@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schemalist gettext-domain="hemera">
-	<schema id="com.github.SubhadeepJasu.hemera" path="/com/github/SubhadeepJasu/hemera/">
+<schemalist>
+	<schema id="com.github.SubhadeepJasu.hemera" path="/com/github/SubhadeepJasu/hemera/" gettext-domain="com.github.SubhadeepJasu.hemera">
+		<key name="mycroft-location" type="s">
+			<default>"~/.local/share"</default>
+			<summary>Mycroft Core Location</summary>
+			<description>The location of mycroft-core, where it was downloaded and installed</description>
+		</key>
+		<key name="window-width" type="i">
+			<default>800</default>
+			<summary>Window Width</summary>
+			<description>Width of the main window</description>
+		</key>
+		<key name="window-height" type="i">
+			<default>600</default>
+			<summary>Window Height</summary>
+			<description>Height of the main window</description>
+		</key>
+		<key name="override-remote-settings" type="b">
+			<default>true</default>
+			<summary>Override Remote Settings</summary>
+			<description>Prioritize settings configured using Hemera, instead of Mycroft Home</description>
+		</key>
+		<key name="launch-at-startup" type="b">
+			<default>false</default>
+			<summary>Launch at StartUp</summary>
+			<description>Start Hemera automatically when you login to your desktop</description>
+		</key>
 	</schema>
 </schemalist>
