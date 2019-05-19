@@ -3,15 +3,15 @@ conf_data.set_quoted('PROJECT_NAME', meson.project_name())
 conf_data.set_quoted('VERSION', meson.project_version())
 
 constants_header = configure_file(
-  input: 'configs/Constants.vala.in',
+  input: 'configs/Constants.vala',
   output: 'Constants.vala',
   configuration: conf_data
 )
 
 hemera_sources = files(
+  'configs/Settings.vala',
   'Application.vala',
   'MainWindow.vala',
-  'Settings.vala',
   'PreferencesWindow.vala',
   'views/InitSplash.vala',
   'views/DisplayEnclosure.vala',

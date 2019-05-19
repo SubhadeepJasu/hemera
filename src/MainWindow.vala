@@ -18,6 +18,7 @@
  * Authored by: Subhadeep Jasu
  *              Hannes Schulze
  */
+using Hemera.Configs;
 
 namespace Hemera.App {
     public class MainWindow : Gtk.Window {
@@ -36,6 +37,10 @@ namespace Hemera.App {
             make_ui ();
             make_events ();
             make_mycroft_incoming_events ();
+            
+            var settings = Hemera.Configs.Settings.get_default ();
+            int w = settings.window_width;
+            int h = settings.window_height;
         }
         private void make_ui () {
             Gtk.Button settings_button = new Gtk.Button ();

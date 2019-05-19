@@ -32,8 +32,6 @@ namespace Hemera.App {
         private Gtk.Label wakeword_preview_label;
         private Gtk.Label tts_preview_label;
         private Gtk.Label stt_preview_label;
-        
-        private Hemera.App.Settings settings;
 
         public PreferencesWindow (MainWindow? parent = null) {
 
@@ -48,8 +46,6 @@ namespace Hemera.App {
                 window_position = Gtk.WindowPosition.CENTER_ON_PARENT;
             }
             window = parent;
-            
-            settings = Hemera.App.Settings.get_default ();
         }
         construct {
             var mode_button = new Granite.Widgets.ModeButton ();;
@@ -344,7 +340,7 @@ namespace Hemera.App {
             mycroft_icon.halign = Gtk.Align.CENTER;
             mycroft_icon.hexpand = true;
             
-            var mycroft_label = new Gtk.Label ("Powered by Mycroft %s".printf ("<b>" + Hemera.App.Configs.Constants.VERSION + "</b>"));
+            var mycroft_label = new Gtk.Label ("Powered by Mycroft %s".printf ("<b>" + Hemera.Configs.Constants.VERSION + "</b>"));
             mycroft_label.get_style_context ().add_class (Granite.STYLE_CLASS_H3_LABEL);
             mycroft_label.halign = Gtk.Align.CENTER;
             mycroft_label.hexpand = true;
@@ -378,8 +374,9 @@ namespace Hemera.App {
             var core_location_label = new Gtk.Label (_("Mycroft Core Location"));
             core_location_label.get_style_context ().add_class (Granite.STYLE_CLASS_H3_LABEL);
 
-            var core_location_preview_label = new Gtk.Label ("~/");
-            core_location_preview_label.label = settings.mycroft_location;
+            var settings = Hemera.Configs.Settings.get_default ();
+            string loc = settings.mycroft_location;
+            var core_location_preview_label = new Gtk.Label (loc);
             
             var core_location_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             core_location_box.margin = 6;
@@ -425,7 +422,7 @@ namespace Hemera.App {
             hemera_icon.halign = Gtk.Align.CENTER;
             hemera_icon.hexpand = true;
             
-            var hemera_label = new Gtk.Label ("Hemera %s".printf ("<b>" + Hemera.App.Configs.Constants.VERSION + "</b>"));
+            var hemera_label = new Gtk.Label ("Hemera %s".printf ("<b>" + Hemera.Configs.Constants.VERSION + "</b>"));
             hemera_label.get_style_context ().add_class (Granite.STYLE_CLASS_H3_LABEL);
             hemera_label.halign = Gtk.Align.CENTER;
             hemera_label.hexpand = true;

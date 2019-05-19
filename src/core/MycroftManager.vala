@@ -81,7 +81,7 @@ namespace Hemera.Core {
         }
         public bool download_mycroft (string uri_endpoint) {
             MainLoop loop = new MainLoop ();
-
+            print ("Downloading...");
             var file_path = File.new_for_path (user_home_directory.concat ("/.mycroft-core.tar.gz"));
             var file_from_uri = File.new_for_uri (uri_endpoint);
             var progress = 0.0;
@@ -91,8 +91,8 @@ namespace Hemera.Core {
                     null, (current_num_bytes, total_num_bytes) => {
                         // Report copy-status:
                         progress = (double) current_num_bytes / total_num_bytes;
-                        total_num_bytes = total_num_bytes == 0 ? Hemera.App.Configs.Constants.MYCROFT_TAR_SIZE : total_num_bytes;
-                        print ("%" + int64.FORMAT + " bytes of %" + int64.FORMAT + " bytes copied.\n", current_num_bytes, total_num_bytes);
+                        total_num_bytes = total_num_bytes == 0 ? Hemera.Configs.Constants.MYCROFT_TAR_SIZE : total_num_bytes;
+                        warning ("%" + int64.FORMAT + " bytes of %" + int64.FORMAT + " bytes copied.\n", current_num_bytes, total_num_bytes);
                         //show_progress (progress);
 	                }, (obj, res) => {
                         try {

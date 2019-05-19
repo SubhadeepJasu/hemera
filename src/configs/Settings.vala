@@ -1,5 +1,6 @@
 /*-
  * Copyright (c) 2018-2019 Subhadeep Jasu <subhajasu@gmail.com>
+ * Copyright (c) 2018-2019 Hannes Schulze <haschu0103@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -15,22 +16,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Authored by: Subhadeep Jasu
+ *              Hannes Schulze
  */
 
-namespace Hemera.App {
+namespace Hemera.Configs {
     public class Settings : Granite.Services.Settings {
         private static Settings settings;
-        public static Settings get_default () {
+        public static unowned Settings get_default () {
             if (settings == null) {
                 settings = new Settings ();
             }
             return settings;
         }
-        public string mycroft_location {get; set;}
-        public bool override_remote_settings {get; set;}
-        public bool launch_at_startup {get; set;}
         private Settings () {
-            base ("com.github.SubhadeepJasu.hemera");
+            base (Constants.ID);
         }
+        public string mycroft_location {get; set;}
+        public int    window_width {get; set;}
+        public int    window_height {get; set;}
+        public bool   override_remote_settings {get; set;}
+        public bool   launch_at_startup {get; set;}
     }
 }
