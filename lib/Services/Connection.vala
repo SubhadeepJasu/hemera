@@ -43,13 +43,15 @@ namespace Hemera.Services {
         }
         public void init_ws_after_starting_mycroft () {
             int count = 0;
-            Timeout.add (200, () => {
-                init_ws ();
-                if (count++ > 25) {
-                    connection_failed ();
-                }
-                return !(ws_connected || (count > 25));
-            });
+            if (!ws_connected) {
+                Timeout.add (200, () => {
+                    init_ws ();
+                    if (count++ > 25) {
+                        connection_failed ();
+                    }
+                    return !(ws_connected || (count > 25));
+                });
+            }
         }
         public void init_ws_before_starting_mycroft () {
             init_ws ();
@@ -60,6 +62,7 @@ namespace Hemera.Services {
         }
 
         public void init_ws () {
+            ws_connected = false;
             var socket_client = new Soup.Session ();
             socket_client.https_aliases = { "wss" };
             var message = new Soup.Message ("GET", "ws://%s:%s/core".printf (ip_address, port_number));
@@ -80,6 +83,8 @@ namespace Hemera.Services {
                     }
                 } catch (Error e) {
                     stderr.printf ("Remote error\n");
+                    connection_failed ();
+                    ws_connected = false;
                 }
             });
         }

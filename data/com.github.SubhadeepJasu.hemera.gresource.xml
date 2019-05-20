@@ -16,6 +16,7 @@
 
     <gresource prefix="/com/github/SubhadeepJasu/hemera/images/logos">
         <file alias="wikipedia.svg" compressed="true" preprocess="xml-stripblanks">images/logos/wikipedia.svg</file>
+        <file alias="mycroft-logo-64.svg" compressed="true" preprocess="xml-stripblanks">images/logos/mycroft-logo-64.svg</file>
     </gresource>
 
     <gresource prefix="/com/github/SubhadeepJasu/hemera/images/face">

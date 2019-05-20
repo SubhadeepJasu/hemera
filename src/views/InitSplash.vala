@@ -19,24 +19,18 @@
 
 namespace Hemera.App {
     public class InitSplash : Gtk.Grid {
-        public signal void user_attempt_reconnect ();
+        public signal void user_attempt_install ();
         public class InitSplash () {
-            var welcome = new Granite.Widgets.Welcome ("Hemera", "Your very own personal digital companion");
-            welcome.append ("media-playback-start", "Install Mycroft", "Mycroft is my soul and I need it to function");
-            welcome.append ("application-default-icon", "Setup Mycroft", "Mycroft not installed? Let me help you");
+            var welcome = new Granite.Widgets.Welcome ("Hi! I am Hemera", "Mycroft is my soul and I need it");
+            welcome.append ("emblem-downloads", "Install Mycroft", "Download and install mycroft");
+            welcome.append ("folder-open", "Locate Mycroft Core", "Open Mycroft folder, if already installed");
 
             welcome.activated.connect ((index) => {
                 switch (index) {
                     case 0:
-                        user_attempt_reconnect ();
+                        user_attempt_install ();
                         break;
-                    case 1:
-                        try {
-                            AppInfo.launch_default_for_uri ("https://github.com/elementary/granite", null);
-                        } catch (Error e) {
-                            warning (e.message);
-                        }
-
+                    default:
                         break;
                 }
             });

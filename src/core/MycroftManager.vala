@@ -25,6 +25,12 @@ namespace Hemera.Core {
         public signal void mycroft_update_available (string tag, string body, string download_url);
         public signal void mycroft_update_failed ();
         public signal void mycroft_finish_download ();
+        public signal void mycroft_downloading (double progress);
+        public signal void mycroft_extracting (double progress);
+        public signal void mycroft_finished_extraction (string path);
+        public signal void mycroft_installing ();
+        public signal void mycroft_finished_installation ();
+
         public string mycroft_install_location = "~/mycroft-core";
         private string user_home_directory = "~/";
 
@@ -81,19 +87,19 @@ namespace Hemera.Core {
         }
         public bool download_mycroft (string uri_endpoint) {
             MainLoop loop = new MainLoop ();
-            print ("Downloading...");
-            var file_path = File.new_for_path (user_home_directory.concat ("/.mycroft-core.tar.gz"));
+            var file_path = File.new_for_path ("/tmp/.mycroft-core.tar.gz");
             var file_from_uri = File.new_for_uri (uri_endpoint);
             var progress = 0.0;
             if (!file_path.query_exists ()) {
+                print ("Downloading...");
                 file_from_uri.copy_async.begin (file_path, 
                     FileCopyFlags.OVERWRITE | FileCopyFlags.ALL_METADATA, GLib.Priority.DEFAULT, 
                     null, (current_num_bytes, total_num_bytes) => {
                         // Report copy-status:
-                        progress = (double) current_num_bytes / total_num_bytes;
                         total_num_bytes = total_num_bytes == 0 ? Hemera.Configs.Constants.MYCROFT_TAR_SIZE : total_num_bytes;
-                        warning ("%" + int64.FORMAT + " bytes of %" + int64.FORMAT + " bytes copied.\n", current_num_bytes, total_num_bytes);
-                        //show_progress (progress);
+                        print ("%" + int64.FORMAT + " bytes of %" + int64.FORMAT + " bytes copied.\n", current_num_bytes, total_num_bytes);
+                        progress = (double)(current_num_bytes) / (double)total_num_bytes;
+                        mycroft_downloading (progress);
 	                }, (obj, res) => {
                         try {
                             bool tmp = file_from_uri.copy_async.end (res);
@@ -115,6 +121,125 @@ namespace Hemera.Core {
             }
             loop.run ();
             return true;
+        }
+        public void extract_mycroft (string filename) {
+            // Select which attributes we want to restore.
+            warning ("Extracting...");
+            Posix.sleep (2);
+            Archive.ExtractFlags flags;
+            flags = Archive.ExtractFlags.TIME;
+            flags |= Archive.ExtractFlags.PERM;
+            flags |= Archive.ExtractFlags.ACL;
+            flags |= Archive.ExtractFlags.FFLAGS;
+
+            Archive.Read archive = new Archive.Read ();
+            archive.support_format_all ();
+            archive.support_compression_all ();
+
+            Archive.WriteDisk extractor = new Archive.WriteDisk ();
+            extractor.set_options (flags);
+            extractor.set_standard_lookup ();
+
+            if (archive.open_filename (filename, 10240) != Archive.Result.OK) {
+                critical ("Error opening %s: %s (%d)", filename, archive.error_string (), archive.errno ());
+                return;
+            }
+            size_t cummulative_size = 0;
+            unowned Archive.Entry entry;
+            Archive.Result last_result;
+            string destination_path = user_home_directory.concat ("/.local/share/hemera_mycroft");
+            while ((last_result = archive.next_header (out entry)) == Archive.Result.OK) {
+                entry.set_pathname(destination_path.concat("/", entry.pathname ()));
+                if (extractor.write_header (entry) != Archive.Result.OK) {
+                    continue;
+                }
+                void* buffer = null;
+                size_t buffer_length;
+                Posix.off_t offset;
+                while (archive.read_data_block (out buffer, out buffer_length, out offset) == Archive.Result.OK) {
+                    if (extractor.write_data_block (buffer, buffer_length, offset) != Archive.Result.OK) {
+                        break;
+                    }
+                    Thread.usleep (1000);
+                    print (buffer_length.to_string ().concat ("\n"));
+                    cummulative_size += buffer_length;
+                    double progress = (double)(cummulative_size)/15642892;
+                    mycroft_extracting (progress);
+                }
+            }
+            Posix.sleep (1);
+            if (last_result != Archive.Result.EOF) {
+                critical ("Error: %s (%d)", archive.error_string (), archive.errno ());
+            }
+            warning ("Extraction Complete");
+            verify_mycroft_extract ();
+        }
+        public void verify_mycroft_extract () {
+            string mycroft_new_path = "";
+            try {
+		        string directory = user_home_directory.concat ("/.local/share/hemera_mycroft");
+		        Dir dir = Dir.open (directory, 0);
+		        string? name = null;
+
+		        while ((name = dir.read_name ()) != null) {
+			        string path = Path.build_filename (directory, name);
+			        string type = "";
+
+			        if (FileUtils.test (path, FileTest.IS_REGULAR)) {
+				        type += "| REGULAR ";
+			        }
+
+			        if (FileUtils.test (path, FileTest.IS_SYMLINK)) {
+				        type += "| SYMLINK ";
+			        }
+
+			        if (FileUtils.test (path, FileTest.IS_DIR)) {
+				        type += "| DIR ";
+			        }
+
+			        if (FileUtils.test (path, FileTest.IS_EXECUTABLE)) {
+				        type += "| EXECUTABLE ";
+			        }
+
+			        print ("%s\t%s\n", name, type);
+			        mycroft_new_path = user_home_directory.concat ("/.local/share/hemera_mycroft/", name, "/");
+			        warning (mycroft_new_path);
+			        install_mycroft (mycroft_new_path);
+		        }
+	        } catch (FileError err) {
+		        stderr.printf (err.message);
+	        }
+        }
+        public async void install_mycroft (string filepath) {
+            mycroft_installing ();
+            try {
+                string[] command = get_command ();
+                Posix.chdir (filepath);
+                //string? output = null;
+                Process.spawn_command_line_async ("git init");
+                string? input = "nnnnn";
+                var subprocess = new Subprocess.newv (command, SubprocessFlags.STDIN_PIPE);
+                yield subprocess.communicate_utf8_async (input, null, null, null);
+
+                if (yield subprocess.wait_check_async ()) {
+                    stdout.printf ("Installation Done\n");
+                    mycroft_finished_installation ();
+                    //print (output);
+                }
+            } catch (Error e) {
+                warning ("Error: '%s'", e.message);
+            }
+        }
+        private string[] get_command () {
+            string command = "bash dev_setup.sh";
+
+            string[]? argv = null;
+            try {
+                Shell.parse_argv (command, out argv);
+            } catch (Error e) {
+                warning ("Error: '%s'", e.message);
+            }
+            return argv;
         }
         public bool check_updates () {
             if (!Thread.supported ()) {

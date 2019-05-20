@@ -19,6 +19,7 @@ hemera_deps = [
   dependency('glib-2.0'),
   dependency('gtk+-3.0'),
   dependency('granite'),
+  dependency('libarchive'),
   libhemera_dep
 ]
 

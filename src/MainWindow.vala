@@ -30,6 +30,7 @@ namespace Hemera.App {
         private Gtk.Stack main_stack;
         public Hemera.App.HemeraApp app_reference;
         public Gtk.Spinner main_spinner;
+        private Installer installer_view;
 
         public MainWindow (Hemera.App.HemeraApp application) {
             icon_name = "com.github.SubhadeepJasu.hemera";
@@ -74,10 +75,12 @@ namespace Hemera.App {
             main_grid.valign = Gtk.Align.CENTER;
 
             welcome_screen = new InitSplash ();
+            installer_view = new Installer ();
 
             main_stack = new Gtk.Stack ();
             main_stack.add_named (main_grid, "Interaction View");
             main_stack.add_named (welcome_screen, "Welcome View");
+            main_stack.add_named (installer_view, "Installer View");
 
             main_stack.transition_type = Gtk.StackTransitionType.OVER_LEFT_RIGHT;
             this.add (main_stack);
@@ -100,8 +103,9 @@ namespace Hemera.App {
                     app_reference.mycroft_message_manager.send_mic_off ();
                 }
             });
-            welcome_screen.user_attempt_reconnect.connect (() => {
-                app_reference.mycroft_connection.init_ws ();
+            welcome_screen.user_attempt_install.connect (() => {
+                main_stack.set_visible_child (installer_view);
+                installer_view.download_mycroft ();
             });
         }
         public void set_launch_screen (int? screen = 0) {
@@ -121,8 +125,8 @@ namespace Hemera.App {
             });
             app_reference.mycroft_message_manager.connection_established.connect (() => {
                 Timeout.add (500, () => {
-                chatbox.push_mycroft_text ("Hi! I am Hemera");
-                return false;
+                    chatbox.push_mycroft_text ("Hi! I am Hemera");
+                    return false;
                 });
                 Timeout.add (800, () => {
                     var randomizer = new Rand();

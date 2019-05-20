@@ -46,6 +46,19 @@ namespace Hemera.App {
                 window_position = Gtk.WindowPosition.CENTER_ON_PARENT;
             }
             window = parent;
+            var css_provider = new Gtk.CssProvider();
+            try {
+                css_provider.load_from_resource ("/com/github/SubhadeepJasu/hemera/css/style.css");
+            }
+            catch (Error e) {
+                warning("%s", e.message);
+            }
+            // CSS Provider
+            Gtk.StyleContext.add_provider_for_screen (
+                Gdk.Screen.get_default(),
+                css_provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            );
         }
         construct {
             var mode_button = new Granite.Widgets.ModeButton ();;
@@ -333,9 +346,11 @@ namespace Hemera.App {
         }
         private Gtk.Widget get_mycroft_core_widget () {
             
-            var mycroft_icon = new Gtk.Image ();
-            mycroft_icon.gicon = new ThemedIcon ("avatar-default");
-            mycroft_icon.pixel_size = 64;
+            var mycroft_icon = new Gtk.Spinner ();
+            mycroft_icon.active = true;
+            mycroft_icon.get_style_context ().add_class ("mycroft-logo");
+            mycroft_icon.width_request = 64;
+            mycroft_icon.height_request = 64;
             mycroft_icon.margin_top = 12;
             mycroft_icon.halign = Gtk.Align.CENTER;
             mycroft_icon.hexpand = true;

@@ -298,3 +298,8 @@
 	box-shadow:none;
 	color: #4d4d4d;
 }
+
+.mycroft-logo {
+	animation: none;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/logos/mycroft-logo-64.svg");
+}

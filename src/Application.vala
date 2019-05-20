@@ -71,6 +71,7 @@ namespace Hemera.App {
                     return false;
             });
             mycroft_connection.connection_established.connect (() => {
+            warning ("Set screen 1");
                 Timeout.add (1000, () => {
                     mainwindow.present ();
                     mainwindow.set_launch_screen (1);
@@ -79,6 +80,7 @@ namespace Hemera.App {
                 });
             });
             mycroft_connection.connection_failed.connect (() => {
+            warning ("Set screen 0");
                 mainwindow.present ();
                 mainwindow.set_launch_screen (0);
             });
@@ -165,11 +167,6 @@ namespace Hemera.App {
             });
             mycroft_system.mycroft_launch_failed.connect (() => {
                 warning ("Mycroft location doesn't exist");
-            });
-            mycroft_system.mycroft_update_available.connect ((tag, body, download_url) => {
-                print ("Update Available! Version: %s\n%s\nDownloading...", tag, body);
-                mycroft_system.download_mycroft (download_url);
-                
             });
         }
         private void close_window () {
