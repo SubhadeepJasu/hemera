@@ -21,6 +21,15 @@
 using Hemera.Configs;
 
 namespace Hemera.App {
+
+
+    /**
+     * Class responsible for creating the u window and will contain contain other widgets.
+     * allowing the user to manipulate the window (resize it, move it, close it, ...).
+     *
+     * @see Gtk.ApplicationWindow
+     * @since 1.0.0
+     */
     public class MainWindow : Gtk.Window {
         private Hemera.App.DisplayEnclosure enclosure_display;
         private ChatView chatbox;
@@ -32,23 +41,35 @@ namespace Hemera.App {
         public Gtk.Spinner main_spinner;
         private Installer installer_view;
 
+        /**
+         * Constructs a new {@code MainWindow} object.
+         *
+         * @see App.Configs.Constants
+         * @see style_provider
+         * @see build
+         */
         public MainWindow (Hemera.App.HemeraApp application) {
             icon_name = "com.github.SubhadeepJasu.hemera";
             this.app_reference = application;
             make_ui ();
             make_events ();
             make_mycroft_incoming_events ();
-            
+
             var settings = Hemera.Configs.Settings.get_default ();
             int w = settings.window_width;
             int h = settings.window_height;
         }
+
+        /**
+         * Create the user interface
+         * @return {@code void}
+         */
         private void make_ui () {
             Gtk.Button settings_button = new Gtk.Button ();
             settings_button.image = new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
             settings_button.tooltip_text = _("Menu");
             settings_button.valign = Gtk.Align.CENTER;
-            
+
             main_spinner = new Gtk.Spinner ();
             main_spinner.active = false;
 
@@ -90,6 +111,11 @@ namespace Hemera.App {
 
             chatbox.refocus ();
         }
+
+        /**
+         * Handle UI events
+         * @return {@code void}
+         */
         private void make_events () {
             enclosure_display.wake_button_clicked.connect (() => {
                 app_reference.mycroft_message_manager.send_wake ();
@@ -108,6 +134,12 @@ namespace Hemera.App {
                 installer_view.download_mycroft ();
             });
         }
+
+        /**
+         * Handle the view to display in stack
+         * @see Gtk.Stack
+         * @return {@code void}
+         */
         public void set_launch_screen (int? screen = 0) {
             switch (screen) {
                 case 1:
@@ -119,6 +151,11 @@ namespace Hemera.App {
                     break;
             }
         }
+        /**
+         * Handle events incoming from Mycroft
+         * @see Hemera.Services.MessageManager
+         * @return {@code void}
+         */
         private void make_mycroft_incoming_events () {
             chatbox.send_message_text.connect ((utterance) => {
                 app_reference.mycroft_message_manager.send_utterance (utterance);
@@ -160,11 +197,20 @@ namespace Hemera.App {
             app_reference.mycroft_message_manager.receive_current_weather.connect ((icon, current_temp, min_temp, max_temp, location, condition, humidity, wind) => {
                 chatbox.push_current_weather (icon, current_temp, min_temp, max_temp, location, condition, humidity, wind);
             });
-            
         }
+
+        /**
+         * Acknowledge app launch through chat
+         * @return {@code void}
+         */
         public void chat_launch_app (Hemera.Core.AppEntry app) {
             chatbox.push_app_launch (app);
         }
+
+        /**
+         * Handle chat message text
+         * @return {@code void}
+         */
         public void set_chat_message_override (string message) {
             chatbox.received_bubble_text = message;
         }

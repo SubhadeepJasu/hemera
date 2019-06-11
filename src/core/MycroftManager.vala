@@ -18,6 +18,15 @@
  */
 
 namespace Hemera.Core {
+
+    /**
+     * The {@code MycroftManager} class is responsible for managing Mycroft:
+     * - Starting
+     * - Stopping
+     * - Installing
+     *
+     * @since 1.0.0
+     */
     public class MycroftManager {
         public signal void mycroft_launch_failed ();
         public signal void mycroft_launched ();
@@ -34,15 +43,24 @@ namespace Hemera.Core {
         public string mycroft_install_location = "~/mycroft-core";
         private string user_home_directory = "~/";
 
+        /**
+         * Constructs a new {@code MycroftManager} object
+         */
         public MycroftManager () {
             user_home_directory = GLib.Environment.get_home_dir ();
             mycroft_install_location = user_home_directory.concat ("/mycroft-core");
         }
 
+        /**
+         * Start Mycroft asynchronously
+         * @return {@code bool}.
+         */
         public bool start_mycroft () {
             string mc_stdout = "", ms_stderr = "";
             int mc_status = 0;
             bool b_status = true;
+
+            // Launch as a subroutine
             Timeout.add (100, () => {
                 string launch_command = (".%s/start-mycroft.sh all").printf (mycroft_install_location);
                 warning (launch_command);
@@ -63,6 +81,8 @@ namespace Hemera.Core {
                     mycroft_launch_error ();
                     return false;
                 }
+
+                // Lazily verify that Mycroft as indeed started the websocket
                 if (mc_stdout.contains ("Starting background service enclosure")) {
                     mycroft_launched ();
                 } else {
@@ -72,6 +92,11 @@ namespace Hemera.Core {
             });
             return b_status;
         }
+
+        /**
+         * Stop Mycroft asynchronously
+         * @return {@code void}.
+         */
         public void stop_mycroft () {
             string mc_stdout = "", ms_stderr = "";
             int mc_status = 0;
@@ -85,11 +110,18 @@ namespace Hemera.Core {
                 return false;
             });
         }
+
+        /**
+         * Download the given version of Mycroft
+         * @return {@code bool}.
+         */
         public bool download_mycroft (string uri_endpoint) {
             MainLoop loop = new MainLoop ();
             var file_path = File.new_for_path ("/tmp/.mycroft-core.tar.gz");
             var file_from_uri = File.new_for_uri (uri_endpoint);
             var progress = 0.0;
+
+            // Don't redownload if the same file exist
             if (!file_path.query_exists ()) {
                 print ("Downloading...");
                 file_from_uri.copy_async.begin (file_path, 
@@ -122,9 +154,16 @@ namespace Hemera.Core {
             loop.run ();
             return true;
         }
+
+        /**
+         * Extract the Mycroft tar package
+         * @return {@code bool}.
+         */
         public void extract_mycroft (string filename) {
             // Select which attributes we want to restore.
             warning ("Extracting...");
+
+            // Wait for the file to close, not a proper way, but it works
             Posix.sleep (2);
             Archive.ExtractFlags flags;
             flags = Archive.ExtractFlags.TIME;
@@ -149,6 +188,8 @@ namespace Hemera.Core {
             Archive.Result last_result;
             string destination_path = user_home_directory.concat ("/.local/share/hemera_mycroft");
             while ((last_result = archive.next_header (out entry)) == Archive.Result.OK) {
+
+                // Modify the entry path to the destination path
                 entry.set_pathname(destination_path.concat("/", entry.pathname ()));
                 if (extractor.write_header (entry) != Archive.Result.OK) {
                     continue;
@@ -160,6 +201,8 @@ namespace Hemera.Core {
                     if (extractor.write_data_block (buffer, buffer_length, offset) != Archive.Result.OK) {
                         break;
                     }
+
+                    // Slow down extraction to prevent segmentation fault
                     Thread.usleep (1000);
                     print (buffer_length.to_string ().concat ("\n"));
                     cummulative_size += buffer_length;
@@ -172,8 +215,15 @@ namespace Hemera.Core {
                 critical ("Error: %s (%d)", archive.error_string (), archive.errno ());
             }
             warning ("Extraction Complete");
+
+            // Queue the verify routine
             verify_mycroft_extract ();
         }
+
+        /**
+         * Verify that the extract went well and set the mycroft path property
+         * @return {@code void}.
+         */
         public void verify_mycroft_extract () {
             string mycroft_new_path = "";
             try {
@@ -210,12 +260,18 @@ namespace Hemera.Core {
 		        stderr.printf (err.message);
 	        }
         }
+
+        /**
+         * Run Mycroft Installation script
+         * @return {@code void}.
+         */
         public async void install_mycroft (string filepath) {
             mycroft_installing ();
             try {
                 string[] command = get_command ();
                 Posix.chdir (filepath);
-                //string? output = null;
+
+                // Initialize git to this new directory
                 Process.spawn_command_line_async ("git init");
                 string? input = "nnnnn";
                 var subprocess = new Subprocess.newv (command, SubprocessFlags.STDIN_PIPE);
@@ -224,13 +280,21 @@ namespace Hemera.Core {
                 if (yield subprocess.wait_check_async ()) {
                     stdout.printf ("Installation Done\n");
                     mycroft_finished_installation ();
-                    //print (output);
                 }
             } catch (Error e) {
                 warning ("Error: '%s'", e.message);
             }
         }
+
+        /**
+         * Get Installation script commandline
+         * @return {@code string[]}.
+         */
         private string[] get_command () {
+            /* TODO: Find a new way to run this script that doesn't cause multiple
+             *       bash processes to continue running after the main script has
+             *       exited and hog CPU
+             */
             string command = "bash dev_setup.sh";
 
             string[]? argv = null;
@@ -241,6 +305,13 @@ namespace Hemera.Core {
             }
             return argv;
         }
+
+        /**
+         * Get the latest version number of Mycroft and the download url
+         * Uses threads
+         * @see GLib.Thread
+         * @return {@code bool}.
+         */
         public bool check_updates () {
             if (!Thread.supported ()) {
                 warning ("Thread support missing. Please wait for web API access...\n");
@@ -249,25 +320,36 @@ namespace Hemera.Core {
             }
             else {
                 try {
+                /* TODO: Remove the useless thread reference
+                 */
                     Thread<int> thread_u = new Thread<int>.try ("thread_u", fetch_updates);
                 } catch (Error e) {
                     warning ("%s\n", e.message);
+                    // Thread error, to bad. Update Mycroft manually.
                     mycroft_update_failed ();
                     return false;
                 }
             }
             return true;
         }
+        /**
+         * Threaded Mycroft update subroutine
+         * @return {@code int}.
+         */
         int fetch_updates () {
             var uri = "https://api.github.com/repos/MycroftAI/mycroft-core/releases/latest";
             var session = new Soup.Session ();
             var message = new Soup.Message ("GET", uri);
             session.user_agent = "com.github.SubhadeepJasu.hemera";
             if(session.send_message (message) != 200) {
+
+                // Failed to fetch updates
                 mycroft_update_failed ();
                 return 1;
             }
             try {
+
+                // Parse JSON to get the latest update version and url
                 var parser = new Json.Parser ();
                 parser.load_from_data ((string) message.response_body.flatten ().data, -1);
                 var root_object = parser.get_root ().get_object();
@@ -276,6 +358,8 @@ namespace Hemera.Core {
                 var body = root_object.get_string_member ("body");
                 mycroft_update_available (tag.replace ("release/", ""), body, download_url);
             } catch (Error e) {
+
+                // JSON data is corrupted
                 warning ("Failed to connect to service: %s", e.message);
                 mycroft_update_failed ();
                 return 1;

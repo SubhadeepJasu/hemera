@@ -20,21 +20,73 @@
  */
 
 namespace Hemera.Configs {
+
+    /**
+     * The {@code Settings} class is responsible for defining all
+     * the texts that are displayed in the application and must be translated.
+     *
+     * @see Granite.Services.Settings
+     * @since 1.0.0
+     */
     public class Settings : Granite.Services.Settings {
+
+        /**
+         * This static property represents the {@code Settings} type.
+         */
         private static Settings settings;
+
+        /**
+         * Returns a single instance of this class.
+         *
+         * @return {@code Settings}
+         */
         public static unowned Settings get_default () {
             if (settings == null) {
                 settings = new Settings ();
             }
             return settings;
         }
+
+        /**
+         * Constructs a new {@code Settings} object
+         * and sets the default exit folder.
+         */
         private Settings () {
             base (Constants.ID);
         }
+
+        /**
+         * This property represents the location of mycroft-core
+         * Variable of type {@code string} as declared.
+         */
         public string mycroft_location {get; set;}
+
+        /**
+         * This property represents the width of MainWindow
+         * Variable of type {@code int} as declared.
+         * @see Hemera.App.MainWindow
+         */
         public int    window_width {get; set;}
+
+        /**
+         * This property represents the height of MainWindow
+         * Variable of type {@code int} as declared.
+         * @see Hemera.App.MainWindow
+         */
         public int    window_height {get; set;}
+
+        /**
+         * This property is set to true when the user opts to let Hemera handle
+         * Mycroft settings
+         * Variable of type {@code bool} as declared.
+         */
         public bool   override_remote_settings {get; set;}
+
+        /**
+         * This property is set to true when the user opts to start Hemera on
+         * start up
+         * Variable of type {@code bool} as declared.
+         */
         public bool   launch_at_startup {get; set;}
     }
 }

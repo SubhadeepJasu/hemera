@@ -20,6 +20,12 @@
  */
 
 namespace Hemera.App {
+    /**
+     * The {@code HemeraApp} class is a foundation for all GTK-based applications.
+     *
+     * @see Gtk.Application
+     * @since 1.0.0
+     */
     public class HemeraApp : Gtk.Application {
         static HemeraApp _instance = null;
         public static HemeraApp instance {
@@ -36,6 +42,9 @@ namespace Hemera.App {
         public Hemera.Core.AppSearch app_search_provider;
         private Hemera.Core.MycroftManager mycroft_system;
 
+        /**
+         * Constructs a new {@code HemeraApp} object.
+         */
         public HemeraApp () {
             Object (
                 application_id: "com.github.SubhadeepJasu.hemera",
@@ -46,6 +55,11 @@ namespace Hemera.App {
             mycroft_message_manager = new Hemera.Services.MessageManager (mycroft_connection);
         }
         public MainWindow mainwindow;
+
+        /**
+         * Handle attempts to start up the application
+         * @return {@code void}
+         */
         protected override void activate () {
             mycroft_system = new Hemera.Core.MycroftManager ();
             if (mainwindow == null) {
@@ -88,11 +102,19 @@ namespace Hemera.App {
             handle_application_launch_system ();
         }
 
+        /**
+         * Handle command line arguments
+         * @return {@code int}
+         */
         public override int command_line (ApplicationCommandLine cmd) {
             command_line_interpreter (cmd);
             return 0;
         }
 
+        /**
+         * Handle command line arguments
+         * @return {@code void}
+         */
         private void command_line_interpreter (ApplicationCommandLine cmd) {
             string[] cmd_args = cmd.get_arguments ();
             unowned string[] args = cmd_args;
@@ -116,14 +138,19 @@ namespace Hemera.App {
                 cmd.print ("%s\n",version_string);
             }
             else if (show_preferences) {
-                var prefs = new PreferencesWindow ();
-                prefs.show_all ();
-                add_window (prefs);
+                var prefs_window = new PreferencesWindow ();
+                prefs_window.show_all ();
+                add_window (prefs_window);
             }
             else {
                 activate ();
             }
         }
+        /**
+         * Add ability to launch other installed apps
+         * using Mycroft and Hemera skill
+         * @return {@code void}
+         */
         private void handle_application_launch_system () {
             app_search_provider = new Hemera.Core.AppSearch ();
             mycroft_message_manager.receive_hemera_launch_app.connect ((query) => {
@@ -132,6 +159,7 @@ namespace Hemera.App {
                     launchable_app.launch ();
                     if (mainwindow != null) {
                         mainwindow.chat_launch_app (launchable_app);
+                        // Make me sound more human
                         Rand randomizer = new Rand ();
                         int random = randomizer.int_range (1, 4);
                         string open_word = "";
@@ -149,6 +177,7 @@ namespace Hemera.App {
                                 open_word = ("Okay, launching %s").printf (launchable_app.app_name);
                                 break;
                         }
+                        // Send message to Mycroft TTS system
                         mycroft_message_manager.send_speech (open_word);
                         if (mainwindow != null) {
                             mainwindow.set_chat_message_override (open_word);
@@ -160,6 +189,10 @@ namespace Hemera.App {
                 }
             });
         }
+        /**
+         * Handle the system to launch Mycroft and connect to it
+         * @return {@code void}
+         */
         private void handle_mycroft_launch_system () {
             mycroft_system.start_mycroft ();
             mycroft_system.mycroft_launched.connect (() => {
@@ -169,13 +202,24 @@ namespace Hemera.App {
                 warning ("Mycroft location doesn't exist");
             });
         }
+        /**
+         * Stub: Handle window visibility when
+         * the app runs in the background
+         * @return {@code void}
+         */
         private void close_window () {
             if (mainwindow != null) {
                 mainwindow.destroy ();
                 mainwindow = null;
             }
         }
-        
+        /**
+         * Main method. Responsible for starting the {@code HemeraApp} class.
+         *
+         * @see Hemera.HemeraApp
+         * @return {@code int}
+         * @since 1.0.0
+         */
         public static int main (string[] args) {
             var app = new Hemera.App.HemeraApp ();
             var ret = app.run (args);

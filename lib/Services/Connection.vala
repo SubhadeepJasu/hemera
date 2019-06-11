@@ -21,6 +21,12 @@
  */
 
 namespace Hemera.Services {
+
+    /**
+     * The {@code Connection} class is responsible for creating a websocket 
+     * connection with Mycroft
+     * @since 1.0.0
+     */
     public class Connection {
         public signal void ws_message (int type, string message);
         public signal void connection_established ();
@@ -33,14 +39,27 @@ namespace Hemera.Services {
         private string port_number = "8181";
         public bool ws_connected { public get; private set; }
 
+        /**
+         * Constructs a new {@code Connection} object
+         */
         public Connection (string ip_address, string port_number) {
             this.ip_address = ip_address;
             this.port_number = port_number;
             this.ws_connected = false;
         }
+
+        /**
+         * Get the websocket connection reference
+         * @return {@code Soup.WebsocketConnection}
+         */
         public Soup.WebsocketConnection get_web_socket () {
             return websocket_connection;
         }
+
+        /**
+         * Attempt reconnection with Mycroft.
+         * @return {@code void}
+         */
         public void init_ws_after_starting_mycroft () {
             int count = 0;
             if (!ws_connected) {
@@ -53,6 +72,11 @@ namespace Hemera.Services {
                 });
             }
         }
+
+        /**
+         * Attempt connection to check if Mycroft is running.
+         * @return {@code void}
+         */
         public void init_ws_before_starting_mycroft () {
             init_ws ();
             Timeout.add (5000, () => {
@@ -61,6 +85,10 @@ namespace Hemera.Services {
             });
         }
 
+        /**
+         * Starts a web socket connection with Mycroft asynchronously.
+         * @return {@code void}
+         */
         public void init_ws () {
             ws_connected = false;
             var socket_client = new Soup.Session ();
@@ -89,6 +117,10 @@ namespace Hemera.Services {
             });
         }
 
+        /**
+         * Converts a stream of bytes to string.
+         * @return {@code string}
+         */
         private static string decode_bytes (Bytes byt, int n) {
             Intl.setlocale ();
 
