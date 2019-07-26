@@ -48,7 +48,11 @@ namespace Hemera.Core {
          */
         public MycroftManager () {
             user_home_directory = GLib.Environment.get_home_dir ();
-            mycroft_install_location = user_home_directory.concat ("/mycroft-core");
+            var settings = Hemera.Configs.Settings.get_default ();
+            string mycroft_install_location = settings.mycroft_location;
+            if (mycroft_install_location == null) {
+                mycroft_install_location = user_home_directory.concat ("/mycroft-core");
+            }
         }
 
         /**
@@ -172,8 +176,8 @@ namespace Hemera.Core {
             flags |= Archive.ExtractFlags.FFLAGS;
 
             Archive.Read archive = new Archive.Read ();
-            archive.support_format_all ();
-            archive.support_compression_all ();
+            archive.support_format_tar ();
+            archive.support_filter_all ();
 
             Archive.WriteDisk extractor = new Archive.WriteDisk ();
             extractor.set_options (flags);
@@ -203,11 +207,11 @@ namespace Hemera.Core {
                     }
 
                     // Slow down extraction to prevent segmentation fault
-                    Thread.usleep (1000);
                     print (buffer_length.to_string ().concat ("\n"));
                     cummulative_size += buffer_length;
                     double progress = (double)(cummulative_size)/15642892;
                     mycroft_extracting (progress);
+                    //Thread.usleep (2000);
                 }
             }
             Posix.sleep (1);
@@ -252,7 +256,10 @@ namespace Hemera.Core {
 			        }
 
 			        print ("%s\t%s\n", name, type);
-			        mycroft_new_path = user_home_directory.concat ("/.local/share/hemera_mycroft/", name, "/");
+                    mycroft_new_path = user_home_directory.concat ("/.local/share/hemera_mycroft/", name, "/");
+                    mycroft_install_location = mycroft_new_path;
+                    var settings = Hemera.Configs.Settings.get_default ();
+                    settings.mycroft_location = mycroft_new_path;
 			        warning (mycroft_new_path);
 			        install_mycroft (mycroft_new_path);
 		        }
@@ -268,7 +275,7 @@ namespace Hemera.Core {
         public async void install_mycroft (string filepath) {
             mycroft_installing ();
             try {
-                string[] command = get_command ();
+                string[] command = get_command_install ();
                 Posix.chdir (filepath);
 
                 // Initialize git to this new directory
@@ -290,7 +297,7 @@ namespace Hemera.Core {
          * Get Installation script commandline
          * @return {@code string[]}.
          */
-        private string[] get_command () {
+        private string[] get_command_install () {
             /* TODO: Find a new way to run this script that doesn't cause multiple
              *       bash processes to continue running after the main script has
              *       exited and hog CPU

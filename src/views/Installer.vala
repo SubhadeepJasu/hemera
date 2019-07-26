@@ -62,12 +62,16 @@ namespace Hemera.App {
             });
             mycroft_system.mycroft_extracting.connect ((progress) => {
                 progressbar_label.label = "Extracting...";
-                progressbar_installer.fraction = progress;
+                //progressbar_installer.fraction = progress;
             });
             mycroft_system.mycroft_installing.connect (() => {
+                queue_draw ();
                 progressbar_label.label = "Installing, It will take a long time...";
-                Timeout.add (100, () => {
-                    progressbar_installer.pulse ();
+                double i = 0;
+                Timeout.add (10, () => {
+                    //progressbar_installer.pulse ();
+
+                    progressbar_installer.set_fraction (i+=0.00005);
                     return installing;
                 });
             });
@@ -75,6 +79,7 @@ namespace Hemera.App {
                 progressbar_label.label = "Installation Complete!";
                 installing = false;
                 progressbar_installer.fraction = 1.0;
+                queue_draw ();
             });
         }
         public void download_mycroft () {
