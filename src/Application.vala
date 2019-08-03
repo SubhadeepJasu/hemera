@@ -79,7 +79,7 @@ namespace Hemera.App {
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
-            handle_mycroft_launch_system ();
+            //handle_mycroft_launch_system ();
             Timeout.add (1000, () => {
                     mycroft_connection.init_ws ();
                     return false;
@@ -93,11 +93,12 @@ namespace Hemera.App {
                     return false;
                 });
             });
-            mycroft_connection.connection_failed.connect (() => {
-            warning ("Set screen 0");
+            //mycroft_connection.connection_failed.connect (() => {
+                /*warning ("Set screen 0");
                 mainwindow.present ();
-                mainwindow.set_launch_screen (0);
-            });
+                mainwindow.set_launch_screen (0);*/
+            handle_mycroft_launch_system ();
+            //});
             mycroft_system.check_updates ();
             handle_application_launch_system ();
         }
@@ -194,12 +195,34 @@ namespace Hemera.App {
          * @return {@code void}
          */
         private void handle_mycroft_launch_system () {
-            mycroft_system.start_mycroft ();
+            mycroft_connection.connection_failed.connect (() => {
+                /*
+                var loop = new MainLoop();
+                mycroft_system.start_mycroft.begin ((obj, res) => {
+                    try {
+                        mycroft_system.start_mycroft.end (res);
+                    }
+                    catch (ThreadError e) {
+                        string msg = e.message;
+                        stderr.printf(@"Thread error: $msg\n");
+                    }
+                    loop.quit ();
+                });
+                loop.run();
+                */
+                mycroft_system.start_mycroft ();
+            });
             mycroft_system.mycroft_launched.connect (() => {
                 warning ("Mycroft started");
+                Timeout.add (1000, () => {
+                    mycroft_connection.init_ws ();
+                    return false;
+                });
             });
             mycroft_system.mycroft_launch_failed.connect (() => {
                 warning ("Mycroft location doesn't exist");
+                mainwindow.present ();
+                mainwindow.set_launch_screen (0);
             });
         }
         /**

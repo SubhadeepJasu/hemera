@@ -392,6 +392,7 @@ namespace Hemera.App {
             var settings = Hemera.Configs.Settings.get_default ();
             string loc = settings.mycroft_location;
             var core_location_preview_label = new Gtk.Label (loc);
+            core_location_preview_label.ellipsize = Pango.EllipsizeMode.END;
             
             var core_location_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             core_location_box.margin = 6;

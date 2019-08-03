@@ -49,52 +49,90 @@ namespace Hemera.Core {
         public MycroftManager () {
             user_home_directory = GLib.Environment.get_home_dir ();
             var settings = Hemera.Configs.Settings.get_default ();
-            string mycroft_install_location = settings.mycroft_location;
+            mycroft_install_location = settings.mycroft_location;
             if (mycroft_install_location == null) {
                 mycroft_install_location = user_home_directory.concat ("/mycroft-core");
             }
         }
 
+        private static bool process_line (MycroftManager me, IOChannel channel, IOCondition condition, string stream_name) {
+            if (condition == IOCondition.HUP) {
+                print ("%s: The fd has been closed.\n", stream_name);
+                return false;
+            }
+        
+            try {
+                string line;
+                channel.read_line (out line, null, null);
+                print ("%s: %s", stream_name, line);
+                if (stream_name == "stderr" && line.contains ("No such file or directory")) {
+                    me.mycroft_launch_failed ();
+                } else if (stream_name == "stdout" && (line.contains ("Starting all mycroft-core services")) || (line.contains ("Starting background service bus"))){
+                    Posix.sleep (2);
+                    me.mycroft_launched ();
+                }
+            } catch (IOChannelError e) {
+                print ("%s: IOChannelError: %s\n", stream_name, e.message);
+                me.mycroft_launch_error ();
+                return false;
+            } catch (ConvertError e) {
+                print ("%s: ConvertError: %s\n", stream_name, e.message);
+                me.mycroft_launch_error ();
+                return false;
+            }
+        
+            return true;
+        }
+
         /**
          * Start Mycroft asynchronously
-         * @return {@code bool}.
+         * @return {@code int}.
          */
-        public bool start_mycroft () {
-            string mc_stdout = "", ms_stderr = "";
-            int mc_status = 0;
-            bool b_status = true;
 
-            // Launch as a subroutine
-            Timeout.add (100, () => {
-                string launch_command = (".%s/start-mycroft.sh all").printf (mycroft_install_location);
-                warning (launch_command);
-                try {
-                GLib.Process.spawn_command_line_sync (launch_command,
-                                                      out mc_stdout,
-                                                      out ms_stderr,
-                                                      out mc_status);
-                }
-                catch (SpawnError e) {
-                    mycroft_launch_failed ();
-                    return false;
-                }
-                try {
-                    b_status = GLib.Process.check_exit_status (mc_status);
-                }
-                catch (Error e) {
-                    mycroft_launch_error ();
-                    return false;
-                }
+        public int start_mycroft () {
+            MainLoop loop = new MainLoop ();
+            try {
+                string launch_command = ("%sstart-mycroft.sh").printf (mycroft_install_location);
+                string[] spawn_args = {"bash", launch_command, "all"};
+                string[] spawn_env = Environ.get ();
+                Pid child_pid;
 
-                // Lazily verify that Mycroft as indeed started the websocket
-                if (mc_stdout.contains ("Starting background service enclosure")) {
-                    mycroft_launched ();
-                } else {
-                    mycroft_launch_failed ();
-                }
-                return false;
-            });
-            return b_status;
+                int standard_input;
+                int standard_output;
+                int standard_error;
+                Process.spawn_async_with_pipes ("/",
+                                                spawn_args,
+                                                spawn_env,
+                                                SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD,
+                                                null,
+                                                out child_pid,
+                                                out standard_input,
+                                                out standard_output,
+                                                out standard_error);
+                
+                // stdout:
+                IOChannel output = new IOChannel.unix_new (standard_output);
+                output.add_watch (IOCondition.IN | IOCondition.HUP, (channel, condition) => {
+                    return process_line (this, channel, condition, "stdout");
+                });
+
+                // stderr:
+                IOChannel error = new IOChannel.unix_new (standard_error);
+                error.add_watch (IOCondition.IN | IOCondition.HUP, (channel, condition) => {
+                    return process_line (this, channel, condition, "stderr");
+                });
+
+                ChildWatch.add (child_pid, (pid, status) => {
+                    // Triggered when the child indicated by child_pid exits
+                    Process.close_pid (pid);
+                    loop.quit ();
+                });
+
+                loop.run ();
+            } catch (SpawnError e) {
+                print ("Error: %s\n", e.message);
+            }
+            return 0;
         }
 
         /**
@@ -284,9 +322,10 @@ namespace Hemera.Core {
                 var subprocess = new Subprocess.newv (command, SubprocessFlags.STDIN_PIPE);
                 yield subprocess.communicate_utf8_async (input, null, null, null);
 
-                if (yield subprocess.wait_check_async ()) {
-                    stdout.printf ("Installation Done\n");
+                if (yield subprocess.wait_async ()) {
+                    stdout.printf ("Installation Done, starting Mycroft\n");
                     mycroft_finished_installation ();
+                    start_mycroft ();
                 }
             } catch (Error e) {
                 warning ("Error: '%s'", e.message);
@@ -302,14 +341,14 @@ namespace Hemera.Core {
              *       bash processes to continue running after the main script has
              *       exited and hog CPU
              */
-            string command = "bash dev_setup.sh";
+            string command = "%sdev_setup.sh".printf (mycroft_install_location);
 
-            string[]? argv = null;
-            try {
+            string[] argv = {"bash", "dev_setup.sh"};
+            /*try {
                 Shell.parse_argv (command, out argv);
             } catch (Error e) {
                 warning ("Error: '%s'", e.message);
-            }
+            }*/
             return argv;
         }
 
