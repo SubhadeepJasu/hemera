@@ -55,7 +55,7 @@ namespace Hemera.Core {
             }
         }
 
-        private static bool process_line (MycroftManager me, IOChannel channel, IOCondition condition, string stream_name) {
+        private bool process_line (MycroftManager me, IOChannel channel, IOCondition condition, string stream_name) {
             if (condition == IOCondition.HUP) {
                 print ("%s: The fd has been closed.\n", stream_name);
                 return false;
@@ -78,6 +78,50 @@ namespace Hemera.Core {
             } catch (ConvertError e) {
                 print ("%s: ConvertError: %s\n", stream_name, e.message);
                 me.mycroft_launch_error ();
+                return false;
+            }
+        
+            return true;
+        }
+
+        private bool process_line_installation (MycroftManager me, IOChannel channel, IOCondition condition, string stream_name) {
+            if (condition == IOCondition.HUP) {
+                print ("%s: The fd has been closed install.\n", stream_name);
+                mycroft_finished_installation ();
+                return false;
+            }
+        
+            try {
+                string line;
+                channel.read_line (out line, null, null);
+                print ("%s: %s", stream_name, line);
+            } catch (IOChannelError e) {
+                print ("%s: IOChannelError: %s\n", stream_name, e.message);
+                return false;
+            } catch (ConvertError e) {
+                print ("%s: ConvertError: %s\n", stream_name, e.message);
+                return false;
+            }
+        
+            return true;
+        }
+
+        private bool process_line_skill (MycroftManager me, IOChannel channel, IOCondition condition, string stream_name) {
+            if (condition == IOCondition.HUP) {
+                print ("%s: The fd has been closed - skill.\n", stream_name);
+                mycroft_finished_installation ();
+                return false;
+            }
+        
+            try {
+                string line;
+                channel.read_line (out line, null, null);
+                print ("%s: %s", stream_name, line);
+            } catch (IOChannelError e) {
+                print ("%s: IOChannelError: %s\n", stream_name, e.message);
+                return false;
+            } catch (ConvertError e) {
+                print ("%s: ConvertError: %s\n", stream_name, e.message);
                 return false;
             }
         
@@ -228,7 +272,7 @@ namespace Hemera.Core {
             size_t cummulative_size = 0;
             unowned Archive.Entry entry;
             Archive.Result last_result;
-            string destination_path = user_home_directory.concat ("/.local/share/hemera_mycroft");
+            string destination_path = user_home_directory.concat ("/.local/share/com.github.SubhadeepJasu.hemera");
             while ((last_result = archive.next_header (out entry)) == Archive.Result.OK) {
 
                 // Modify the entry path to the destination path
@@ -269,7 +313,7 @@ namespace Hemera.Core {
         public void verify_mycroft_extract () {
             string mycroft_new_path = "";
             try {
-		        string directory = user_home_directory.concat ("/.local/share/hemera_mycroft");
+		        string directory = user_home_directory.concat ("/.local/share/com.github.SubhadeepJasu.hemera");
 		        Dir dir = Dir.open (directory, 0);
 		        string? name = null;
 
@@ -294,7 +338,7 @@ namespace Hemera.Core {
 			        }
 
 			        print ("%s\t%s\n", name, type);
-                    mycroft_new_path = user_home_directory.concat ("/.local/share/hemera_mycroft/", name, "/");
+                    mycroft_new_path = user_home_directory.concat ("/.local/share/com.github.SubhadeepJasu.hemera/", name, "/");
                     mycroft_install_location = mycroft_new_path;
                     var settings = Hemera.Configs.Settings.get_default ();
                     settings.mycroft_location = mycroft_new_path;
@@ -312,44 +356,114 @@ namespace Hemera.Core {
          */
         public async void install_mycroft (string filepath) {
             mycroft_installing ();
+            MainLoop loop = new MainLoop ();
             try {
-                string[] command = get_command_install ();
+                string launch_command = ("%sdev_setup.sh").printf (mycroft_install_location);
+                
                 Posix.chdir (filepath);
-
                 // Initialize git to this new directory
                 Process.spawn_command_line_async ("git init");
-                string? input = "nnnnn";
-                var subprocess = new Subprocess.newv (command, SubprocessFlags.STDIN_PIPE);
-                yield subprocess.communicate_utf8_async (input, null, null, null);
+                //string[] spawn_args = {"xterm", "-e", launch_command};
+                string[] spawn_args = {launch_command};
+                string[] spawn_env = Environ.get ();
+                Pid child_pid;
 
-                if (yield subprocess.wait_async ()) {
-                    stdout.printf ("Installation Done, starting Mycroft\n");
-                    mycroft_finished_installation ();
-                    start_mycroft ();
-                }
+                int standard_input;
+                int standard_output;
+                int standard_error;
+                Process.spawn_async_with_pipes (filepath,
+                                                spawn_args,
+                                                spawn_env,
+                                                SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD,
+                                                null,
+                                                out child_pid,
+                                                out standard_input,
+                                                out standard_output,
+                                                out standard_error);
+                
+                // stdout:
+                IOChannel output = new IOChannel.unix_new (standard_output);
+                output.add_watch (IOCondition.IN | IOCondition.HUP, (channel, condition) => {
+                    return process_line_installation (this, channel, condition, "stdout");
+                });
+
+                // stderr:
+                IOChannel error = new IOChannel.unix_new (standard_error);
+                error.add_watch (IOCondition.IN | IOCondition.HUP, (channel, condition) => {
+                    return process_line_installation (this, channel, condition, "stderr");
+                });
+
+                char[] buf = { 'n' };
+                size_t size = 0;
+
+                // stdin:
+                IOChannel input = new IOChannel.unix_new (standard_input);
+                input.add_watch (IOCondition.OUT, (channel, condition) => {
+                    var stats = channel.write_chars (buf, out size);
+                    channel.flush ();
+                    return true;
+                });
+                
+
+                ChildWatch.add (child_pid, (pid, status) => {
+                    // Triggered when the child indicated by child_pid exits
+                    Process.close_pid (pid);
+                    loop.quit ();
+                });
+
+                loop.run ();
             } catch (Error e) {
                 warning ("Error: '%s'", e.message);
             }
         }
 
-        /**
-         * Get Installation script commandline
-         * @return {@code string[]}.
-         */
-        private string[] get_command_install () {
-            /* TODO: Find a new way to run this script that doesn't cause multiple
-             *       bash processes to continue running after the main script has
-             *       exited and hog CPU
-             */
-            string command = "%sdev_setup.sh".printf (mycroft_install_location);
+        public void install_skill (string? filepath) {
+            /*sudo .venv/bin/activate && msm install https://github.com/SubhadeepJasu/mycroft-skill-hemera.git */
+            MainLoop loop = new MainLoop ();
+            try {
+                string launch_command = (".venv/bin/activate && msm install https://github.com/SubhadeepJasu/mycroft-skill-hemera.git");
+                
+                Posix.chdir (filepath);
+                string[] spawn_args = {"source", launch_command};
+                string[] spawn_env = Environ.get ();
+                Pid child_pid;
 
-            string[] argv = {"bash", "dev_setup.sh"};
-            /*try {
-                Shell.parse_argv (command, out argv);
+                int standard_input;
+                int standard_output;
+                int standard_error;
+                Process.spawn_async_with_pipes (filepath,
+                                                spawn_args,
+                                                spawn_env,
+                                                SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD,
+                                                null,
+                                                out child_pid,
+                                                out standard_input,
+                                                out standard_output,
+                                                out standard_error);
+                
+                // stdout:
+                IOChannel output = new IOChannel.unix_new (standard_output);
+                output.add_watch (IOCondition.IN | IOCondition.HUP, (channel, condition) => {
+                    return process_line_skill (this, channel, condition, "stdout");
+                });
+
+                // stderr:
+                IOChannel error = new IOChannel.unix_new (standard_error);
+                error.add_watch (IOCondition.IN | IOCondition.HUP, (channel, condition) => {
+                    return process_line_skill (this, channel, condition, "stderr");
+                });
+
+                ChildWatch.add (child_pid, (pid, status) => {
+                    // Triggered when the child indicated by child_pid exits
+                    Process.close_pid (pid);
+                    loop.quit ();
+                });
+
+                loop.run ();
+                Process.spawn_command_line_async ("deactivate");
             } catch (Error e) {
                 warning ("Error: '%s'", e.message);
-            }*/
-            return argv;
+            }
         }
 
         /**

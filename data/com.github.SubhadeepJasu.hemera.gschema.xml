@@ -2,9 +2,19 @@
 <schemalist>
 	<schema id="com.github.SubhadeepJasu.hemera" path="/com/github/SubhadeepJasu/hemera/" gettext-domain="com.github.SubhadeepJasu.hemera">
 		<key name="mycroft-location" type="s">
-			<default>"~/.local/share"</default>
+			<default>"~/.local/share/com.github.SubhadeepJasu.hemera"</default>
 			<summary>Mycroft Core Location</summary>
 			<description>The location of mycroft-core, where it was downloaded and installed</description>
+		</key>
+		<key name="mycroft-ip" type="s">
+			<default>"127.0.0.1"</default>
+			<summary>Mycroft Server IP</summary>
+			<description>The IP Address of Mycroft Server</description>
+		</key>
+		<key name="mycroft-port" type="s">
+			<default>"8181"</default>
+			<summary>Mycroft Server Port</summary>
+			<description>The Port of Mycroft Server</description>
 		</key>
 		<key name="window-width" type="i">
 			<default>800</default>

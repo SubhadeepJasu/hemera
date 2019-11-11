@@ -39,8 +39,11 @@ namespace Hemera.App {
         private Gtk.Stack main_stack;
         public Hemera.App.HemeraApp app_reference;
         public Gtk.Spinner main_spinner;
+        private Setup setup_view;
         private Installer installer_view;
+        public InstallerComplete install_complete_view;
 
+        private Hemera.Core.MycroftManager mycroft_system;
         /**
          * Constructs a new {@code MainWindow} object.
          *
@@ -95,13 +98,18 @@ namespace Hemera.App {
             main_grid.attach (chatbox, 2, 0, 1, 1);
             main_grid.valign = Gtk.Align.CENTER;
 
-            welcome_screen = new InitSplash ();
-            installer_view = new Installer ();
+            welcome_screen        = new InitSplash ();
+            setup_view            = new Setup (this);
+            installer_view        = new Installer ();
+            install_complete_view = new InstallerComplete ();
 
             main_stack = new Gtk.Stack ();
             main_stack.add_named (main_grid, "Interaction View");
             main_stack.add_named (welcome_screen, "Welcome View");
             main_stack.add_named (installer_view, "Installer View");
+            main_stack.add_named (setup_view, "Setup View");
+
+            main_stack.set_visible_child (main_grid);
 
             main_stack.transition_type = Gtk.StackTransitionType.OVER_LEFT_RIGHT;
             this.add (main_stack);
@@ -133,6 +141,20 @@ namespace Hemera.App {
                 main_stack.set_visible_child (installer_view);
                 installer_view.download_mycroft ();
             });
+            welcome_screen.user_attempt_setup.connect (() => {
+                set_launch_screen (3);
+            });
+            welcome_screen.user_attempt_reconnect.connect (() => {
+                this.app_reference.reset_connection ();
+            });
+            mycroft_system = new Hemera.Core.MycroftManager ();
+            installer_view.switch.connect (() => {
+                set_launch_screen (2);
+                warning ("in window");
+            });
+            setup_view.setup_launch_mycroft.connect (() => {
+                this.app_reference.reset_connection ();
+            });
         }
 
         /**
@@ -145,6 +167,13 @@ namespace Hemera.App {
                 case 1:
                     main_stack.set_visible_child (main_grid);
                     enclosure_display.animate_button ();
+                    break;
+                case 2:
+                    main_stack.add_named (install_complete_view, "Install Complete View");
+                    main_stack.set_visible_child (install_complete_view);
+                    break;
+                case 3:
+                    main_stack.set_visible_child (setup_view);
                     break;
                 default:
                     main_stack.set_visible_child (welcome_screen);

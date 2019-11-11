@@ -24,6 +24,7 @@ namespace Hemera.App {
         Gtk.ProgressBar progressbar_installer;
         private Hemera.Core.MycroftManager mycroft_system;
         bool installing = true;
+        public signal void switch ();
 
         public Installer () {
             mycroft_system = new Hemera.Core.MycroftManager ();
@@ -79,11 +80,18 @@ namespace Hemera.App {
                     return installing;
                 });
             });
+            /*
             mycroft_system.mycroft_finished_installation.connect (() => {
                 progressbar_label.label = "Installation Complete! Starting Mycroft...";
                 installing = false;
                 progressbar_installer.fraction = 1.0;
                 queue_draw ();
+            });
+            */
+            mycroft_system.mycroft_finished_installation.connect (() => {
+                //set_launch_screen (2);
+                this.switch ();
+                warning ("switched");
             });
         }
         public void download_mycroft () {

@@ -62,6 +62,18 @@ namespace Hemera.Configs {
         public string mycroft_location {get; set;}
 
         /**
+         * This property represents the IP Address that Hemera 
+         * attempts to connect through to Mycroft Server
+         */
+        public string mycroft_ip {get; set;}
+
+        /**
+         * This property represents the Port used by the Mycroft
+         * Server 
+         */
+        public string mycroft_port {get; set;}
+
+        /**
          * This property represents the width of MainWindow
          * Variable of type {@code int} as declared.
          * @see Hemera.App.MainWindow
