@@ -16,6 +16,11 @@
 			<summary>Mycroft Server Port</summary>
 			<description>The Port of Mycroft Server</description>
 		</key>
+		<key name="rewrite-mycroft-settings" type="b">
+			<default>true</default>
+			<summary>Rewrite Mycroft Settings</summary>
+			<description>Override and rewrite mycroft configuration file</description>
+		</key>
 		<key name="window-width" type="i">
 			<default>800</default>
 			<summary>Window Width</summary>

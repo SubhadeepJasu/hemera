@@ -22,8 +22,9 @@ namespace Hemera.App {
         public signal void setup_launch_mycroft ();
         MainWindow window;
 
-        Gtk.Entry ip_address_entry;
-        Gtk.Entry port_entry;
+        Gtk.Entry  ip_address_entry;
+        Gtk.Entry  port_entry;
+        Gtk.Switch rewrite_settings_switch;
 
         string location = "";
         public Setup (MainWindow window) {
@@ -31,6 +32,7 @@ namespace Hemera.App {
             var header_label = new Gtk.Label ("Hemera Setup");
             header_label.get_style_context ().add_class ("h2");
             var ip_address_label = new Gtk.Label ("Mycroft Server Address");
+            ip_address_label.halign = Gtk.Align.END;
             ip_address_entry = new Gtk.Entry ();
             ip_address_entry.set_placeholder_text ("IP Address");
             ip_address_entry.set_text ("127.0.0.1"); 
@@ -51,9 +53,15 @@ namespace Hemera.App {
             location_entry.set_text (user_home_directory.concat ("/mycroft-core"));
             location_entry.set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, "folder-open-symbolic");
 
+            Gtk.Label settings_rewrite_consent = new Gtk.Label ("Rewrite Mycroft Settings");
+            rewrite_settings_switch = new Gtk.Switch ();
+            rewrite_settings_switch.margin_right = 63;
+            rewrite_settings_switch.set_active (true);
+
             var launching_spinner = new Gtk.Spinner ();
             launching_spinner.start ();
             launching_spinner.opacity = 0.0;
+
             var connect_button = new Gtk.Button.with_label ("Save & Connect");
             connect_button.get_style_context ().add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION);
 
@@ -64,7 +72,9 @@ namespace Hemera.App {
             attach (port_entry, 2, 1, 1, 1);
             attach (location_label, 0, 2, 1, 1);
             attach (location_entry, 1, 2, 2, 1);
-            attach (connect_button, 1, 3, 2, 1);
+            attach (settings_rewrite_consent, 0, 3, 1, 1);
+            attach (rewrite_settings_switch, 1, 3, 1, 1);
+            attach (connect_button, 1, 4, 2, 1);
 
             column_spacing = 8;
             row_spacing     = 8;

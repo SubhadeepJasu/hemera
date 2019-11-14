@@ -74,10 +74,17 @@ namespace Hemera.Configs {
         public string mycroft_port {get; set;}
 
         /**
+         * This property represents the Port used by the Mycroft
+         * Server 
+         */
+        public bool   rewrite_mycroft_settings {get; set;}
+        
+        /**
          * This property represents the width of MainWindow
          * Variable of type {@code int} as declared.
          * @see Hemera.App.MainWindow
          */
+
         public int    window_width {get; set;}
 
         /**
