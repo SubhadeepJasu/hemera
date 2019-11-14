@@ -65,6 +65,16 @@ namespace Hemera.App {
             var connect_button = new Gtk.Button.with_label ("Save & Connect");
             connect_button.get_style_context ().add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION);
 
+            Gtk.Label install_mycroft_label = new Gtk.Label ("Mycroft is like my soul, get it from ");
+            install_mycroft_label.halign = Gtk.Align.END;
+            install_mycroft_label.opacity = 0.50;
+            Gtk.LinkButton install_mycroft_link = new Gtk.LinkButton.with_label ("https://github.com/MycroftAI/mycroft-core", "their github.");
+            install_mycroft_link.halign = Gtk.Align.START;
+
+            Gtk.HBox note_grid = new Gtk.HBox (false, 0);
+            note_grid.pack_start (install_mycroft_label);
+            note_grid.pack_end (install_mycroft_link);
+
 
             attach (header_label, 0, 0, 3, 1);
             attach (ip_address_label, 0, 1, 1, 1);
@@ -75,6 +85,7 @@ namespace Hemera.App {
             attach (settings_rewrite_consent, 0, 3, 1, 1);
             attach (rewrite_settings_switch, 1, 3, 1, 1);
             attach (connect_button, 1, 4, 2, 1);
+            attach (note_grid, 0, 5, 3, 1);
 
             column_spacing = 8;
             row_spacing     = 8;
