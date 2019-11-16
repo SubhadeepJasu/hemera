@@ -67,10 +67,6 @@ namespace Hemera.App {
 
         public MainWindow mainwindow;
 
-        /**
-         * Handle attempts to start up the application
-         * @return {@code void}
-         */
         protected override void activate () {
             mycroft_system = new Hemera.Core.MycroftManager ();
             if (mainwindow == null) {
@@ -90,7 +86,6 @@ namespace Hemera.App {
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
-            //handle_mycroft_launch_system ();
             Timeout.add (1000, () => {
                     mycroft_connection.init_ws ();
                     return false;
@@ -123,10 +118,7 @@ namespace Hemera.App {
             return 0;
         }
 
-        /**
-         * Handle command line arguments
-         * @return {@code void}
-         */
+
         private void command_line_interpreter (ApplicationCommandLine cmd) {
             string[] cmd_args = cmd.get_arguments ();
             unowned string[] args = cmd_args;
@@ -158,11 +150,7 @@ namespace Hemera.App {
                 activate ();
             }
         }
-        /**
-         * Add ability to launch other installed apps
-         * using Mycroft and Hemera skill
-         * @return {@code void}
-         */
+
         private void handle_application_launch_system () {
             app_search_provider = new Hemera.Core.AppSearch ();
             mycroft_message_manager.receive_hemera_launch_app.connect ((query) => {
@@ -201,24 +189,9 @@ namespace Hemera.App {
                 }
             });
         }
-        /**
-         * Handle the system to launch Mycroft and connect to it
-         * @return {@code void}
-         */
+
         private void handle_mycroft_launch_system () {
             mycroft_connection.connection_failed.connect (() => {
-                /*var loop = new MainLoop();
-                mycroft_system.start_mycroft.begin ((obj, res) => {
-                    try {
-                        mycroft_system.start_mycroft.end (res);
-                    }
-                    catch (ThreadError e) {
-                        string msg = e.message;
-                        stderr.printf(@"Thread error: $msg\n");
-                    }
-                    loop.quit ();
-                });
-                loop.run();*/
                 mycroft_system.start_mycroft ();
             });
             mycroft_system.mycroft_launched.connect (() => {
@@ -241,7 +214,6 @@ namespace Hemera.App {
         /**
          * Stub: Handle window visibility when
          * the app runs in the background
-         * @return {@code void}
          */
         private void close_window () {
             if (mainwindow != null) {

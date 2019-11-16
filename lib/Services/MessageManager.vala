@@ -76,10 +76,6 @@ namespace Hemera.Services {
 
         public signal void receive_thinking ();
 
-        /**
-         * Parse JSON messages from Mycroft
-         * @return {@code void}
-         */
         private void readJSON (string json_message) {
             try {
                 Json.Parser parser = new Json.Parser ();
@@ -415,7 +411,7 @@ namespace Hemera.Services {
 
         /**
          * Send user utterance to Mycroft
-         * @return {@code bool}
+         * @return {@code success}
          */
         public bool send_utterance (string val) {
             if (ws_connection.ws_connected) {
@@ -458,7 +454,7 @@ namespace Hemera.Services {
 
         /**
          * Send wake signal to Mycroft
-         * @return {@code bool}
+         * @return {@code success}
          */
         public bool send_wake () {
             if (ws_connection.ws_connected) {
@@ -490,7 +486,7 @@ namespace Hemera.Services {
 
         /**
          * Send speech to Mycroft TTS
-         * @return {@code bool}
+         * @return {@code success}
          */
         public bool send_speech (string val, string? localle = "en-us") {
             if (ws_connection.ws_connected) {
@@ -531,7 +527,7 @@ namespace Hemera.Services {
 
         /**
          * Send Mic On signal to Mycroft
-         * @return {@code bool}
+         * @return {@code success}
          */
         public bool send_mic_on () {
             if (ws_connection.ws_connected) {
@@ -563,7 +559,7 @@ namespace Hemera.Services {
 
         /**
          * Send Mic Off signal to Mycroft
-         * @return {@code bool}
+         * @return {@code success}
          */
         public bool send_mic_off () {
             if (ws_connection.ws_connected) {
@@ -595,7 +591,7 @@ namespace Hemera.Services {
 
         /**
          * Send universal stop to Mycroft
-         * @return {@code bool}
+         * @return {@code success}
          */
         public bool stop () {
             if (ws_connection.ws_connected) {

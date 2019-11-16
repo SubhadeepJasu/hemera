@@ -39,7 +39,6 @@ namespace Hemera.App {
             stop_button.margin_start = 90;
             stop_button.margin_end = 90;
             stop_button.margin_bottom = 6;
-            //stop_button.get_style_context ().add_class (Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
             stop_button.get_style_context ().add_class ("rounded_button");
             stop_button.tooltip_text = "Stop";
             invoke_mode_button = new Granite.Widgets.ModeButton ();

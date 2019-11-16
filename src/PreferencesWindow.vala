@@ -478,7 +478,7 @@ namespace Hemera.App {
             issue_icon.gicon = new ThemedIcon ("bug");
             issue_icon.pixel_size = 24;
             
-            var issue_label = new Gtk.Label (_("Report a Issue"));
+            var issue_label = new Gtk.Label (_("Report an issue"));
             issue_label.get_style_context ().add_class (Granite.STYLE_CLASS_H3_LABEL);
             
             var issue_end = new Gtk.Image ();

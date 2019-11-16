@@ -24,9 +24,11 @@ namespace Hemera.App {
         public signal void user_attempt_setup ();
         public class InitSplash () {
             var welcome = new Granite.Widgets.Welcome ("Hi! I am Hemera", "Mycroft is my soul and I need it");
+            /* Below commented line is there as a potential future feature.
+             * Uncomment the add the option to the list
+             */
             //welcome.append ("emblem-downloads", "Install Mycroft", "Download and install mycroft");
             welcome.append ("network-error", "Reconnect with Mycroft", "Attempt to reconnect with Mycroft");
-            //welcome.append ("folder-open", "Locate Mycroft Core", "Open Mycroft folder, if already installed");
             welcome.append ("preferences-system", "Hemera Setup",      "Locate Mycroft and set up connection");
 
             welcome.activated.connect ((index) => {

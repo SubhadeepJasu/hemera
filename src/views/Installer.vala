@@ -67,29 +67,17 @@ namespace Hemera.App {
                     progressbar_installer.fraction = progress;
                     return false;
                 });
-                //progressbar_installer.fraction = progress;
             });
             mycroft_system.mycroft_installing.connect (() => {
                 queue_draw ();
                 progressbar_label.label = "Installing, It will take a long time...";
                 double i = 0;
                 Timeout.add (10, () => {
-                    //progressbar_installer.pulse ();
-
                     progressbar_installer.set_fraction (i+=0.00002);
                     return installing;
                 });
             });
-            /*
             mycroft_system.mycroft_finished_installation.connect (() => {
-                progressbar_label.label = "Installation Complete! Starting Mycroft...";
-                installing = false;
-                progressbar_installer.fraction = 1.0;
-                queue_draw ();
-            });
-            */
-            mycroft_system.mycroft_finished_installation.connect (() => {
-                //set_launch_screen (2);
                 this.switch ();
                 warning ("switched");
             });

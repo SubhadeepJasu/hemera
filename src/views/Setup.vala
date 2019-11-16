@@ -68,7 +68,7 @@ namespace Hemera.App {
             Gtk.Label install_mycroft_label = new Gtk.Label ("Mycroft is like my soul, get it from ");
             install_mycroft_label.halign = Gtk.Align.END;
             install_mycroft_label.opacity = 0.50;
-            Gtk.LinkButton install_mycroft_link = new Gtk.LinkButton.with_label ("https://github.com/MycroftAI/mycroft-core", "their github.");
+            Gtk.LinkButton install_mycroft_link = new Gtk.LinkButton.with_label ("https://github.com/MycroftAI/mycroft-core", "their GitHub.");
             install_mycroft_link.halign = Gtk.Align.START;
 
             Gtk.HBox note_grid = new Gtk.HBox (false, 0);
