@@ -107,9 +107,7 @@ namespace Hemera.App {
             main_stack.add_named (main_grid, "Interaction View");
             main_stack.add_named (welcome_screen, "Welcome View");
             main_stack.add_named (installer_view, "Installer View");
-            main_stack.add_named (setup_view, "Setup View");
-
-            main_stack.set_visible_child (main_grid);
+            
 
             main_stack.transition_type = Gtk.StackTransitionType.OVER_LEFT_RIGHT;
             this.add (main_stack);
@@ -173,6 +171,7 @@ namespace Hemera.App {
                     main_stack.set_visible_child (install_complete_view);
                     break;
                 case 3:
+                    main_stack.add_named (setup_view, "Setup View");
                     main_stack.set_visible_child (setup_view);
                     break;
                 default:

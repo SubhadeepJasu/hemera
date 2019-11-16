@@ -50,7 +50,8 @@ namespace Hemera.App {
             location_entry.set_placeholder_text ("Mycroft Core Root Folder");
 
             string user_home_directory = GLib.Environment.get_home_dir ();
-            location_entry.set_text (user_home_directory.concat ("/mycroft-core"));
+            location = user_home_directory.concat ("/mycroft-core/");
+            location_entry.set_text (location);
             location_entry.set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, "folder-open-symbolic");
 
             Gtk.Label settings_rewrite_consent = new Gtk.Label ("Rewrite Mycroft Settings");
@@ -127,7 +128,7 @@ namespace Hemera.App {
             }
     
             chooser.destroy ();
-            return return_value;
+            return return_value.concat ("","/");
         }
         
         private void save_connection_settings () {
