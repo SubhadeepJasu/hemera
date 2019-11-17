@@ -132,10 +132,13 @@ namespace Hemera.App {
 
         private void mycroft_connect () {
             mycroft_connection.connection_established.connect (() => {
-                warning ("Set screen 1");
-                mainwindow.present ();
-                mainwindow.set_launch_screen (1);
-                mainwindow.queue_draw ();
+                Timeout.add (100, () => {
+                    warning ("Set screen 1");
+                    mainwindow.present ();
+                    mainwindow.set_launch_screen (1);
+                    mainwindow.queue_draw ();
+                    return false;
+                });
             });
             mycroft_connection.connection_failed.connect (() => {
                 mycroft_system.start_mycroft ();
@@ -156,7 +159,10 @@ namespace Hemera.App {
             mainwindow.install_complete_view.ui_launch_mycroft.connect (() => {
                 mycroft_system.start_mycroft ();
             });
-            mycroft_connection.init_ws ();
+            Timeout.add (100, () => {
+                mycroft_connection.init_ws ();
+                return false;
+            });
         }
         private void handle_application_launch_system () {
             app_search_provider = new Hemera.Core.AppSearch ();
