@@ -86,33 +86,11 @@ namespace Hemera.App {
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
-            Timeout.add (1000, () => {
-                    mycroft_connection.init_ws ();
-                    return false;
-            });
-            mycroft_connection.connection_established.connect (() => {
-            warning ("Set screen 1");
-                Timeout.add (2000, () => {
-                    mainwindow.present ();
-                    mainwindow.set_launch_screen (1);
-                    mainwindow.queue_draw ();
-                    return false;
-                });
-            });
-            mycroft_connection.connection_failed.connect (() => {
-                warning ("Set screen 0");
-                mainwindow.present ();
-                mainwindow.set_launch_screen (0);
-                handle_mycroft_launch_system ();
-            });
+            mycroft_connect ();
             mycroft_system.check_updates ();
             handle_application_launch_system ();
         }
 
-        /**
-         * Handle command line arguments
-         * @return {@code int}
-         */
         public override int command_line (ApplicationCommandLine cmd) {
             command_line_interpreter (cmd);
             return 0;
@@ -151,6 +129,35 @@ namespace Hemera.App {
             }
         }
 
+
+        private void mycroft_connect () {
+            mycroft_connection.connection_established.connect (() => {
+                warning ("Set screen 1");
+                mainwindow.present ();
+                mainwindow.set_launch_screen (1);
+                mainwindow.queue_draw ();
+            });
+            mycroft_connection.connection_failed.connect (() => {
+                mycroft_system.start_mycroft ();
+            });
+            mycroft_system.mycroft_launched.connect (() => {
+                warning ("Starting Mycroft...");
+                Timeout.add (1000, () => {
+                    mycroft_connection.init_ws ();
+                    return false;
+                });
+            });
+            mycroft_system.mycroft_launch_failed.connect (() => {
+                warning ("Mycroft location doesn't exist");
+                mainwindow.queue_draw ();
+                mainwindow.set_launch_screen (0);
+            });
+
+            mainwindow.install_complete_view.ui_launch_mycroft.connect (() => {
+                mycroft_system.start_mycroft ();
+            });
+            mycroft_connection.init_ws ();
+        }
         private void handle_application_launch_system () {
             app_search_provider = new Hemera.Core.AppSearch ();
             mycroft_message_manager.receive_hemera_launch_app.connect ((query) => {
@@ -187,28 +194,6 @@ namespace Hemera.App {
                     mycroft_message_manager.send_speech (e.message);
                     warning (e.message);
                 }
-            });
-        }
-
-        private void handle_mycroft_launch_system () {
-            mycroft_connection.connection_failed.connect (() => {
-                mycroft_system.start_mycroft ();
-            });
-            mycroft_system.mycroft_launched.connect (() => {
-                warning ("Starting Mycroft...");
-                Timeout.add (1000, () => {
-                    mycroft_connection.init_ws ();
-                    return false;
-                });
-            });
-            mycroft_system.mycroft_launch_failed.connect (() => {
-                warning ("Mycroft location doesn't exist");
-                mainwindow.queue_draw ();
-                mainwindow.set_launch_screen (0);
-            });
-
-            mainwindow.install_complete_view.ui_launch_mycroft.connect (() => {
-                mycroft_system.start_mycroft ();
             });
         }
         /**

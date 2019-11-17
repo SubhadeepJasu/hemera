@@ -62,7 +62,6 @@ namespace Hemera.Services {
 
         /**
          * Attempt reconnection with Mycroft.
-         * @return {@code void}
          */
         public void init_ws_after_starting_mycroft () {
             int count = 0;
@@ -79,7 +78,6 @@ namespace Hemera.Services {
 
         /**
          * Attempt connection to check if Mycroft is running.
-         * @return {@code void}
          */
         public void init_ws_before_starting_mycroft () {
             init_ws ();
@@ -91,9 +89,9 @@ namespace Hemera.Services {
 
         /**
          * Starts a web socket connection with Mycroft asynchronously.
-         * @return {@code void}
          */
         public void init_ws () {
+            MainLoop loop = new MainLoop ();
             ws_connected = false;
             var socket_client = new Soup.Session ();
             socket_client.https_aliases = { "wss" };
@@ -118,7 +116,9 @@ namespace Hemera.Services {
                     connection_failed ();
                     ws_connected = false;
                 }
+                loop.quit ();
             });
+            loop.run ();
         }
 
         /**

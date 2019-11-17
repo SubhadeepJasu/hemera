@@ -187,7 +187,7 @@ namespace Hemera.App {
         private void make_mycroft_incoming_events () {
             chatbox.send_message_text.connect ((utterance) => {
                 app_reference.mycroft_message_manager.send_utterance (utterance);
-            });
+            });/*
             app_reference.mycroft_message_manager.connection_established.connect (() => {
                 Timeout.add (500, () => {
                     chatbox.push_mycroft_text ("Hi! I am Hemera");
@@ -212,7 +212,7 @@ namespace Hemera.App {
                     }
                     return false;
                 });
-            });
+            });*/
             app_reference.mycroft_message_manager.receive_speak.connect ((utterance_in, response_expected) => {
                 chatbox.push_mycroft_text (utterance_in);
             });
