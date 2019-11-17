@@ -135,7 +135,6 @@ namespace Hemera.App {
                     warning ("Set screen 1");
                     mainwindow.present ();
                     mainwindow.set_launch_screen (1);
-                    mainwindow.queue_draw ();
             });
             mycroft_connection.connection_failed.connect (() => {
                 mycroft_system.start_mycroft ();
