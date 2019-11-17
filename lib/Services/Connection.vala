@@ -101,7 +101,6 @@ namespace Hemera.Services {
                     websocket_connection = socket_client.websocket_connect_async.end (res);
                     print ("Connected!\n");
                     ws_connected = true;
-                    connection_established ();
                     if (websocket_connection != null) {
                         websocket_connection.message.connect ((type, m_message) => {
                             ws_message (type, decode_bytes(m_message, m_message.length));
@@ -115,8 +114,10 @@ namespace Hemera.Services {
                     stderr.printf ("Remote error\n");
                     connection_failed ();
                     ws_connected = false;
+                    loop.quit ();
                 }
                 loop.quit ();
+                connection_established ();
             });
             loop.run ();
         }

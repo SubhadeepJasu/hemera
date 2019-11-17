@@ -86,9 +86,9 @@ namespace Hemera.App {
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
-            mycroft_connect ();
-            mycroft_system.check_updates ();
+            //mycroft_system.check_updates ();
             handle_application_launch_system ();
+            mycroft_connect ();
         }
 
         public override int command_line (ApplicationCommandLine cmd) {
@@ -132,13 +132,10 @@ namespace Hemera.App {
 
         private void mycroft_connect () {
             mycroft_connection.connection_established.connect (() => {
-                Timeout.add (100, () => {
                     warning ("Set screen 1");
                     mainwindow.present ();
                     mainwindow.set_launch_screen (1);
                     mainwindow.queue_draw ();
-                    return false;
-                });
             });
             mycroft_connection.connection_failed.connect (() => {
                 mycroft_system.start_mycroft ();
@@ -159,10 +156,15 @@ namespace Hemera.App {
             mainwindow.install_complete_view.ui_launch_mycroft.connect (() => {
                 mycroft_system.start_mycroft ();
             });
-            Timeout.add (100, () => {
+            MainLoop loop = new MainLoop ();
+            TimeoutSource time = new TimeoutSource (100);
+            time.set_callback (() => {
                 mycroft_connection.init_ws ();
+                loop.quit ();
                 return false;
             });
+            time.attach (loop.get_context ());
+            loop.run ();
         }
         private void handle_application_launch_system () {
             app_search_provider = new Hemera.Core.AppSearch ();
