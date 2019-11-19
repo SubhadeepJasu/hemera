@@ -31,6 +31,7 @@ namespace Hemera.App {
      * @since 1.0.0
      */
     public class MainWindow : Gtk.Window {
+        private Gtk.Button quit_button;
         private Hemera.App.DisplayEnclosure enclosure_display;
         private ChatView chatbox;
         private Gtk.Grid main_grid;
@@ -43,6 +44,9 @@ namespace Hemera.App {
         private Installer installer_view;
         public InstallerComplete install_complete_view;
 
+        private bool hide_window_on_start;
+
+
         private Hemera.Core.MycroftManager mycroft_system;
         /**
          * Constructs a new {@code MainWindow} object.
@@ -51,7 +55,7 @@ namespace Hemera.App {
          * @see style_provider
          * @see build
          */
-        public MainWindow (Hemera.App.HemeraApp application) {
+        public MainWindow (Hemera.App.HemeraApp application, bool hide_window_on_start) {
             icon_name = "com.github.SubhadeepJasu.hemera";
             this.app_reference = application;
             make_ui ();
@@ -61,6 +65,7 @@ namespace Hemera.App {
             var settings = Hemera.Configs.Settings.get_default ();
             int w = settings.window_width;
             int h = settings.window_height;
+            this.hide_window_on_start = hide_window_on_start;
         }
 
         /**
@@ -68,6 +73,10 @@ namespace Hemera.App {
          * @return {@code void}
          */
         private void make_ui () {
+            quit_button = new Gtk.Button ();
+            quit_button.image = new Gtk.Image.from_icon_name ("system-shutdown-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+            quit_button.tooltip_text = _("Quit Hemera and Mycroft");
+            quit_button.valign = Gtk.Align.CENTER;
             Gtk.Button settings_button = new Gtk.Button ();
             settings_button.image = new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
             settings_button.tooltip_text = _("Menu");
@@ -83,8 +92,9 @@ namespace Hemera.App {
             headerbar.title = _("Hemera");
             headerbar.get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
             headerbar.get_style_context().add_class("headerbar");
-            headerbar.pack_end(settings_button);
-            headerbar.pack_end(main_spinner);
+            headerbar.pack_start (quit_button);
+            headerbar.pack_end   (settings_button);
+            headerbar.pack_end   (main_spinner);
             this.set_titlebar (headerbar);
 
             enclosure_display = new Hemera.App.DisplayEnclosure (this);
@@ -113,9 +123,8 @@ namespace Hemera.App {
             this.add (main_stack);
             this.get_style_context ().add_class ("rounded");
             this.set_resizable (false);
-            this.show_all ();
-
             chatbox.refocus ();
+            app_reference.hold ();
         }
 
         /**
@@ -123,6 +132,14 @@ namespace Hemera.App {
          * @return {@code void}
          */
         private void make_events () {
+            quit_button.clicked.connect (() => {
+                this.app_reference.release ();
+                this.app_reference.quit ();
+            });
+            this.delete_event.connect (() => {
+                this.hide_on_delete ();
+                return true;
+            });
             enclosure_display.wake_button_clicked.connect (() => {
                 app_reference.mycroft_message_manager.send_wake ();
                 chatbox.refocus ();
@@ -187,32 +204,38 @@ namespace Hemera.App {
         private void make_mycroft_incoming_events () {
             chatbox.send_message_text.connect ((utterance) => {
                 app_reference.mycroft_message_manager.send_utterance (utterance);
-            });/*
+            });
             app_reference.mycroft_message_manager.connection_established.connect (() => {
-                Timeout.add (500, () => {
-                    chatbox.push_mycroft_text ("Hi! I am Hemera");
-                    return false;
-                });
-                Timeout.add (800, () => {
-                    var randomizer = new Rand();
-                    var rand = randomizer.int_range (0, 3);
-                    switch (rand) {
-                        case 0:
-                            chatbox.push_mycroft_text ("How may I help you?");
-                            break;
-                        case 1:
-                            chatbox.push_mycroft_text ("How may I be of service?");
-                            break;
-                        case 2:
-                            chatbox.push_mycroft_text ("May I help you?");
-                            break;
-                        default:
-                            chatbox.push_mycroft_text ("Ask me anything you want!");
-                            break;
-                    }
-                    return false;
-                });
-            });*/
+                if (!hide_window_on_start) {
+                    this.show_all ();
+                }
+                this.set_launch_screen (1);
+                if (!hide_window_on_start) {
+                    Timeout.add (500, () => {
+                        chatbox.push_mycroft_text ("Hi! I am Hemera");
+                        return false;
+                    });
+                    Timeout.add (800, () => {
+                        var randomizer = new Rand();
+                        var rand = randomizer.int_range (0, 3);
+                        switch (rand) {
+                            case 0:
+                                chatbox.push_mycroft_text ("How may I help you?");
+                                break;
+                            case 1:
+                                chatbox.push_mycroft_text ("How may I be of service?");
+                                break;
+                            case 2:
+                                chatbox.push_mycroft_text ("May I help you?");
+                                break;
+                            default:
+                                chatbox.push_mycroft_text ("Ask me anything you want!");
+                                break;
+                        }
+                        return false;
+                    });
+                }
+            });
             app_reference.mycroft_message_manager.receive_speak.connect ((utterance_in, response_expected) => {
                 chatbox.push_mycroft_text (utterance_in);
             });
@@ -224,6 +247,9 @@ namespace Hemera.App {
             });
             app_reference.mycroft_message_manager.receive_current_weather.connect ((icon, current_temp, min_temp, max_temp, location, condition, humidity, wind) => {
                 chatbox.push_current_weather (icon, current_temp, min_temp, max_temp, location, condition, humidity, wind);
+            });
+            app_reference.mycroft_message_manager.receive_record_begin.connect (() => {
+                this.show_all ();
             });
         }
 
