@@ -91,35 +91,36 @@ namespace Hemera.Services {
          * Starts a web socket connection with Mycroft asynchronously.
          */
         public void init_ws () {
-            MainLoop loop = new MainLoop ();
-            ws_connected = false;
-            var socket_client = new Soup.Session ();
-            socket_client.https_aliases = { "wss" };
-            var message = new Soup.Message ("GET", "ws://%s:%s/core".printf (ip_address, port_number));
-            socket_client.websocket_connect_async.begin (message, null, null, null, (obj, res) => {
-                try {
-                    websocket_connection = socket_client.websocket_connect_async.end (res);
-                    print ("Connected!\n");
-                    ws_connected = true;
-                    if (websocket_connection != null) {
-                        websocket_connection.message.connect ((type, m_message) => {
-                            ws_message (type, decode_bytes(m_message, m_message.length));
-                        });
-                        websocket_connection.closed.connect (() => {
-                            print ("Connection closed\n");
-                            connection_disengaged ();
-                        });
+            if (!ws_connected) {
+                MainLoop loop = new MainLoop ();
+                var socket_client = new Soup.Session ();
+                socket_client.https_aliases = { "wss" };
+                var message = new Soup.Message ("GET", "ws://%s:%s/core".printf (ip_address, port_number));
+                socket_client.websocket_connect_async.begin (message, null, null, null, (obj, res) => {
+                    try {
+                        websocket_connection = socket_client.websocket_connect_async.end (res);
+                        print ("Connected!\n");
+                        ws_connected = true;
+                        if (websocket_connection != null) {
+                            websocket_connection.message.connect ((type, m_message) => {
+                                ws_message (type, decode_bytes(m_message, m_message.length));
+                            });
+                            websocket_connection.closed.connect (() => {
+                                print ("Connection closed\n");
+                                connection_disengaged ();
+                                ws_connected = false;
+                            });
+                        }
+                    } catch (Error e) {
+                        stderr.printf ("Remote error\n");
+                        connection_failed ();
+                        loop.quit ();
                     }
-                } catch (Error e) {
-                    stderr.printf ("Remote error\n");
-                    connection_failed ();
-                    ws_connected = false;
                     loop.quit ();
-                }
-                loop.quit ();
-                connection_established ();
-            });
-            loop.run ();
+                    connection_established ();
+                });
+                loop.run ();
+            }
         }
 
         /**

@@ -74,6 +74,10 @@ namespace Hemera.App {
                 mainwindow = new MainWindow (this, hide_window_on_start);
                 add_window (mainwindow);
             }
+            if (!mainwindow.visible && mycroft_connection.ws_connected) {
+                mainwindow.show_all ();
+            }
+            mycroft_connect ();
             mycroft_connection.init_ws ();
 
             var css_provider = new Gtk.CssProvider();
@@ -92,10 +96,6 @@ namespace Hemera.App {
             );
             //mycroft_system.check_updates ();
             handle_application_launch_system ();
-            mycroft_connect ();
-            while (Gtk.events_pending()) {
-                Gtk.main_iteration_do (false);
-            }
         }
 
         public override int command_line (ApplicationCommandLine cmd) {
@@ -145,30 +145,20 @@ namespace Hemera.App {
             });
             mycroft_system.mycroft_launched.connect (() => {
                 warning ("Starting Mycroft...");
-                Timeout.add (1000, () => {
+                Timeout.add (2000, () => {
                     mycroft_connection.init_ws ();
                     return false;
                 });
             });
             mycroft_system.mycroft_launch_failed.connect (() => {
                 warning ("Mycroft location doesn't exist");
-                mainwindow.queue_draw ();
+                mainwindow.show_all ();
                 mainwindow.set_launch_screen (0);
             });
 
             mainwindow.install_complete_view.ui_launch_mycroft.connect (() => {
                 mycroft_system.start_mycroft ();
             });
-            //MainLoop loop = new MainLoop ();
-            //TimeoutSource time = new TimeoutSource (100);
-            //time.set_callback (() => {
-            //    loop.quit ();
-
-            
-            //    return false;
-            //});
-            //time.attach (loop.get_context ());
-            //loop.run ();
         }
         private void handle_application_launch_system () {
             app_search_provider = new Hemera.Core.AppSearch ();
