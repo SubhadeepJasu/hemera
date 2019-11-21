@@ -1,0 +1,9 @@
+digraph HemeraMycroftConnect{
+	init -> show_main_ui [label="success"]
+	init -> start_mycroft [label="failure"]
+
+	start_mycroft -> init [label="success"]
+	start_mycroft -> show_welcome [label="failure"]
+
+	show_welcome -> init [label="save&connect"]
+}

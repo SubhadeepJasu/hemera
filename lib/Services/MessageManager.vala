@@ -26,8 +26,18 @@
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 namespace Hemera.Services {
+
+    /**
+     * The {@code MessageManager} class is responsible for transmitting messages
+     * to and from Mycroft
+     * @since 1.0.0
+     */
     public class MessageManager {
         Connection ws_connection;
+
+        /**
+         * Constructs a new {@code Connection} object
+         */
         public MessageManager (Connection ws_connection) {
             this.ws_connection = ws_connection;
             ws_connection.ws_message.connect ((type, message) => {
@@ -399,6 +409,10 @@ namespace Hemera.Services {
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 
+        /**
+         * Send user utterance to Mycroft
+         * @return {@code success}
+         */
         public bool send_utterance (string val) {
             if (ws_connection.ws_connected) {
                 Json.Builder builder = new Json.Builder ();
@@ -438,6 +452,10 @@ namespace Hemera.Services {
 // Enable Mycroft Mic to listen for query                                                  //
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
+        /**
+         * Send wake signal to Mycroft
+         * @return {@code success}
+         */
         public bool send_wake () {
             if (ws_connection.ws_connected) {
                 Json.Builder builder = new Json.Builder ();
@@ -466,6 +484,10 @@ namespace Hemera.Services {
             }
         }
 
+        /**
+         * Send speech to Mycroft TTS
+         * @return {@code success}
+         */
         public bool send_speech (string val, string? localle = "en-us") {
             if (ws_connection.ws_connected) {
                 Json.Builder builder = new Json.Builder ();
@@ -502,6 +524,11 @@ namespace Hemera.Services {
                 return false;
             }
         }
+
+        /**
+         * Send Mic On signal to Mycroft
+         * @return {@code success}
+         */
         public bool send_mic_on () {
             if (ws_connection.ws_connected) {
                 Json.Builder builder = new Json.Builder ();
@@ -529,6 +556,11 @@ namespace Hemera.Services {
                 return false;
             }
         }
+
+        /**
+         * Send Mic Off signal to Mycroft
+         * @return {@code success}
+         */
         public bool send_mic_off () {
             if (ws_connection.ws_connected) {
                 Json.Builder builder = new Json.Builder ();
@@ -556,6 +588,11 @@ namespace Hemera.Services {
                 return false;
             }
         }
+
+        /**
+         * Send universal stop to Mycroft
+         * @return {@code success}
+         */
         public bool stop () {
             if (ws_connection.ws_connected) {
                 Json.Builder builder = new Json.Builder ();

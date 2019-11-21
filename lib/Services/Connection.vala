@@ -21,52 +21,112 @@
  */
 
 namespace Hemera.Services {
+
+    /**
+     * The {@code Connection} class is responsible for creating a websocket 
+     * connection with Mycroft
+     * @since 1.0.0
+     */
     public class Connection {
         public signal void ws_message (int type, string message);
         public signal void connection_established ();
         public signal void connection_failed ();
         public signal void connection_disengaged ();
+        public signal void check_connection (bool connected);
 
         private Soup.WebsocketConnection websocket_connection;
         private string ip_address = "0.0.0.0";
         private string port_number = "8181";
         public bool ws_connected { public get; private set; }
 
+        /**
+         * Constructs a new {@code Connection} object
+         */
         public Connection (string ip_address, string port_number) {
             this.ip_address = ip_address;
             this.port_number = port_number;
             this.ws_connected = false;
         }
+
+        public void set_connection_address (string ip, string port_number) {
+            this.ip_address = ip_address;
+            this.port_number = port_number;
+        }
+        /**
+         * Get the websocket connection reference
+         * @return {@code Soup.WebsocketConnection}
+         */
         public Soup.WebsocketConnection get_web_socket () {
             return websocket_connection;
         }
 
-        public void init_ws () {
-            var socket_client = new Soup.Session ();
-            socket_client.https_aliases = { "wss" };
-            var message = new Soup.Message ("GET", "ws://%s:%s/core".printf (ip_address, port_number));
-            socket_client.websocket_connect_async.begin (message, null, null, null, (obj, res) => {
-                try {
-                    websocket_connection = socket_client.websocket_connect_async.end (res);
-                    print ("Connected!\n");
-                    ws_connected = true;
-                    connection_established ();
-                    if (websocket_connection != null) {
-                        websocket_connection.message.connect ((type, m_message) => {
-                            ws_message (type, decode_bytes(m_message, m_message.length));
-                        });
-                        websocket_connection.closed.connect (() => {
-                            print ("Connection closed\n");
-                            connection_disengaged ();
-                        });
+        /**
+         * Attempt reconnection with Mycroft.
+         */
+        public void init_ws_after_starting_mycroft () {
+            int count = 0;
+            if (!ws_connected) {
+                Timeout.add (200, () => {
+                    init_ws ();
+                    if (count++ > 25) {
+                        connection_failed ();
                     }
-                } catch (Error e) {
-                    stderr.printf ("Remote error\n");
-                    connection_failed ();
-                }
+                    return !(ws_connected || (count > 25));
+                });
+            }
+        }
+
+        /**
+         * Attempt connection to check if Mycroft is running.
+         */
+        public void init_ws_before_starting_mycroft () {
+            init_ws ();
+            Timeout.add (5000, () => {
+                check_connection (ws_connected);
+                return false;
             });
         }
 
+        /**
+         * Starts a web socket connection with Mycroft asynchronously.
+         */
+        public void init_ws () {
+            if (!ws_connected) {
+                MainLoop loop = new MainLoop ();
+                var socket_client = new Soup.Session ();
+                socket_client.https_aliases = { "wss" };
+                var message = new Soup.Message ("GET", "ws://%s:%s/core".printf (ip_address, port_number));
+                socket_client.websocket_connect_async.begin (message, null, null, null, (obj, res) => {
+                    try {
+                        websocket_connection = socket_client.websocket_connect_async.end (res);
+                        print ("Connected!\n");
+                        ws_connected = true;
+                        if (websocket_connection != null) {
+                            websocket_connection.message.connect ((type, m_message) => {
+                                ws_message (type, decode_bytes(m_message, m_message.length));
+                            });
+                            websocket_connection.closed.connect (() => {
+                                print ("Connection closed\n");
+                                connection_disengaged ();
+                                ws_connected = false;
+                            });
+                        }
+                    } catch (Error e) {
+                        stderr.printf ("Remote error\n");
+                        connection_failed ();
+                        loop.quit ();
+                    }
+                    loop.quit ();
+                    connection_established ();
+                });
+                loop.run ();
+            }
+        }
+
+        /**
+         * Converts a stream of bytes to string.
+         * @return {@code string}
+         */
         private static string decode_bytes (Bytes byt, int n) {
             Intl.setlocale ();
 

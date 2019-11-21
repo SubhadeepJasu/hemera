@@ -20,6 +20,12 @@
  */
 
 namespace Hemera.App {
+    /**
+     * The {@code HemeraApp} class is a foundation for all GTK-based applications.
+     *
+     * @see Gtk.Application
+     * @since 1.0.0
+     */
     public class HemeraApp : Gtk.Application {
         static HemeraApp _instance = null;
         public static HemeraApp instance {
@@ -34,22 +40,46 @@ namespace Hemera.App {
         public Hemera.Services.Connection mycroft_connection;
         public Hemera.Services.MessageManager mycroft_message_manager;
         public Hemera.Core.AppSearch app_search_provider;
+        private Hemera.Core.MycroftManager mycroft_system;
+        private bool hide_window_on_start;
 
+        /**
+         * Constructs a new {@code HemeraApp} object.
+         */
         public HemeraApp () {
             Object (
                 application_id: "com.github.SubhadeepJasu.hemera",
                 flags: ApplicationFlags.HANDLES_COMMAND_LINE
             );
             version_string = "0.1.0";
-            mycroft_connection = new Hemera.Services.Connection ("127.0.0.1", "8181");
+            var settings = Hemera.Configs.Settings.get_default ();
+            mycroft_connection = new Hemera.Services.Connection (settings.mycroft_ip, settings.mycroft_port);
             mycroft_message_manager = new Hemera.Services.MessageManager (mycroft_connection);
         }
+
+        public void reset_connection () {
+            var settings = Hemera.Configs.Settings.get_default ();
+            mycroft_connection.set_connection_address (settings.mycroft_ip, settings.mycroft_port);
+            Timeout.add (1000, () => {
+                mycroft_connection.init_ws ();
+                return false;
+            });
+        }
+
         public MainWindow mainwindow;
+
         protected override void activate () {
+            mycroft_system = new Hemera.Core.MycroftManager ();
             if (mainwindow == null) {
-                mainwindow = new MainWindow (this);
+                mainwindow = new MainWindow (this, hide_window_on_start);
                 add_window (mainwindow);
             }
+            if (!mainwindow.visible && mycroft_connection.ws_connected) {
+                mainwindow.show_all ();
+            }
+            mycroft_connect ();
+            mycroft_connection.init_ws ();
+
             var css_provider = new Gtk.CssProvider();
             try {
                 css_provider.load_from_resource ("/com/github/SubhadeepJasu/hemera/css/style.css");
@@ -58,27 +88,13 @@ namespace Hemera.App {
                 warning("%s", e.message);
             }
             // CSS Provider
+            
             Gtk.StyleContext.add_provider_for_screen (
                 Gdk.Screen.get_default(),
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
-            Timeout.add (1000, () => {
-                    mycroft_connection.init_ws ();
-                    return false;
-            });
-            mycroft_connection.connection_established.connect (() => {
-                Timeout.add (1000, () => {
-                    mainwindow.present ();
-                    mainwindow.set_launch_screen (1);
-                    mainwindow.queue_draw ();
-                    return false;
-                });
-            });
-            mycroft_connection.connection_failed.connect (() => {
-                mainwindow.present ();
-                mainwindow.set_launch_screen (0);
-            });
+            //mycroft_system.check_updates ();
             handle_application_launch_system ();
         }
 
@@ -87,15 +103,17 @@ namespace Hemera.App {
             return 0;
         }
 
+
         private void command_line_interpreter (ApplicationCommandLine cmd) {
             string[] cmd_args = cmd.get_arguments ();
             unowned string[] args = cmd_args;
             
-            bool version = false, show_preferences = false;
-            OptionEntry[] option = new OptionEntry[3];
+            bool version = false, show_preferences = false, run_headless = false;
+            OptionEntry[] option = new OptionEntry[4];
             option[0] = { "version", 0, 0, OptionArg.NONE, ref version, "Display version number", null };
             option[1] = { "show-preferences", 0, 0, OptionArg.NONE, ref show_preferences, "Display Preferences Window", null };
-            option[2] = { null };
+            option[2] = { "run-headless", 0, 0, OptionArg.NONE, ref run_headless, "Run Hemera in Background", null };
+            option[3] = { null };
             
             var option_context = new OptionContext ("actions");
             option_context.add_main_entries (option, null);
@@ -110,13 +128,37 @@ namespace Hemera.App {
                 cmd.print ("%s\n",version_string);
             }
             else if (show_preferences) {
-                var prefs = new PreferencesWindow ();
-                prefs.show_all ();
-                add_window (prefs);
+                var prefs_window = new PreferencesWindow ();
+                prefs_window.show_all ();
+                add_window (prefs_window);
             }
             else {
+                hide_window_on_start = run_headless;
                 activate ();
             }
+        }
+
+
+        private void mycroft_connect () {
+            mycroft_connection.connection_failed.connect (() => {
+                mycroft_system.start_mycroft ();
+            });
+            mycroft_system.mycroft_launched.connect (() => {
+                warning ("Starting Mycroft...");
+                Timeout.add (2000, () => {
+                    mycroft_connection.init_ws ();
+                    return false;
+                });
+            });
+            mycroft_system.mycroft_launch_failed.connect (() => {
+                warning ("Mycroft location doesn't exist");
+                mainwindow.show_all ();
+                mainwindow.set_launch_screen (0);
+            });
+
+            mainwindow.install_complete_view.ui_launch_mycroft.connect (() => {
+                mycroft_system.start_mycroft ();
+            });
         }
         private void handle_application_launch_system () {
             app_search_provider = new Hemera.Core.AppSearch ();
@@ -126,6 +168,7 @@ namespace Hemera.App {
                     launchable_app.launch ();
                     if (mainwindow != null) {
                         mainwindow.chat_launch_app (launchable_app);
+                        // Make me sound more human
                         Rand randomizer = new Rand ();
                         int random = randomizer.int_range (1, 4);
                         string open_word = "";
@@ -143,6 +186,7 @@ namespace Hemera.App {
                                 open_word = ("Okay, launching %s").printf (launchable_app.app_name);
                                 break;
                         }
+                        // Send message to Mycroft TTS system
                         mycroft_message_manager.send_speech (open_word);
                         if (mainwindow != null) {
                             mainwindow.set_chat_message_override (open_word);
@@ -154,13 +198,23 @@ namespace Hemera.App {
                 }
             });
         }
+        /**
+         * Stub: Handle window visibility when
+         * the app runs in the background
+         */
         private void close_window () {
             if (mainwindow != null) {
                 mainwindow.destroy ();
                 mainwindow = null;
             }
         }
-        
+        /**
+         * Main method. Responsible for starting the {@code HemeraApp} class.
+         *
+         * @see Hemera.HemeraApp
+         * @return {@code int}
+         * @since 1.0.0
+         */
         public static int main (string[] args) {
             var app = new Hemera.App.HemeraApp ();
             var ret = app.run (args);

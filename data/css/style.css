@@ -114,11 +114,12 @@
 .main_wake_button {
 	opacity: 1;
 	margin: 35px;
-	border-radius: 150px;
-	border: 1px solid alpha (#000, 0.15);
+	border: none;
+	border-radius: 200px;
 	background: linear-gradient(to bottom, #808080 0%, #6b6b6b 50%, #595959 100%);
 	box-shadow: 0 10px 9px alpha (#000, 0.2),
-              0 -10px 9px #fff;
+                0 -10px 9px #fff,
+ 		        inset 0px 0px 0px 1px alpha (#000, 0.15);
 	transition:all 0.2s ease-out;
 }
 
@@ -297,4 +298,9 @@
 	background-image: none;
 	box-shadow:none;
 	color: #4d4d4d;
+}
+
+.mycroft-logo {
+	animation: none;
+	-gtk-icon-source: url("resource://com/github/SubhadeepJasu/hemera/images/logos/mycroft-logo-64.svg");
 }

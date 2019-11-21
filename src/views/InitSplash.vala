@@ -19,24 +19,25 @@
 
 namespace Hemera.App {
     public class InitSplash : Gtk.Grid {
+        public signal void user_attempt_install ();
         public signal void user_attempt_reconnect ();
+        public signal void user_attempt_setup ();
         public class InitSplash () {
-            var welcome = new Granite.Widgets.Welcome ("Hemera", "Your own personal digital assistant");
-            welcome.append ("media-playback-start", "Start Mycroft", "Mycroft is my soul and I need it to function");
-            welcome.append ("application-default-icon", "Setup Mycroft", "Mycroft not installed? Let me help you");
+            var welcome = new Granite.Widgets.Welcome ("Hi! I am Hemera", "Mycroft is my soul and I need it");
+            /* Below commented line is there as a potential future feature.
+             * Uncomment the add the option to the list
+             */
+            //welcome.append ("emblem-downloads", "Install Mycroft", "Download and install mycroft");
+            welcome.append ("network-error", "Reconnect with Mycroft", "Attempt to reconnect with Mycroft");
+            welcome.append ("preferences-system", "Hemera Setup",      "Locate Mycroft and set up connection");
 
             welcome.activated.connect ((index) => {
                 switch (index) {
                     case 0:
                         user_attempt_reconnect ();
                         break;
-                    case 1:
-                        try {
-                            AppInfo.launch_default_for_uri ("https://github.com/elementary/granite", null);
-                        } catch (Error e) {
-                            warning (e.message);
-                        }
-
+                    default:
+                        user_attempt_setup ();
                         break;
                 }
             });

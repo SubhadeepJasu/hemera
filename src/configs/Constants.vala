@@ -19,7 +19,7 @@
  * Authored by: Hannes Schulze
  */
 
-namespace Hemera.App.Configs {
+namespace Hemera.Configs {
 
     /**
      * The {@code Constants} class is responsible for defining all
@@ -45,6 +45,7 @@ namespace Hemera.App.Configs {
         public abstract const string URL_CSS = "/com/github/SubhadeepJasu/hemera/css/style.css";
         public abstract const string [] ABOUT_AUTHORS = { "Subhadeep Jasu <subhajasu@gmail.com>", "Christopher M", "Hannes Schulze <haschu0103@gmail.com>" };
         public abstract const Gtk.License ABOUT_LICENSE_TYPE = Gtk.License.GPL_3_0;
+        public abstract const int64 MYCROFT_TAR_SIZE = 9700000;
     }
 }
 
