@@ -108,7 +108,7 @@ namespace Hemera.App {
             main_grid.attach (chatbox, 2, 0, 1, 1);
             main_grid.valign = Gtk.Align.CENTER;
 
-            welcome_screen        = new InitSplash ();
+            welcome_screen        = new InitSplash (false);
             setup_view            = new Setup (this);
             installer_view        = new Installer ();
             install_complete_view = new InstallerComplete ();
@@ -168,6 +168,7 @@ namespace Hemera.App {
                 warning ("in window");
             });
             setup_view.setup_launch_mycroft.connect (() => {
+                warning ("Relaunching mycroft...");
                 this.app_reference.reset_connection ();
             });
         }

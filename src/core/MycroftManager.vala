@@ -40,7 +40,8 @@ namespace Hemera.Core {
         public signal void mycroft_installing ();
         public signal void mycroft_finished_installation ();
 
-        public string mycroft_install_location = "~/mycroft-core";
+        Hemera.Configs.Settings settings;
+
         private string user_home_directory = "~/";
 
         /**
@@ -48,10 +49,9 @@ namespace Hemera.Core {
          */
         public MycroftManager () {
             user_home_directory = GLib.Environment.get_home_dir ();
-            var settings = Hemera.Configs.Settings.get_default ();
-            mycroft_install_location = settings.mycroft_location;
-            if (mycroft_install_location == null) {
-                mycroft_install_location = user_home_directory.concat ("/mycroft-core");
+            settings = Hemera.Configs.Settings.get_default ();
+            if (settings.mycroft_location == null) {
+                settings.mycroft_location = user_home_directory.concat ("/mycroft-core");
             }
         }
 
@@ -136,7 +136,7 @@ namespace Hemera.Core {
         public int start_mycroft () {
             MainLoop loop = new MainLoop ();
             try {
-                string launch_command = ("%sstart-mycroft.sh").printf (mycroft_install_location);
+                string launch_command = ("%sstart-mycroft.sh").printf (settings.mycroft_location);
                 string[] spawn_args = {"bash", launch_command, "all"};
                 string[] spawn_env = Environ.get ();
                 Pid child_pid;
@@ -188,7 +188,7 @@ namespace Hemera.Core {
             int mc_status = 0;
             bool b_status = true;
             Timeout.add (100, () => {
-                string stop_command = ("cd %s && ./stop-mycroft.sh all").printf (mycroft_install_location);
+                string stop_command = ("cd %s && ./stop-mycroft.sh all").printf (settings.mycroft_location);
                 GLib.Process.spawn_command_line_sync (stop_command,
                                                       out mc_stdout,
                                                       out ms_stderr,
@@ -339,7 +339,7 @@ namespace Hemera.Core {
 
 			        print ("%s\t%s\n", name, type);
                     mycroft_new_path = user_home_directory.concat ("/.local/share/com.github.SubhadeepJasu.hemera/", name, "/");
-                    mycroft_install_location = mycroft_new_path;
+                    settings.mycroft_location = mycroft_new_path;
                     var settings = Hemera.Configs.Settings.get_default ();
                     settings.mycroft_location = mycroft_new_path;
 			        warning (mycroft_new_path);
@@ -358,7 +358,7 @@ namespace Hemera.Core {
             mycroft_installing ();
             MainLoop loop = new MainLoop ();
             try {
-                string launch_command = ("%sdev_setup.sh").printf (mycroft_install_location);
+                string launch_command = ("%sdev_setup.sh").printf (settings.mycroft_location);
                 
                 Posix.chdir (filepath);
                 // Initialize git to this new directory

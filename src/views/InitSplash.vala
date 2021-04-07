@@ -22,22 +22,26 @@ namespace Hemera.App {
         public signal void user_attempt_install ();
         public signal void user_attempt_reconnect ();
         public signal void user_attempt_setup ();
-        public class InitSplash () {
+        public class InitSplash (bool showInstallOption) {
             var welcome = new Granite.Widgets.Welcome ("Hi! I am Hemera", "Mycroft is my soul and I need it");
             /* Below commented line is there as a potential future feature.
              * Uncomment the add the option to the list
              */
-            //welcome.append ("emblem-downloads", "Install Mycroft", "Download and install mycroft");
             welcome.append ("network-error", "Reconnect with Mycroft", "Attempt to reconnect with Mycroft");
             welcome.append ("preferences-system", "Hemera Setup",      "Locate Mycroft and set up connection");
+            if (showInstallOption)
+                welcome.append ("emblem-downloads", "Install Mycroft", "Download and install mycroft");
 
             welcome.activated.connect ((index) => {
                 switch (index) {
                     case 0:
                         user_attempt_reconnect ();
                         break;
-                    default:
+                    case 1:
                         user_attempt_setup ();
+                        break;
+                    default:
+                        user_attempt_install ();
                         break;
                 }
             });
