@@ -54,6 +54,7 @@ namespace Hemera.Services {
         public signal void receive_qna (string phrase, string answer, string skill_id, double confidence);
         public signal void receive_current_weather (string icon, string current, string min, string max, string location, string condition, double humidity, double wind);
         public signal void receive_hemera_launch_app(string app);
+        public signal void skill_handler_complete (string skill_name);
 
         public signal void receive_audio_output_start ();
         public signal void receive_audio_output_end ();
@@ -177,6 +178,11 @@ namespace Hemera.Services {
                             string app_name = data.get_string_member ("app");
                             receive_hemera_launch_app (app_name);
                         }
+                        break;
+                    case "mycroft.skill.handler.complete":
+                        Json.Object data = root_object.get_object_member ("data");
+                        string skill_name = data.get_string_member ("name");
+                        skill_handler_complete (skill_name);
                         break;
 
                     // COMMON DISPLAY SIGNALS //////////////////////////////////////////////////

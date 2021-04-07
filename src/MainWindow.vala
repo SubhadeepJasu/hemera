@@ -46,6 +46,9 @@ namespace Hemera.App {
 
         private bool hide_window_on_start;
 
+        // Message tracking flags
+        private bool weather_message_received;
+
 
         private Hemera.Core.MycroftManager mycroft_system;
         /**
@@ -247,10 +250,19 @@ namespace Hemera.App {
                 chatbox.push_qna (query, answer, skill, conf);
             });
             app_reference.mycroft_message_manager.receive_current_weather.connect ((icon, current_temp, min_temp, max_temp, location, condition, humidity, wind) => {
-                chatbox.push_current_weather (icon, current_temp, min_temp, max_temp, location, condition, humidity, wind);
+                if (!weather_message_received) {
+                    chatbox.push_current_weather (icon, current_temp, min_temp, max_temp, location, condition, humidity, wind);
+                    weather_message_received = true;
+                }
             });
             app_reference.mycroft_message_manager.receive_record_begin.connect (() => {
                 this.show_all ();
+            });
+
+            // Reset flags when skill completes
+            app_reference.mycroft_message_manager.skill_handler_complete.connect ((skill_name) => {
+                if (skill_name.contains ("WeatherSkill"))
+                    weather_message_received = false;
             });
         }
 
