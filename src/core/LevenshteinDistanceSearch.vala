@@ -45,7 +45,12 @@ namespace Hemera.Core {
                     index = i;
                 }
             }
-            if (min > 5) {
+            if (min >3) {
+                for (int i = 0; i < list_of_plugs.length; i++) {
+                    if (simplify(list_of_plugs [i].app_name).contains(simplify(query))) {
+                        return i;
+                    }
+                }
                 return -1;
             }
             return index;

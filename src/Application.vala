@@ -213,7 +213,7 @@ namespace Hemera.App {
                         string open_word = "";
                         switch (random) {
                             case 1:
-                                open_word = ("Opening switch board with %s settings").printf (plug_query.app_name);
+                                open_word = ("Opening %s settings").printf (plug_query.app_name);
                                 break;
                             case 2:
                                 open_word = ("Alright, opening %s settings").printf (plug_query.app_name);
@@ -222,7 +222,7 @@ namespace Hemera.App {
                                 open_word = ("Here's %s settings for you").printf (plug_query.app_name);
                                 break;
                             default:
-                                open_word = ("Okay, launching switch board with %s settings").printf (plug_query.app_name);
+                                open_word = ("You can change %s settings here").printf (plug_query.app_name);
                                 break;
                         }
                         // Send message to Mycroft TTS system
