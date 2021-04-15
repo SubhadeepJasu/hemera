@@ -20,6 +20,7 @@ hemera_deps = [
   dependency('gtk+-3.0'),
   dependency('granite'),
   dependency('libarchive'),
+  dependency('switchboard-2.0'),
   libhemera_dep
 ]
 

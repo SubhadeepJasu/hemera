@@ -17,6 +17,9 @@
  * Authored by: Subhadeep Jasu <subhajasu@gmail.com>
  */
 
+using Hemera.Models;
+using Hemera.Options;
+
 namespace Hemera.App {
     public class PreferencesWindow : Gtk.Dialog {
         private MainWindow window;
@@ -32,6 +35,9 @@ namespace Hemera.App {
         private Gtk.Label wakeword_preview_label;
         private Gtk.Label tts_preview_label;
         private Gtk.Label stt_preview_label;
+        
+        
+        private Hemera.Models.MycroftSettingsModel mycroft_settings;
 
         public PreferencesWindow (MainWindow? parent = null) {
 
@@ -59,8 +65,16 @@ namespace Hemera.App {
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             );
+
+            if (window != null) {
+                this.delete_event.connect (() => {
+                    window.reload_settings ();
+                    return false;
+                });
+            }
         }
         construct {
+            read_settings ();
             var mode_button = new Granite.Widgets.ModeButton ();;
             mode_button.hexpand = true;
             mode_button.halign = Gtk.Align.CENTER;
@@ -96,6 +110,13 @@ namespace Hemera.App {
             });
 
         }
+        private void read_settings () {
+            mycroft_settings = Hemera.Services.MycroftSettings.read_settings ();
+        }
+        private void save_settings () {
+            Hemera.Services.MycroftSettings.write (mycroft_settings);
+            lang_preview_label.set_text (Languages.get_name_from_language_code (mycroft_settings.lang));
+        }
         private Gtk.Widget get_hemera_general_widget () {
             int pixel_size = 24;
 
@@ -106,8 +127,7 @@ namespace Hemera.App {
 
             var lang_label = new Gtk.Label (_("Language"));
             lang_label.get_style_context ().add_class ("h3");
-
-            lang_preview_label = new Gtk.Label ("English (US)");
+            lang_preview_label = new Gtk.Label (Languages.get_name_from_language_code (mycroft_settings.lang));
             var lang_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             lang_box.margin = 6;
             lang_box.margin_end = 12;
@@ -116,8 +136,34 @@ namespace Hemera.App {
             lang_box.pack_start (lang_label, false, false, 6);
             lang_box.pack_end (lang_preview_label, false, false, 0);
 
+            Gtk.Revealer settings_revealer_language = new Gtk.Revealer ();
+            Gtk.ComboBoxText settings_combo_language = new Gtk.ComboBoxText ();
+            for (int i = 0; i < Languages.length (); i++) {
+                settings_combo_language.append_text (Languages.names[i]);
+            }
+            settings_combo_language.active = Languages.get_language_code_index (mycroft_settings.lang);
+            settings_combo_language.margin = 8;
+            settings_combo_language.margin_start = 34;
+            settings_revealer_language.add (settings_combo_language);
+            Gtk.Box settings_input_grid = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+            settings_input_grid.pack_start (lang_box, false, false, 0);
+            settings_input_grid.pack_end (settings_revealer_language, false, false, 0);
             var lang_eventbox = new Gtk.EventBox ();
-            lang_eventbox.add (lang_box);
+            lang_eventbox.add (settings_input_grid);
+            lang_eventbox.button_press_event.connect (() => {
+                if (settings_revealer_language.get_reveal_child ()) {
+                    settings_revealer_language.set_reveal_child (false);
+                } else {
+                    settings_revealer_language.set_reveal_child (true);
+                }
+                return false;
+            });
+
+            settings_combo_language.changed.connect (() => {
+                mycroft_settings.lang = Languages.lang_code[settings_combo_language.get_active ()];
+                save_settings ();
+                read_settings ();
+            });
 
             // Unit System
             var units_icon = new Gtk.Image ();
@@ -127,7 +173,7 @@ namespace Hemera.App {
             var units_label = new Gtk.Label (_("Units of Measurement"));
             units_label.get_style_context ().add_class ("h3");
 
-            units_preview_label = new Gtk.Label ("U.S.");
+            units_preview_label = new Gtk.Label (UnitSystems.get_name_from_unit_codes (mycroft_settings.system_unit));
             var units_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             units_box.margin = 6;
             units_box.margin_end = 12;
@@ -136,8 +182,34 @@ namespace Hemera.App {
             units_box.pack_start (units_label, false, false, 6);
             units_box.pack_end (units_preview_label, false, false, 0);
 
+            Gtk.Revealer settings_revealer_unit = new Gtk.Revealer ();
+            Gtk.ComboBoxText settings_combo_unit = new Gtk.ComboBoxText ();
+            for (int i = 0; i < UnitSystems.length (); i++) {
+                settings_combo_unit.append_text (UnitSystems.names[i]);
+            }
+            settings_combo_unit.active = UnitSystems.get_unit_codes_index (mycroft_settings.system_unit);
+            settings_combo_unit.margin = 8;
+            settings_combo_unit.margin_start = 34;
+            settings_revealer_unit.add (settings_combo_unit);
+            Gtk.Box settings_unit_input_grid = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+            settings_unit_input_grid.pack_start (units_box, false, false, 0);
+            settings_unit_input_grid.pack_end (settings_revealer_unit, false, false, 0);
             var units_eventbox = new Gtk.EventBox ();
-            units_eventbox.add (units_box);
+            units_eventbox.add (settings_unit_input_grid);
+            units_eventbox.button_press_event.connect (() => {
+                if (settings_revealer_unit.get_reveal_child ()) {
+                    settings_revealer_unit.set_reveal_child (false);
+                } else {
+                    settings_revealer_unit.set_reveal_child (true);
+                }
+                return false;
+            });
+
+            settings_combo_unit.changed.connect (() => {
+                mycroft_settings.system_unit = UnitSystems.unit_code[settings_combo_unit.get_active ()];
+                save_settings ();
+                read_settings ();
+            });
             
             // Time Format
             var time_format_icon = new Gtk.Image ();

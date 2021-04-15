@@ -40,6 +40,7 @@ namespace Hemera.App {
         public Hemera.Services.Connection mycroft_connection;
         public Hemera.Services.MessageManager mycroft_message_manager;
         public Hemera.Core.AppSearch app_search_provider;
+        public Hemera.Core.SwitchBoardPlugSearch switchboard_plug_search_provider;
         private Hemera.Core.MycroftManager mycroft_system;
         private bool hide_window_on_start;
 
@@ -96,6 +97,8 @@ namespace Hemera.App {
             );
             //mycroft_system.check_updates ();
             handle_application_launch_system ();
+            handle_gsettings_events ();
+            handle_system_events ();
         }
 
         public override int command_line (ApplicationCommandLine cmd) {
@@ -128,7 +131,7 @@ namespace Hemera.App {
                 cmd.print ("%s\n",version_string);
             }
             else if (show_preferences) {
-                var prefs_window = new PreferencesWindow ();
+                var prefs_window = new PreferencesWindow (mainwindow);
                 prefs_window.show_all ();
                 add_window (prefs_window);
             }
@@ -162,6 +165,7 @@ namespace Hemera.App {
         }
         private void handle_application_launch_system () {
             app_search_provider = new Hemera.Core.AppSearch ();
+            switchboard_plug_search_provider = new Hemera.Core.SwitchBoardPlugSearch ();
             mycroft_message_manager.receive_hemera_launch_app.connect ((query) => {
                 try {
                     Hemera.Core.AppEntry launchable_app = app_search_provider.get_app_by_search (query);
@@ -196,6 +200,54 @@ namespace Hemera.App {
                     mycroft_message_manager.send_speech (e.message);
                     warning (e.message);
                 }
+            });
+            mycroft_message_manager.receive_hemera_open_switchboard.connect ((query) => {
+                try {
+                    Hemera.Core.PlugInfo plug_query = switchboard_plug_search_provider.get_plug_by_search (query);
+                    AppInfo.launch_default_for_uri (("settings://%s").printf (plug_query.uri), null);
+                    if (mainwindow != null) {
+                        mainwindow.chat_launch_switchboard (plug_query);
+                        // Make me sound more human
+                        Rand randomizer = new Rand ();
+                        int random = randomizer.int_range (1, 4);
+                        string open_word = "";
+                        switch (random) {
+                            case 1:
+                                open_word = ("Opening switch board with %s settings").printf (plug_query.app_name);
+                                break;
+                            case 2:
+                                open_word = ("Alright, opening %s settings").printf (plug_query.app_name);
+                                break;
+                            case 3:
+                                open_word = ("Here's %s settings for you").printf (plug_query.app_name);
+                                break;
+                            default:
+                                open_word = ("Okay, launching switch board with %s settings").printf (plug_query.app_name);
+                                break;
+                        }
+                        // Send message to Mycroft TTS system
+                        mycroft_message_manager.send_speech (open_word);
+                        if (mainwindow != null) {
+                            mainwindow.set_chat_message_override (open_word);
+                        }
+                    }
+                } catch (Error e) {
+                    mycroft_message_manager.send_speech (e.message);
+                    warning (e.message);
+                }
+            });
+        }
+        private void handle_gsettings_events () {
+            mycroft_message_manager.receive_hemera_gsettings_night_light.connect ((enable) => {
+                var color_settings = new GLib.Settings ("org.gnome.settings-daemon.plugins.color");
+                color_settings.set_boolean ("night-light-enabled", enable);
+            });
+        }
+        private void handle_system_events () {
+            mycroft_message_manager.receive_system_shutdown.connect (() => {
+                mycroft_system.stop_mycroft ();
+                release ();
+                quit ();
             });
         }
         /**

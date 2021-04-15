@@ -28,12 +28,14 @@ hemera_sources = files(
   'bubbles/SpeechBubble.vala',
   'bubbles/QnABubble.vala',
   'bubbles/WeatherBubbleCurrent.vala',
+  'bubbles/AppBubble.vala',
+  'bubbles/SwitchBoardBubble.vala',
   'core/AppEntry.vala',
   'core/AppDiscovery.vala',
   'core/AppSearch.vala',
+  'core/SwitchBoardPlugSearch.vala',
   'core/LevenshteinDistanceSearch.vala',
   'core/MycroftManager.vala',
-  'bubbles/AppBubble.vala',
   'views/ChatView.vala',
 )
 

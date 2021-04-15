@@ -171,9 +171,16 @@ namespace Hemera.App {
                 warning ("in window");
             });
             setup_view.setup_launch_mycroft.connect (() => {
+                warning ("Writing settings...");
+                Hemera.Services.MycroftSettings.write_defaults ();
                 warning ("Relaunching mycroft...");
                 this.app_reference.reset_connection ();
             });
+        }
+
+        public void reload_settings () {
+            warning ("Reloading...");
+            app_reference.mycroft_message_manager.update_config ();
         }
 
         /**
@@ -272,6 +279,10 @@ namespace Hemera.App {
          */
         public void chat_launch_app (Hemera.Core.AppEntry app) {
             chatbox.push_app_launch (app);
+        }
+
+        public void chat_launch_switchboard (Hemera.Core.PlugInfo plug) {
+            chatbox.push_switch_board_launch (plug);
         }
 
         /**

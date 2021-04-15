@@ -54,6 +54,8 @@ namespace Hemera.Services {
         public signal void receive_qna (string phrase, string answer, string skill_id, double confidence);
         public signal void receive_current_weather (string icon, string current, string min, string max, string location, string condition, double humidity, double wind);
         public signal void receive_hemera_launch_app(string app);
+        public signal void receive_hemera_open_switchboard(string plug);
+        public signal void receive_hemera_gsettings_night_light (bool enable);
         public signal void skill_handler_complete (string skill_name);
 
         public signal void receive_audio_output_start ();
@@ -74,6 +76,8 @@ namespace Hemera.Services {
         public signal void receive_eyes_look (string side);
         public signal void receive_eyes_off ();
         public signal void receive_volume_change (int64 volume);
+
+        public signal void receive_system_shutdown ();
 
         public signal void receive_thinking ();
 
@@ -171,13 +175,20 @@ namespace Hemera.Services {
                         }
                         break;
                     // HEMERA SKILL SIGNALS ////////////////////////////////////////////////////
-                    case "hemera_action":
+                    case "mycroft-skill-hemera.subhadeepjasu:LaunchApp.intent":
                         Json.Object data = root_object.get_object_member ("data");
-                        string type_of_action = data.get_string_member ("type");
-                        if (type_of_action == "launch") {
-                            string app_name = data.get_string_member ("app");
-                            receive_hemera_launch_app (app_name);
-                        }
+                        string app_name = data.get_string_member ("app_name");
+                        receive_hemera_launch_app (app_name);
+                        break;
+                    case "mycroft-skill-hemera.subhadeepjasu:SwitchBoard.intent":
+                        Json.Object data = root_object.get_object_member ("data");
+                        string plug_name = data.get_string_member ("settings_name");
+                        receive_hemera_open_switchboard (plug_name);
+                        break;
+                    case "mycroft-skill-hemera.subhadeepjasu:GSettingsNightLight.intent":
+                        Json.Object data = root_object.get_object_member ("data");
+                        string switch_mode = data.get_string_member ("switch_mode");
+                        receive_hemera_gsettings_night_light (switch_mode == "on");
                         break;
                     case "mycroft.skill.handler.complete":
                         Json.Object data = root_object.get_object_member ("data");
@@ -400,6 +411,9 @@ namespace Hemera.Services {
                     case "mycroft-configuration.mycroftai:ConfigurationSkillupdate_remote":
                         // data: UpdateRemote
                         break;
+                    case "system.shutdown":
+                        receive_system_shutdown ();
+                        break;
                     default:
                         // Unrecognized signal
                         break;
@@ -605,6 +619,37 @@ namespace Hemera.Services {
                 builder.begin_object ();                                        // {
                 builder.set_member_name ("type");                               //     "type" : 
                 builder.add_string_value ("mycroft.stop");                      //          "mycroft.stop"
+                builder.end_object ();                                          // }
+
+                Json.Generator generator = new Json.Generator ();
+                Json.Node root = builder.get_root ();
+                generator.set_root (root);
+                string str = generator.to_data (null);
+
+                try {
+                    ws_connection.get_web_socket ().send_text (str);
+                }
+                catch (Error e) {
+                    warning ("[Hemera]: Mycroft Error: %s", (string)e);
+                    return false;
+                }
+                return true;
+            }
+            else {
+                warning ("[Hemera]: No web socket");
+                return false;
+            }
+        }
+        /**
+         * Signal Mycroft to reload configuration
+         * @return {@code success}
+         */
+        public bool update_config () {
+            if (ws_connection.ws_connected) {
+                Json.Builder builder = new Json.Builder ();
+                builder.begin_object ();                                        // {
+                builder.set_member_name ("type");                               //     "type" : 
+                builder.add_string_value ("configuration.update");                      //          "mycroft.stop"
                 builder.end_object ();                                          // }
 
                 Json.Generator generator = new Json.Generator ();

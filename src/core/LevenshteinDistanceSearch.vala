@@ -20,7 +20,7 @@ using GLib;
 
 namespace Hemera.Core {
     public class LevenshteinDistanceSearch{
-        public static int search (AppEntry[] list_of_apps, string query) {
+        public static int search_apps (AppEntry[] list_of_apps, string query) {
             int min = 1000;
             int index = 0;
             for (int i = 0; i < list_of_apps.length; i++) {
@@ -30,7 +30,22 @@ namespace Hemera.Core {
                     index = i;
                 }
             }
-            if (min > 2) {
+            if (min > 3) {
+                return -1;
+            }
+            return index;
+        }
+        public static int search_plugs (PlugInfo[] list_of_plugs, string query) {
+            int min = 1000;
+            int index = 0;
+            for (int i = 0; i < list_of_plugs.length; i++) {
+                int distance = compute_distance (simplify(list_of_plugs [i].app_name), simplify(query));
+                if (distance < min) {
+                    min = distance;
+                    index = i;
+                }
+            }
+            if (min > 5) {
                 return -1;
             }
             return index;
@@ -77,6 +92,7 @@ namespace Hemera.Core {
             output_string = output_string.replace ("-", "");
             output_string = output_string.replace (".", "");
             output_string = output_string.replace (",", "");
+            output_string = output_string.casefold ();
             return output_string.down ();
         }
     }

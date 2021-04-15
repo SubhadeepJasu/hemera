@@ -1,6 +1,10 @@
 libhemera_sources = files(
+  'Models/MycroftSettingsModel.vala',
+  'Options/Languages.vala',
+  'Options/UnitSystems.vala',
   'Services/Connection.vala',
   'Services/MessageManager.vala',
+  'Services/MycroftSettings.vala'
 )
 
 libhemera_deps = [

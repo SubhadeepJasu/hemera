@@ -121,6 +121,14 @@ namespace Hemera.App {
             chat_box.pack_start (new AppBubble (app));
             number_of_messages++;
         }
+        public void push_switch_board_launch (Hemera.Core.PlugInfo plug) {
+            if (number_of_messages >= max_number_of_messages) {
+                var bubble_list = chat_box.get_children ();
+                chat_box.remove (bubble_list.first ().nth_data (0));
+            }
+            chat_box.pack_start (new SwitchBoardBubble (plug));
+            number_of_messages++;
+        }
         public void refocus () {
             utterance_entry.grab_focus_without_selecting ();
         }

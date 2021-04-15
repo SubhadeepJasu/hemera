@@ -183,18 +183,50 @@ namespace Hemera.Core {
          * Stop Mycroft asynchronously
          * @return {@code void}.
          */
-        public void stop_mycroft () {
-            string mc_stdout = "", ms_stderr = "";
-            int mc_status = 0;
-            bool b_status = true;
-            Timeout.add (100, () => {
-                string stop_command = ("cd %s && ./stop-mycroft.sh all").printf (settings.mycroft_location);
-                GLib.Process.spawn_command_line_sync (stop_command,
-                                                      out mc_stdout,
-                                                      out ms_stderr,
-                                                      out mc_status);
-                return false;
-            });
+        public int stop_mycroft () {
+            MainLoop loop = new MainLoop ();
+            try {
+                string launch_command = ("%sstop-mycroft.sh").printf (settings.mycroft_location);
+                string[] spawn_args = {"bash", launch_command};
+                string[] spawn_env = Environ.get ();
+                Pid child_pid;
+
+                int standard_input;
+                int standard_output;
+                int standard_error;
+                Process.spawn_async_with_pipes ("/",
+                                                spawn_args,
+                                                spawn_env,
+                                                SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD,
+                                                null,
+                                                out child_pid,
+                                                out standard_input,
+                                                out standard_output,
+                                                out standard_error);
+                
+                // stdout:
+                IOChannel output = new IOChannel.unix_new (standard_output);
+                output.add_watch (IOCondition.IN | IOCondition.HUP, (channel, condition) => {
+                    return process_line (this, channel, condition, "stdout");
+                });
+
+                // stderr:
+                IOChannel error = new IOChannel.unix_new (standard_error);
+                error.add_watch (IOCondition.IN | IOCondition.HUP, (channel, condition) => {
+                    return process_line (this, channel, condition, "stderr");
+                });
+
+                ChildWatch.add (child_pid, (pid, status) => {
+                    // Triggered when the child indicated by child_pid exits
+                    Process.close_pid (pid);
+                    loop.quit ();
+                });
+
+                loop.run ();
+            } catch (SpawnError e) {
+                print ("Error: %s\n", e.message);
+            }
+            return 0;
         }
 
         /**

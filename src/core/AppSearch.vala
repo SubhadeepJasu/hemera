@@ -46,7 +46,7 @@ namespace Hemera.Core {
             return 0;
         }
         public AppEntry get_app_by_search (string query) throws SEARCH_ERROR.NO_SEARCH_RESULTS, SEARCH_ERROR.SAME_APP {
-            int search_index = LevenshteinDistanceSearch.search (apps, query);
+            int search_index = LevenshteinDistanceSearch.search_apps (apps, query);
             if (search_index == -1) {
                 throw new SEARCH_ERROR.NO_SEARCH_RESULTS ("Sorry, I couldn't find the app");
             }
